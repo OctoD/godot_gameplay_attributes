@@ -1,0 +1,12 @@
+[package]
+name = "godot_gameplay_attributes"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]  # Compile this crate to a dynamic C library.
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+godot = { git = "https://github.com/godot-rust/gdext", branch = "master" }
