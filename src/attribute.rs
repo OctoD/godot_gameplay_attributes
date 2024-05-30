@@ -10,14 +10,16 @@ pub struct Attribute {
     pub attribute_buffs: Array<Gd<AttributeBuff>>,
     #[var]
     pub attribute_name: GString,
+    #[var(get = get_buffed_value)]
+    pub current_value: f64,
     #[var]
-    pub current_value: f32,
+    pub initial_value: f64,
     #[var]
-    pub initial_value: f32,
+    pub max_value: f64,
     #[var]
-    pub max_value: f32,
-    #[var]
-    pub min_value: f32,
+    pub min_value: f64,
+    // this will never get public. Get away from me. 
+    underlying_value: f64,
 }
 
 impl PartialEq for Attribute {
@@ -30,7 +32,7 @@ impl PartialEq for Attribute {
 impl Attribute {
     #[func]
     pub fn add_buff(&mut self, buff: Gd<AttributeBuff>) {
-        if !self.has_buff(buff.clone()) {
+        if self.can_receive_buff(buff.clone()) {
             self.attribute_buffs.push(buff);
         }
     }
@@ -38,8 +40,22 @@ impl Attribute {
     #[func]
     pub fn add_buffs(&mut self, buffs: Array<Gd<AttributeBuff>>) {
         for buff in buffs.iter_shared() {
-            self.attribute_buffs.push(buff);
+            if self.can_receive_buff(buff.clone()) {
+                self.attribute_buffs.push(buff);
+            }
         }
+    }
+
+    #[func]
+    pub fn can_receive_buff(&self, buff: Gd<AttributeBuff>) -> bool {
+        buff.bind().attribute_name == self.attribute_name
+    }
+
+    #[func]
+    pub fn get_buffed_value(&self) -> f64 {
+        self.attribute_buffs
+            .iter_shared()
+            .fold(self.underlying_value, |acc, buff| buff.bind().operate(acc))
     }
 
     #[func]
@@ -53,15 +69,10 @@ impl Attribute {
         false
     }
 
-	#[func]
-	pub fn operate(&mut self, op: AttributeOperation, value: f32) {
-		match op {
-			AttributeOperation::Add => self.current_value += value,
-			AttributeOperation::Multiply => self.current_value *= value,
-			AttributeOperation::Subtract => self.current_value -= value,
-			AttributeOperation::Divide => self.current_value /= value,
-		}
-	}
+    #[func]
+    pub fn operate(&mut self, op: AttributeOperation, value: f64) {
+        self.underlying_value = op.operate(self.underlying_value, value)
+    }
 
     #[func]
     pub fn remove_buff(&mut self, buff: Gd<AttributeBuff>) {
@@ -83,21 +94,5 @@ impl Attribute {
         for buff in buffs.iter_shared() {
             self.remove_buff(buff);
         }
-    }
-
-    #[func]
-    pub fn get_buffed_value(&self) -> f32 {
-        self.attribute_buffs
-            .iter_shared()
-            .fold(self.current_value, |acc, buff| {
-                let b = buff.bind();
-
-                match &b.op {
-                    AttributeOperation::Add => acc + b.value,
-                    AttributeOperation::Multiply => acc * b.value,
-                    AttributeOperation::Subtract => acc - b.value,
-                    AttributeOperation::Divide => acc / b.value,
-                }
-            })
     }
 }
