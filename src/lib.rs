@@ -2,6 +2,7 @@ mod attribute;
 mod attribute_buff;
 mod attribute_container;
 mod attribute_operation;
+mod resources;
 
 use godot::prelude::*;
 

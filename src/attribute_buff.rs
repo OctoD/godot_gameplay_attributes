@@ -9,16 +9,12 @@ pub struct AttributeBuff {
     #[var]
     pub attribute_name: GString,
     #[var]
-    pub op: AttributeOperation,
-    #[var]
-    pub value: f64,
+    pub op: Gd<AttributeOperation>,
 }
 
 impl PartialEq for AttributeBuff {
     fn eq(&self, other: &Self) -> bool {
-        self.attribute_name == other.attribute_name
-            && self.op == other.op
-            && self.value == other.value
+        self.attribute_name == other.attribute_name && self.op == other.op
     }
 }
 
@@ -26,6 +22,6 @@ impl PartialEq for AttributeBuff {
 impl AttributeBuff {
     #[func]
     pub fn operate(&self, base_value: f64) -> f64 {
-        self.op.operate(base_value, self.value)
+        self.op.bind().operate(base_value)
     }
 }
