@@ -3,18 +3,18 @@ use godot::prelude::*;
 use crate::attribute_operation::AttributeOperation;
 
 #[derive(GodotClass)]
-#[class(init, base=RefCounted)]
+#[class(init, base=Resource)]
 pub struct AttributeBuff {
-    base: Base<RefCounted>,
+    base: Base<Resource>,
     #[var]
     pub attribute_name: GString,
     #[var]
-    pub op: Gd<AttributeOperation>,
+    pub operation: Gd<AttributeOperation>,
 }
 
 impl PartialEq for AttributeBuff {
     fn eq(&self, other: &Self) -> bool {
-        self.attribute_name == other.attribute_name && self.op == other.op
+        self.attribute_name == other.attribute_name && self.operation == other.operation
     }
 }
 
@@ -22,6 +22,6 @@ impl PartialEq for AttributeBuff {
 impl AttributeBuff {
     #[func]
     pub fn operate(&self, base_value: f64) -> f64 {
-        self.op.bind().operate(base_value)
+        self.operation.bind().operate(base_value)
     }
 }
