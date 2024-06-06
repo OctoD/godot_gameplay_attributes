@@ -6,9 +6,9 @@ use crate::attribute_operation::AttributeOperation;
 #[class(init, base=Resource)]
 pub struct AttributeBuff {
     base: Base<Resource>,
-    #[var]
+    #[export]
     pub attribute_name: GString,
-    #[var]
+    #[export]
     pub operation: Gd<AttributeOperation>,
 }
 
