@@ -3,6 +3,8 @@ mod attribute_buff;
 mod attribute_container;
 mod attribute_operation;
 mod attribute_effect;
+mod resources;
+mod editor;
 
 use godot::prelude::*;
 
