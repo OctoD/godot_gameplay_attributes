@@ -1,6 +1,6 @@
 use godot::prelude::*;
 
-use crate::{attribute_buff::AttributeBuff, attribute_operation::AttributeOperation};
+use crate::attribute_buff::{AttributeBuff, BuffType};
 
 #[derive(GodotClass)]
 #[class(init, base=Resource)]
@@ -41,10 +41,21 @@ impl Attribute {
     #[func]
     pub fn add_buff(&mut self, buff: Gd<AttributeBuff>) -> bool {
         if self.can_receive_buff(buff.clone()) {
-            self.attribute_buffs.push(buff.clone());
+            if buff.bind().buff_type == BuffType::Immediate as u8 {
+                let prev_value = self.underlying_value;
+                self.underlying_value = buff.bind().operate(self.underlying_value);
 
-            self.to_gd()
-                .emit_signal(StringName::from("buff_added"), &[buff.to_variant()]);
+                if self.underlying_value != prev_value {
+                    self.to_gd().emit_signal(
+                        StringName::from("attribute_changed"),
+                        &[prev_value.to_variant(), self.underlying_value.to_variant()],
+                    );
+                }
+            } else {
+                self.attribute_buffs.push(buff.clone());
+                self.to_gd()
+                    .emit_signal(StringName::from("buff_added"), &[buff.to_variant()]);
+            }
 
             return true;
         }
@@ -72,6 +83,11 @@ impl Attribute {
         buff.bind().attribute_name == self.attribute_name
     }
 
+    #[func]
+    pub fn clear_buffs(&mut self) {
+        self.attribute_buffs.clear();
+    }
+
     /// Returns the buffed value of the attribute.
     #[func]
     pub fn get_buffed_value(&self) -> f64 {
@@ -92,21 +108,6 @@ impl Attribute {
         false
     }
 
-    /// Operates on the attribute with the given operation and value.
-    #[func]
-    pub fn operate(&mut self, op: Gd<AttributeOperation>) {
-        let prev_value = self.underlying_value;
-
-        self.underlying_value = op.bind().operate(self.underlying_value);
-
-        if self.underlying_value != prev_value {
-            self.to_gd().emit_signal(
-                StringName::from("attribute_changed"),
-                &[prev_value.to_variant(), self.underlying_value.to_variant()],
-            );
-        }
-    }
-
     /// Removes the first buff found of a specific type on the attribute.
     #[func]
     pub fn remove_buff(&mut self, buff: Gd<AttributeBuff>) -> bool {
@@ -119,7 +120,6 @@ impl Attribute {
                     .emit_signal(StringName::from("buff_removed"), &[buff.to_variant()]);
                 return true;
             }
-
             index += 1usize;
         }
 
@@ -132,7 +132,7 @@ impl Attribute {
         let mut indexes: Vec<usize> = Vec::new();
 
         for (index, x) in self.attribute_buffs.iter_shared().enumerate() {
-            if x == buff {
+            if x.bind().buff_name == buff.bind().buff_name {
                 indexes.push(index);
             }
         }

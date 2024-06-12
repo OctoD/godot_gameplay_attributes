@@ -1,22 +1,36 @@
 use godot::prelude::*;
 
+use crate::attribute_buff::AttributeBuff;
+
 #[derive(GodotClass)]
 #[class(init, base=Resource)]
 pub struct AttributeEffect {
     base: Base<Resource>,
     #[export]
-    pub attribute_name: GString,
-    #[export]
-    pub buffs: Array<Gd<AttributeEffect>>,
-    #[export]
-    pub value: f64,
+    pub buffs: Array<Gd<AttributeBuff>>,
 }
 
 impl PartialEq for AttributeEffect {
     fn eq(&self, other: &Self) -> bool {
-        self.attribute_name == other.attribute_name && self.buffs == other.buffs
+        self.buffs == other.buffs
     }
 }
 
 #[godot_api]
-impl AttributeEffect {}
+impl AttributeEffect {
+    #[func]
+    pub fn get_instant_buffs(&self) -> Array<Gd<AttributeBuff>> {
+        self.buffs
+            .iter_shared()
+            .filter(|buff| buff.bind().duration == 0.0)
+            .collect()
+    }
+
+    #[func]
+    pub fn get_timed_buffs(&self) -> Array<Gd<AttributeBuff>> {
+        self.buffs
+            .iter_shared()
+            .filter(|buff| buff.bind().duration > 0.0)
+            .collect()
+    }
+}
