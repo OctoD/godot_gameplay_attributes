@@ -55,15 +55,15 @@ impl Attribute {
     /// Adds multiple buffs to the attribute. If a buff is not of the same type as the attribute, it will not be added.
     #[func]
     pub fn add_buffs(&mut self, buffs: Array<Gd<AttributeBuff>>) -> u32 {
-        let mut added: u32 = 0;
+        let mut count: u32 = 0;
 
         for buff in buffs.iter_shared() {
             if self.add_buff(buff) {
-                added += 1;
+                count += 1;
             }
         }
 
-        added
+        count
     }
 
     /// Returns true if the attribute can receive the buff, false otherwise.
