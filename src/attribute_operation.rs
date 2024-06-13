@@ -97,7 +97,8 @@ impl AttributeOperation {
             value,
         })
     }
-
+    
+    #[func]
     pub fn operate(&self, &base_value: f64) -> f64 {
         match Operand::from(self.operand) {
             Operand::Add => base_value + self.value,
