@@ -44,7 +44,10 @@ pub struct AttributeBuff {
 
 impl PartialEq for AttributeBuff {
     fn eq(&self, other: &Self) -> bool {
-        self.attribute_name == other.attribute_name && self.operation == other.operation
+        self.attribute_name == other.attribute_name
+            && self.operation == other.operation
+            && self.buff_name == other.buff_name
+            && self.buff_type == other.buff_type
     }
 }
 
