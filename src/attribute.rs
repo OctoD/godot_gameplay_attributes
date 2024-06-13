@@ -41,7 +41,7 @@ impl Attribute {
     #[func]
     pub fn add_buff(&mut self, buff: Gd<AttributeBuff>) -> bool {
         if self.can_receive_buff(buff.clone()) {
-            if buff.bind().buff_type == BuffType::Immediate as u8 {
+            if buff.bind().buff_type == BuffType::OneShot as u8 {
                 let prev_value = self.underlying_value;
                 self.underlying_value = buff.bind().operate(self.underlying_value);
 
