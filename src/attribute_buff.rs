@@ -3,16 +3,16 @@ use godot::prelude::*;
 use crate::attribute_operation::AttributeOperation;
 
 pub enum BuffType {
-    Immediate,
-    Persistent,
+    OneShot,
+    Stackable,
 }
 
 impl From<u8> for BuffType {
     fn from(value: u8) -> Self {
         match value {
-            0 => BuffType::Immediate,
-            1 => BuffType::Persistent,
-            _ => BuffType::Immediate,
+            0 => BuffType::OneShot,
+            1 => BuffType::Stackable,
+            _ => BuffType::OneShot,
         }
     }
 }
@@ -20,8 +20,8 @@ impl From<u8> for BuffType {
 impl Into<u8> for BuffType {
     fn into(self) -> u8 {
         match self {
-            BuffType::Immediate => 0,
-            BuffType::Persistent => 1,
+            BuffType::OneShot => 0,
+            BuffType::Stackable => 1,
         }
     }
 }
@@ -34,7 +34,7 @@ pub struct AttributeBuff {
     pub attribute_name: GString,
     #[export]
     pub buff_name: GString,
-    #[export(enum = (Immediate, Persistent))]
+    #[export(enum = (OneShot, Stackable))]
     pub buff_type: u8,
     #[export]
     pub duration: f64,
