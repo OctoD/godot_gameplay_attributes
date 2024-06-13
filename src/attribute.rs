@@ -44,14 +44,17 @@ impl Attribute {
             if buff.bind().buff_type == BuffType::OneShot as u8 {
                 let prev_value = self.underlying_value;
                 self.underlying_value = buff.bind().operate(self.underlying_value);
+                let underlying_value = self.underlying_value;
 
-                if self.underlying_value != prev_value {
-                    self.to_gd().emit_signal(
+                if underlying_value != prev_value {
+                    let selfclone = self.to_gd().clone();
+                    
+                    self.base_mut().emit_signal(
                         StringName::from("attribute_changed"),
                         &[
-                            self.to_gd().to_variant(),
+                            selfclone.to_variant(),
                             prev_value.to_variant(),
-                            self.underlying_value.to_variant(),
+                            underlying_value.to_variant(),
                         ],
                     );
                 }
@@ -95,9 +98,10 @@ impl Attribute {
     /// Returns the buffed value of the attribute.
     #[func]
     pub fn get_buffed_value(&self) -> f64 {
+        let underlying_value = self.underlying_value;
         self.attribute_buffs
             .iter_shared()
-            .fold(self.underlying_value, |acc, buff| buff.bind().operate(acc))
+            .fold(underlying_value, |acc, buff| buff.bind().operate(acc))
     }
 
     /// Returns true if the attribute has the buff, false otherwise.
@@ -120,7 +124,7 @@ impl Attribute {
         for x in self.attribute_buffs.iter_shared() {
             if x == buff {
                 self.attribute_buffs.remove(index);
-                self.to_gd()
+                self.base_mut()
                     .emit_signal(StringName::from("buff_removed"), &[buff.to_variant()]);
                 return true;
             }

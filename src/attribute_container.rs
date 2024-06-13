@@ -13,7 +13,34 @@ pub struct AttributeContainer {
 }
 
 #[godot_api]
+impl INode for AttributeContainer {
+    fn ready(&mut self) {
+        for mut attribute in self.attributes.iter_shared() {
+            attribute.bind_mut().setup_underlying_value();
+            self._connect_attribute(attribute);
+        }
+    }
+}
+
+#[godot_api]
 impl AttributeContainer {
+    fn _on_attribute_changed(&self, attribute: Gd<Attribute>, previous_value: f64, new_value: f64) {
+        self.to_gd().emit_signal(
+            "attribute_changed".into(),
+            &[
+                attribute.to_variant(),
+                previous_value.to_variant(),
+                new_value.to_variant(),
+            ],
+        );
+    }
+
+    fn _connect_attribute(&self, mut attribute: Gd<Attribute>) {
+        let callable = Callable::from_object_method(&self.to_gd(), "_on_attribute_changed");
+
+        attribute.connect("attribute_changed".into(), callable);
+    }
+
     fn _try_cast_to<T: FromGodot>(&self, variant: Option<Variant>) -> Option<T> {
         match variant {
             Some(variant) => match variant.try_to::<T>() {
@@ -48,9 +75,11 @@ impl AttributeContainer {
     fn attribute_changed(attribute: Gd<Attribute>, previous_value: f64, new_value: f64);
 
     #[func]
-    fn add_attribute(&mut self, attribute: Gd<Attribute>) {
+    fn add_attribute(&mut self, mut attribute: Gd<Attribute>) {
         if !self.attributes.contains(&attribute) {
-            self.attributes.push(attribute);
+            attribute.bind_mut().setup_underlying_value();
+            self.attributes.push(attribute.clone());
+            self._connect_attribute(attribute.clone());
         }
     }
 
