@@ -53,6 +53,11 @@ impl PartialEq for AttributeBuff {
 
 #[godot_api]
 impl AttributeBuff {
+    #[constant]
+    pub const ONE_SHOT: u8 = 0;
+    #[constant]
+    pub const STACKABLE: u8 = 1;
+
     #[func]
     pub fn operate(&self, base_value: f64) -> f64 {
         self.operation.bind().operate(base_value)
