@@ -31,7 +31,7 @@ impl PartialEq for Attribute {
 #[godot_api]
 impl Attribute {
     #[signal]
-    fn attribute_changed(prev_value: f64, new_value: f64);
+    fn attribute_changed(self, prev_value: f64, new_value: f64);
     #[signal]
     fn buff_added(buff: Gd<AttributeBuff>);
     #[signal]
@@ -48,7 +48,11 @@ impl Attribute {
                 if self.underlying_value != prev_value {
                     self.to_gd().emit_signal(
                         StringName::from("attribute_changed"),
-                        &[prev_value.to_variant(), self.underlying_value.to_variant()],
+                        &[
+                            self.to_gd().to_variant(),
+                            prev_value.to_variant(),
+                            self.underlying_value.to_variant(),
+                        ],
                     );
                 }
             } else {
@@ -156,5 +160,11 @@ impl Attribute {
         }
 
         count
+    }
+
+    /// Privately sets the underlying value of the attribute.
+    #[func]
+    pub fn setup_underlying_value(&mut self) {
+        self.underlying_value = self.initial_value;
     }
 }
