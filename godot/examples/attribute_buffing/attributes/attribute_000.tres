@@ -1,0 +1,6 @@
+[gd_resource type="Attribute" format=3 uid="uid://cu6o02molycn1"]
+
+[resource]
+attribute_name = "attribute_000"
+initial_value = 50.0
+max_value = 100.0

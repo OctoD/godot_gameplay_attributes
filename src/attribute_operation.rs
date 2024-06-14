@@ -23,7 +23,7 @@ impl From<u8> for Operand {
 }
 
 #[derive(GodotClass)]
-#[class(no_init, base=Resource)]
+#[class(init, base=Resource)]
 pub struct AttributeOperation {
     base: Base<Resource>,
     /// the operand used. It's converted to Operand enum in the operate method.
@@ -37,17 +37,6 @@ pub struct AttributeOperation {
 impl PartialEq for AttributeOperation {
     fn eq(&self, other: &Self) -> bool {
         self.operand == other.operand && self.value == other.value
-    }
-}
-
-#[godot_api]
-impl IRefCounted for AttributeOperation {
-    fn init(base: Base<Resource>) -> Self {
-        Self {
-            base,
-            operand: 0,
-            value: 0.0,
-        }
     }
 }
 

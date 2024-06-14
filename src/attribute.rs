@@ -41,13 +41,15 @@ impl Attribute {
     #[func]
     pub fn add_buff(&mut self, buff: Gd<AttributeBuff>) -> bool {
         if self.can_receive_buff(buff.clone()) {
-            if buff.bind().buff_type == BuffType::OneShot as u8 {
+            let bound = buff.bind();
+            
+            if bound.buff_type == BuffType::OneShot as u8 {
                 let prev_value = self.underlying_value;
-                self.underlying_value = buff.bind().operate(self.underlying_value);
+                self.underlying_value = bound.operate(self.underlying_value);
                 let underlying_value = self.underlying_value;
 
                 if underlying_value != prev_value {
-                    let selfclone = self.to_gd().clone();
+                    let selfclone = self.base_mut().clone();
                     
                     self.base_mut().emit_signal(
                         StringName::from("attribute_changed"),
@@ -60,7 +62,7 @@ impl Attribute {
                 }
             } else {
                 self.attribute_buffs.push(buff.clone());
-                self.to_gd()
+                self.base_mut()
                     .emit_signal(StringName::from("buff_added"), &[buff.to_variant()]);
             }
 
@@ -138,9 +140,10 @@ impl Attribute {
     #[func]
     pub fn remove_all_buffs_of_type(&mut self, buff: Gd<AttributeBuff>) -> u32 {
         let mut indexes: Vec<usize> = Vec::new();
+        let buff_name = buff.bind().buff_name.clone();
 
         for (index, x) in self.attribute_buffs.iter_shared().enumerate() {
-            if x.bind().buff_name == buff.bind().buff_name {
+            if x.bind().buff_name == buff_name {
                 indexes.push(index);
             }
         }

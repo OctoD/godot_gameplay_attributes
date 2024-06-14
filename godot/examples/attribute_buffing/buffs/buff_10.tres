@@ -1,0 +1,13 @@
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://4bcniqvsodsu"]
+
+[sub_resource type="AttributeOperation" id="AttributeOperation_soite"]
+operand = 0
+value = 10.0
+resource_local_to_scene = false
+resource_name = ""
+
+[resource]
+attribute_name = "attribute_000"
+buff_name = "buff10"
+buff_type = 1
+operation = SubResource("AttributeOperation_soite")
