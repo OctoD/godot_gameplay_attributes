@@ -84,13 +84,6 @@ impl AttributeContainer {
     }
 
     #[func]
-    fn apply_effect(&mut self, effect: Gd<AttributeEffect>) {
-        effect.bind().buffs.iter_shared().for_each(|buff| {
-            self.apply_buff(buff);
-        });
-    }
-
-    #[func]
     fn apply_buff(&mut self, buff: Gd<AttributeBuff>) {
         for mut attribute in self.attributes.iter_shared() {
             let mut m_attr = attribute.bind_mut();
@@ -99,6 +92,13 @@ impl AttributeContainer {
                 m_attr.add_buff(buff.clone());
             }
         }
+    }
+
+    #[func]
+    fn apply_effect(&mut self, effect: Gd<AttributeEffect>) {
+        effect.bind().buffs.iter_shared().for_each(|buff| {
+            self.apply_buff(buff);
+        });
     }
 
     #[func]
