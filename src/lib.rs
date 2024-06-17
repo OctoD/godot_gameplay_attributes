@@ -5,6 +5,7 @@ mod attribute_operation;
 mod attribute_effect;
 mod resources;
 mod editor;
+mod buff_pool_queue;
 
 use godot::prelude::*;
 
