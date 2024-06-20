@@ -2,6 +2,7 @@ use godot::prelude::*;
 
 use crate::{
     attribute::Attribute, attribute_buff::AttributeBuff, attribute_effect::AttributeEffect,
+    buff_pool_queue::BuffPoolQueue,
 };
 
 #[derive(GodotClass)]
@@ -9,12 +10,29 @@ use crate::{
 pub struct AttributeContainer {
     base: Base<Node>,
     #[var]
+    buff_pool_queue: Option<Gd<BuffPoolQueue>>,
+    #[export]
     attributes: Array<Gd<Attribute>>,
+    #[export]
+    server_authoritative: bool,
 }
 
 #[godot_api]
 impl INode for AttributeContainer {
     fn ready(&mut self) {
+        let mut buff_pool_queue = BuffPoolQueue::new_alloc();
+        buff_pool_queue.bind_mut().server_authoritative = self.server_authoritative;
+        buff_pool_queue.connect(
+            "attribute_buff_dequeued".into(),
+            Callable::from_object_method(&self.base(), "_on_attribute_buff_dequeued"),
+        );
+        buff_pool_queue.connect(
+            "attribute_buff_enqueued".into(),
+            Callable::from_object_method(&self.base(), "_on_attribute_buff_enqueued"),
+        );
+        self.buff_pool_queue = Some(buff_pool_queue.clone());
+        self.base_mut().add_child(buff_pool_queue.upcast());
+
         for mut attribute in self.attributes.iter_shared() {
             attribute.bind_mut().setup_underlying_value();
             self._connect_attribute(attribute);
@@ -24,8 +42,39 @@ impl INode for AttributeContainer {
 
 #[godot_api]
 impl AttributeContainer {
-    fn _on_attribute_changed(&self, attribute: Gd<Attribute>, previous_value: f64, new_value: f64) {
-        self.to_gd().emit_signal(
+    fn _connect_attribute(&self, mut attribute: Gd<Attribute>) {
+        attribute.connect(
+            "attribute_changed".into(),
+            Callable::from_object_method(&self.to_gd(), "_on_attribute_changed"),
+        );
+    }
+
+    fn _emit_attribute_buff_added(&mut self, buff: Gd<AttributeBuff>) {
+        self.base_mut()
+            .emit_signal("attribute_buff_added".into(), &[buff.to_variant()]);
+    }
+
+    fn _on_attribute_buff_dequeued(&mut self, buff: Gd<AttributeBuff>) {
+        self.base_mut()
+            .emit_signal("attribute_buff_dequeued".into(), &[buff.to_variant()]);
+
+        for mut attribute in self.attributes.iter_shared() {
+            attribute.bind_mut().remove_buff(buff.clone());
+        }
+    }
+
+    fn _on_attribute_buff_enqueued(&mut self, buff: Gd<AttributeBuff>) {
+        self.base_mut()
+            .emit_signal("attribute_buff_enqueued".into(), &[buff.to_variant()]);
+    }
+
+    fn _on_attribute_changed(
+        &mut self,
+        attribute: Gd<Attribute>,
+        previous_value: f64,
+        new_value: f64,
+    ) {
+        self.base_mut().emit_signal(
             "attribute_changed".into(),
             &[
                 attribute.to_variant(),
@@ -33,12 +82,6 @@ impl AttributeContainer {
                 new_value.to_variant(),
             ],
         );
-    }
-
-    fn _connect_attribute(&self, mut attribute: Gd<Attribute>) {
-        let callable = Callable::from_object_method(&self.to_gd(), "_on_attribute_changed");
-
-        attribute.connect("attribute_changed".into(), callable);
     }
 
     fn _try_cast_to<T: FromGodot>(&self, variant: Option<Variant>) -> Option<T> {
@@ -74,6 +117,12 @@ impl AttributeContainer {
     #[signal]
     fn attribute_changed(attribute: Gd<Attribute>, previous_value: f64, new_value: f64);
 
+    #[signal]
+    fn attribute_buff_enqueued(buff: Gd<AttributeBuff>);
+
+    #[signal]
+    fn attribute_buff_dequeued(buff: Gd<AttributeBuff>);
+
     #[func]
     fn add_attribute(&mut self, mut attribute: Gd<Attribute>) {
         if !self.attributes.contains(&attribute) {
@@ -85,12 +134,26 @@ impl AttributeContainer {
 
     #[func]
     fn apply_buff(&mut self, buff: Gd<AttributeBuff>) {
+        let mut added = false;
+
         for mut attribute in self.attributes.iter_shared() {
             let mut m_attr = attribute.bind_mut();
 
             if m_attr.can_receive_buff(buff.clone()) {
+                added = true;
+
                 m_attr.add_buff(buff.clone());
+
+                if buff.bind().duration > 0.0 {
+                    if let Some(buff_pool_queue) = self.buff_pool_queue.as_mut() {
+                        buff_pool_queue.bind_mut().add_attribute_buff(buff.clone());
+                    }
+                }
             }
+        }
+
+        if added {
+            self._emit_attribute_buff_added(buff.clone());
         }
     }
 
@@ -99,6 +162,27 @@ impl AttributeContainer {
         effect.bind().buffs.iter_shared().for_each(|buff| {
             self.apply_buff(buff);
         });
+    }
+
+    #[func]
+    fn find_attribute(&self, find_predicate: Callable) -> Option<Gd<Attribute>> {
+        self.attributes.iter_shared().find(|attribute| {
+            let mut arguments = VariantArray::new();
+
+            arguments.push(attribute.to_variant());
+
+            find_predicate
+                .callv(arguments)
+                .try_to::<bool>()
+                .unwrap_or(false)
+        })
+    }
+
+    #[func]
+    fn find_attribute_by_name(&self, attribute_name: GString) -> Option<Gd<Attribute>> {
+        self.attributes
+            .iter_shared()
+            .find(|attribute| attribute.bind().attribute_name == attribute_name)
     }
 
     #[func]

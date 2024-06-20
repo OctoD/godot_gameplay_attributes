@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3 uid="uid://4lm2ofr1pb88"]
+
+[ext_resource type="Script" path="res://examples/attribute_container/attribute_container.gd" id="1_x7rde"]
+[ext_resource type="Attribute" uid="uid://cu6o02molycn1" path="res://examples/attribute_buffing/attributes/attribute_000.tres" id="2_emh2w"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wepc"]
+bg_color = Color(0.169843, 0.0784247, 0.0631856, 1)
+
+[node name="AttributeContainer" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_x7rde")
+
+[node name="AttributeContainer" type="AttributeContainer" parent="."]
+attributes = Array[Attribute]([ExtResource("2_emh2w")])
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="AttributeValueDisplay" type="ProgressBar" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 40)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_3wepc")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="DecreaseValue" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "-"
+
+[node name="IncreaseValue" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "+"
