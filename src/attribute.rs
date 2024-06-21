@@ -43,7 +43,7 @@ impl Attribute {
         if self.can_receive_buff(buff.clone()) {
             let bound = buff.bind();
             
-            if bound.buff_type == BuffType::OneShot as u8 {
+            if bound.buff_type == BuffType::OneShot.into() {
                 let prev_value = self.underlying_value;
                 self.underlying_value = bound.operate(self.underlying_value);
                 let underlying_value = self.underlying_value;
