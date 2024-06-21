@@ -1,10 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://4lm2ofr1pb88"]
+[gd_scene load_steps=3 format=3 uid="uid://4lm2ofr1pb88"]
 
 [ext_resource type="Script" path="res://examples/attribute_container/attribute_container.gd" id="1_x7rde"]
 [ext_resource type="Attribute" uid="uid://cu6o02molycn1" path="res://examples/attribute_buffing/attributes/attribute_000.tres" id="2_emh2w"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wepc"]
-bg_color = Color(0.169843, 0.0784247, 0.0631856, 1)
 
 [node name="AttributeContainer" type="VBoxContainer"]
 anchors_preset = 15
@@ -27,7 +24,6 @@ layout_mode = 2
 [node name="AttributeValueDisplay" type="ProgressBar" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(300, 40)
 layout_mode = 2
-theme_override_styles/background = SubResource("StyleBoxFlat_3wepc")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
@@ -43,3 +39,16 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "+"
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="BuffsSelection" type="MenuButton" parent="CenterContainer/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Buffs selection"

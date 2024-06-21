@@ -1,0 +1,11 @@
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://c4gihey1qoe8h"]
+
+[sub_resource type="AttributeOperation" id="AttributeOperation_ko6t2"]
+operand = 3
+value = -1.0
+
+[resource]
+attribute_name = "attribute_000"
+buff_name = "Remove 1%"
+buff_type = 1
+operation = SubResource("AttributeOperation_ko6t2")

@@ -12,10 +12,15 @@ pub struct BuffPoolQueueItem {
 }
 
 impl BuffPoolQueueItem {
-    pub fn set_buff(&mut self, buff: Gd<AttributeBuff>) -> &mut Self {
-        self.seconds_remaining = buff.bind().duration;
-        self.buff = buff;
-        self
+    pub fn from_buff(buff: Gd<AttributeBuff>) -> Gd<Self> {
+        let seconds_remaining = buff.bind().duration;
+
+        Gd::from_init_fn(|base| Self {
+            base,
+            buff,
+            eligible_for_removal: false,
+            seconds_remaining,
+        })
     }
 
     pub fn second_passed(&mut self) -> &mut Self {
@@ -62,15 +67,12 @@ impl BuffPoolQueue {
             return;
         }
 
-        let gdbuff = BuffPoolQueueItem::new_gd()
-            .bind_mut()
-            .set_buff(buff)
-            .to_gd();
         self.base_mut().emit_signal(
             "attribute_buff_enqueued".into(),
-            &[gdbuff.clone().to_variant()],
+            &[buff.clone().to_variant()],
         );
-        self.queue.push(gdbuff);
+
+        self.queue.push(BuffPoolQueueItem::from_buff(buff.clone()));
     }
 
     #[func]

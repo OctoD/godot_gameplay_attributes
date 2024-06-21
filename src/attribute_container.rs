@@ -1,4 +1,4 @@
-use godot::prelude::*;
+use godot::{obj::WithBaseField, prelude::*};
 
 use crate::{
     attribute::Attribute, attribute_buff::AttributeBuff, attribute_effect::AttributeEffect,
@@ -20,6 +20,28 @@ pub struct AttributeContainer {
 #[godot_api]
 impl INode for AttributeContainer {
     fn ready(&mut self) {
+        self._install_pool_queue();
+        self._connect_attributes();
+    }
+}
+
+#[godot_api]
+impl AttributeContainer {
+    fn _connect_attribute(&self, mut attribute: Gd<Attribute>) {
+        attribute.connect(
+            "attribute_changed".into(),
+            Callable::from_object_method(&self.base(), "_on_attribute_changed"),
+        );
+    }
+
+    fn _connect_attributes(&self) {
+        for mut attribute in self.attributes.iter_shared() {
+            attribute.bind_mut().setup_underlying_value();
+            // self._connect_attribute(attribute);
+        }
+    }
+
+    fn _install_pool_queue(&mut self) {
         let mut buff_pool_queue = BuffPoolQueue::new_alloc();
         buff_pool_queue.bind_mut().server_authoritative = self.server_authoritative;
         buff_pool_queue.connect(
@@ -32,28 +54,15 @@ impl INode for AttributeContainer {
         );
         self.buff_pool_queue = Some(buff_pool_queue.clone());
         self.base_mut().add_child(buff_pool_queue.upcast());
-
-        for mut attribute in self.attributes.iter_shared() {
-            attribute.bind_mut().setup_underlying_value();
-            self._connect_attribute(attribute);
-        }
-    }
-}
-
-#[godot_api]
-impl AttributeContainer {
-    fn _connect_attribute(&self, mut attribute: Gd<Attribute>) {
-        attribute.connect(
-            "attribute_changed".into(),
-            Callable::from_object_method(&self.to_gd(), "_on_attribute_changed"),
-        );
     }
 
+    #[func]
     fn _emit_attribute_buff_added(&mut self, buff: Gd<AttributeBuff>) {
         self.base_mut()
             .emit_signal("attribute_buff_added".into(), &[buff.to_variant()]);
     }
 
+    #[func]
     fn _on_attribute_buff_dequeued(&mut self, buff: Gd<AttributeBuff>) {
         self.base_mut()
             .emit_signal("attribute_buff_dequeued".into(), &[buff.to_variant()]);
@@ -63,11 +72,13 @@ impl AttributeContainer {
         }
     }
 
+    #[func]
     fn _on_attribute_buff_enqueued(&mut self, buff: Gd<AttributeBuff>) {
         self.base_mut()
             .emit_signal("attribute_buff_enqueued".into(), &[buff.to_variant()]);
     }
 
+    #[func]
     fn _on_attribute_changed(
         &mut self,
         attribute: Gd<Attribute>,
@@ -165,27 +176,6 @@ impl AttributeContainer {
     }
 
     #[func]
-    fn find_attribute(&self, find_predicate: Callable) -> Option<Gd<Attribute>> {
-        self.attributes.iter_shared().find(|attribute| {
-            let mut arguments = VariantArray::new();
-
-            arguments.push(attribute.to_variant());
-
-            find_predicate
-                .callv(arguments)
-                .try_to::<bool>()
-                .unwrap_or(false)
-        })
-    }
-
-    #[func]
-    fn find_attribute_by_name(&self, attribute_name: GString) -> Option<Gd<Attribute>> {
-        self.attributes
-            .iter_shared()
-            .find(|attribute| attribute.bind().attribute_name == attribute_name)
-    }
-
-    #[func]
     fn from_dictionary(&mut self, dict: Dictionary) {
         for key in dict.keys_array().iter_shared() {
             let key = key.to_string();
@@ -245,13 +235,14 @@ impl AttributeContainer {
 
         for attr in self.attributes.iter_shared() {
             let mut sub_dict = Dictionary::new();
+            let attrbound = attr.bind();
 
-            sub_dict.insert("attribute_name", attr.bind().attribute_name.clone());
-            sub_dict.insert("attribute_value", attr.bind().current_value.clone());
-            sub_dict.insert("initial_value", attr.bind().initial_value.clone());
-            sub_dict.insert("max_value", attr.bind().max_value.clone());
-            sub_dict.insert("min_value", attr.bind().min_value.clone());
-            sub_dict.insert("buffs", attr.bind().attribute_buffs.clone());
+            sub_dict.insert("attribute_name", attrbound.attribute_name.clone());
+            sub_dict.insert("attribute_value", attrbound.current_value.clone());
+            sub_dict.insert("initial_value", attrbound.initial_value.clone());
+            sub_dict.insert("max_value", attrbound.max_value.clone());
+            sub_dict.insert("min_value", attrbound.min_value.clone());
+            sub_dict.insert("buffs", attrbound.attribute_buffs.clone());
 
             dict.insert(attr.bind().attribute_name.clone(), sub_dict);
         }
