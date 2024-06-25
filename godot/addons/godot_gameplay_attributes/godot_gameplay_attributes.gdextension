@@ -1,14 +1,14 @@
 [configuration]
-entry_symbol = "gdext_rust_init"
+entry_symbol = "gdextension_initialize"
 compatibility_minimum = 4.2
 reloadable = true
 
 [libraries]
-linux.debug.x86_64 =     "./build/debug/libgodot_gameplay_attributes.so"
-linux.release.x86_64 =   "./build/release/libgodot_gameplay_attributes.so"
-windows.debug.x86_64 =   "./build/debug/godot_gameplay_attributes.dll"
-windows.release.x86_64 = "./build/release/godot_gameplay_attributes.dll"
-macos.debug =            "./build/debug/libgodot_gameplay_attributes.dylib"
-macos.release =          "./build/release/libgodot_gameplay_attributes.dylib"
-macos.debug.arm64 =      "./build/debug/libgodot_gameplay_attributes.dylib"
-macos.release.arm64 =    "./build/release/libgodot_gameplay_attributes.dylib"
+windows.debug.x86_64 = "bin/godot_gameplay_attributes.windows.debug.x86_64.dll"
+windows.release.x86_64 = "bin/godot_gameplay_attributes.windows.release.x86_64.dll"
+linux.debug.x86_64 = "bin/godot_gameplay_attributes.linux.debug.x86_64.so"
+linux.release.x86_64 = "bin/godot_gameplay_attributes.linux.release.x86_64.so"
+linux.debug.arm64 = "bin/godot_gameplay_attributes.linux.debug.arm64.so"
+linux.release.arm64 = "bin/godot_gameplay_attributes.linux.release.arm64.so"
+linux.debug.rv64 = "bin/godot_gameplay_attributes.linux.debug.rv64.so"
+linux.release.rv64 = "bin/godot_gameplay_attributes.linux.release.rv64.so"
