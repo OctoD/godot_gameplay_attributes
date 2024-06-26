@@ -1,3 +1,32 @@
+/**************************************************************************/
+/*  attribute_container.cpp                                               */
+/**************************************************************************/
+/*                         This file is part of:                          */
+/*                        Godot Gameplay Systems                          */
+/*              https://github.com/OctoD/godot-gameplay-systems           */
+/**************************************************************************/
+/* Copyright (c) 2020-present Paolo "OctoD"      Roth (see AUTHORS.md).   */
+/*                                                                        */
+/* Permission is hereby granted, free of charge, to any person obtaining  */
+/* a copy of this software and associated documentation files (the        */
+/* "Software"), to deal in the Software without restriction, including    */
+/* without limitation the rights to use, copy, modify, merge, publish,    */
+/* distribute, sublicense, and/or sell copies of the Software, and to     */
+/* permit persons to whom the Software is furnished to do so, subject to  */
+/* the following conditions:                                              */
+/*                                                                        */
+/* The above copyright notice and this permission notice shall be         */
+/* included in all copies or substantial portions of the Software.        */
+/*                                                                        */
+/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        */
+/* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     */
+/* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. */
+/* IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   */
+/* CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   */
+/* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE      */
+/* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
+/**************************************************************************/
+
 #include "attribute_container.hpp"
 
 #include "attribute.hpp"
@@ -48,7 +77,7 @@ void AttributeContainer::_on_buff_enqueued(Ref<AttributeBuff> p_buff)
 
 void AttributeContainer::bind_attribute(Ref<Attribute> p_attribute)
 {
-	p_attribute->connect("changed", Callable::create(this, "_on_attribute_changed"));
+	p_attribute->connect("attribute_changed", Callable::create(this, "_on_attribute_changed"));
 }
 
 bool AttributeContainer::has_attribute(Ref<Attribute> p_attribute)
@@ -67,13 +96,15 @@ void AttributeContainer::_ready()
 	/// initializes the BuffPoolQueue
 	buff_pool_queue = memnew(BuffPoolQueue);
 	buff_pool_queue->set_server_authoritative(server_authoritative);
-	buff_pool_queue->connect("buff_dequeued", Callable::create(this, "_on_buff_dequeued"));
-	buff_pool_queue->connect("buff_enqueued", Callable::create(this, "_on_buff_enqueued"));
+	buff_pool_queue->connect("attribute_buff_dequeued", Callable::create(this, "_on_buff_dequeued"));
+	buff_pool_queue->connect("attribute_buff_enqueued", Callable::create(this, "_on_buff_enqueued"));
 
 	add_child(buff_pool_queue);
 
 	for (int i = 0; i < attributes.size(); i++) {
-		bind_attribute(attributes[i]);
+		Ref<Attribute> attribute = attributes[i];
+		bind_attribute(attribute);
+		attribute->setup();
 	}
 }
 
@@ -83,6 +114,7 @@ void AttributeContainer::add_attribute(Ref<Attribute> p_attribute)
 		attributes.push_back(p_attribute);
 		bind_attribute(p_attribute);
 		emit_signal("attribute_added", p_attribute);
+		p_attribute->setup();
 	}
 }
 

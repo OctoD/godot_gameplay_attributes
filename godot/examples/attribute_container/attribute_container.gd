@@ -46,11 +46,11 @@ func _on_attribute_buff_removed(buff) -> void:
 	draw_attribute()
 
 
-func _on_attribute_changed(attribute, previous_value, new_value) -> void:
+func _on_attribute_changed(attribute: Attribute, previous_value: float, new_value: float) -> void:
 	print("_on_attribute_changed", attribute, previous_value, new_value)
 	attribute_value_display.max_value = attribute.max_value
 	attribute_value_display.min_value = attribute.min_value
-	attribute_value_display.value = attribute.current_value
+	attribute_value_display.value = attribute.current_value()
 
 
 func _ready():
@@ -63,11 +63,11 @@ func _ready():
 	for buff in BUFFS:
 		popup.add_item(buff.buff_name)
 
-	attribute_container.attribute_buff_added.connect(_on_attribute_buff_added)
-	attribute_container.attribute_buff_dequeued.connect(_on_attribute_buff_dequeued)
-	attribute_container.attribute_buff_enqueued.connect(_on_attribute_buff_enqueued)
-	attribute_container.attribute_buff_removed.connect(_on_attribute_buff_removed)
 	attribute_container.attribute_changed.connect(_on_attribute_changed)
+	attribute_container.buff_applied.connect(_on_attribute_buff_added)
+	attribute_container.buff_dequed.connect(_on_attribute_buff_dequeued)
+	attribute_container.buff_enqued.connect(_on_attribute_buff_enqueued)
+	attribute_container.buff_removed.connect(_on_attribute_buff_removed)
 
 	for attr in attribute_container.attributes:
 		attr.attribute_changed.connect(_on_attribute_changed)
@@ -111,4 +111,4 @@ func draw_attribute() -> void:
 	if attribute:
 		attribute_value_display.max_value = attribute.max_value
 		attribute_value_display.min_value = attribute.min_value
-		attribute_value_display.value = attribute.current_value
+		attribute_value_display.value = attribute.current_value()

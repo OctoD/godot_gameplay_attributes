@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  buff_pool_queue.hpp                                                   */
+/*  register_types.cpp                                                    */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                        Godot Gameplay Systems                          */
@@ -27,53 +27,40 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef GGA_BUFF_POOL_QUEUE_HPP
-#define GGA_BUFF_POOL_QUEUE_HPP
-
-#include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/core/class_db.hpp>
+#include "attribute.hpp"
+#include "buff_pool_queue.hpp"
+#include "attribute_container.hpp"
 
 using namespace godot;
 
-namespace gga
+void gdextension_initialize(ModuleInitializationLevel p_level)
 {
-	class AttributeBuff;
-
-	class BuffPoolQueueItem : public RefCounted
+	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE)
 	{
-		GDCLASS(BuffPoolQueueItem, RefCounted);
+		ClassDB::register_class<gga::Attribute>();
+		ClassDB::register_class<gga::AttributeBuff>();
+		ClassDB::register_class<gga::AttributeContainer>();
+		ClassDB::register_class<gga::BuffPoolQueue>();
+		ClassDB::register_class<gga::BuffPoolQueueItem>();
+		ClassDB::register_class<gga::AttributeOperation>();
+	}
+}
 
-	protected:
-		static void _bind_methods();
-		Ref<AttributeBuff> buff;
-		bool eligible_for_removal;
-		float seconds_remaining;
+void gdextension_terminate(ModuleInitializationLevel p_level)
+{
+	/// I love lasagna
+}
 
-	public:
-		void second_passed();
-		Ref<AttributeBuff> get_buff();
-		bool get_eligible_for_removal();
-		float get_seconds_remaining();
-		void set_buff(Ref<AttributeBuff> p_buff);
-	};
+extern "C" {
+GDExtensionBool GDE_EXPORT gdextension_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization)
+{
+	godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
 
-	class BuffPoolQueue : public Node
-	{
-		GDCLASS(BuffPoolQueue, Node);
+	init_obj.register_initializer(gdextension_initialize);
+	init_obj.register_terminator(gdextension_terminate);
+	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
 
-	protected:
-		static void _bind_methods();
-		float tick;
-		bool server_authoritative;
-		TypedArray<BuffPoolQueueItem> queue;
-
-	public:
-		void _physics_process(double p_delta) override;
-		void add_attribute_buff(Ref<AttributeBuff> p_buff);
-		bool get_server_authoritative() const;
-		void cleanup();
-		void process_items();
-		void set_server_authoritative(const bool p_server_authoritative);
-	};
-} //namespace gga
-
-#endif
+	return init_obj.init();
+}
+}

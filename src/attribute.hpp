@@ -36,13 +36,13 @@ using namespace godot;
 
 namespace gga
 {
-	enum BuffType : uint8_t
+	enum BuffType
 	{
 		BT_ONESHOT = 0,
 		BT_STACKABLE = 1,
 	};
 
-	enum OperationType : uint8_t
+	enum OperationType
 	{
 		OP_ADD = 0,
 		OP_DIVIDE = 1,
@@ -64,6 +64,10 @@ namespace gga
 
 	public:
 		bool operator==(const Ref<AttributeOperation> &buff) const;
+
+		AttributeOperation();
+		~AttributeOperation();
+
 		static Ref<AttributeOperation> add(const float p_value);
 		static Ref<AttributeOperation> divide(const float p_value);
 		static Ref<AttributeOperation> multiply(const float p_value);
@@ -88,11 +92,21 @@ namespace gga
 		String buff_name;
 		int buff_type;
 		float duration;
-		AttributeOperation *operation;
+		Ref<AttributeOperation> operation;
 
 	public:
 		// equal operator overload
 		bool operator==(const Ref<AttributeBuff> &buff) const;
+
+		AttributeBuff();
+		AttributeBuff(
+			const String &p_attribute_name, 
+			const String &p_buff_name, 
+			const int p_buff_type, 
+			const float p_duration, 
+			const Ref<AttributeOperation> &p_operation
+		);
+		~AttributeBuff();
 
 		float operate(float base_value) const;
 
@@ -100,7 +114,7 @@ namespace gga
 		String get_buff_name() const;
 		int get_buff_type() const;
 		float get_duration() const;
-		AttributeOperation *get_operation() const;
+		Ref<AttributeOperation> get_operation() const;
 		void set_attribute_name(const String &p_value);
 		void set_buff_name(const String &p_value);
 		void set_buff_type(const int p_value);
@@ -123,6 +137,8 @@ namespace gga
 		float underlying_value;
 
 	public:
+		static Ref<Attribute> create(const String &p_attribute_name, const float p_initial_value, const float p_min_value, const float p_max_value);
+
 		bool add_buff(const Ref<AttributeBuff> &p_buff);
 		uint16_t add_buffs(const TypedArray<AttributeBuff> &p_buffs);
 		bool can_receive_buff(const Ref<AttributeBuff> &p_buff) const;
@@ -135,10 +151,12 @@ namespace gga
 
 		// getters/setters
 		String get_attribute_name() const;
+		TypedArray<AttributeBuff> get_buffs() const;
 		float get_initial_value() const;
 		float get_max_value() const;
 		float get_min_value() const;
 		void set_attribute_name(const String &p_value);
+		void set_buffs(const TypedArray<AttributeBuff> &p_buffs);
 		void set_initial_value(const float p_value);
 		void set_max_value(const float p_value);
 		void set_min_value(const float p_value);

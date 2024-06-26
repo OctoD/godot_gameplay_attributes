@@ -4,3 +4,4 @@
 attribute_name = "attribute_000"
 initial_value = 50.0
 max_value = 100.0
+min_value = -3.52284e-26

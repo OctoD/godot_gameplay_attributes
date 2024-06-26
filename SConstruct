@@ -12,7 +12,7 @@ def validate_parent_dir(key, val, env):
 
 
 libname = "godot_gameplay_attributes"
-projectdir = "godot/addons/godot_gameplay_attributes/bin"
+projectdir = "godot/addons/godot_gameplay_attributes"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
 

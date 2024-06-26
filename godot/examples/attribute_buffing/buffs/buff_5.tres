@@ -1,13 +1,10 @@
-[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://bxma4bq2ola18"]
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://rjsc7xeq5pd8"]
 
-[sub_resource type="AttributeOperation" id="AttributeOperation_0sds2"]
-operand = 0
+[sub_resource type="AttributeOperation" id="AttributeOperation_rysxf"]
 value = 5.0
-resource_local_to_scene = false
-resource_name = ""
 
 [resource]
 attribute_name = "attribute_000"
-buff_name = "buff_5"
+buff_name = "buff 5"
 buff_type = 1
-operation = SubResource("AttributeOperation_0sds2")
+operation = SubResource("AttributeOperation_rysxf")
