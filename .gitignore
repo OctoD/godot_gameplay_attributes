@@ -1,4 +1,5 @@
 # Objects.
+bin
 .scons-cache/
 *.os
 *.obj
