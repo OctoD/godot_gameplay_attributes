@@ -248,7 +248,7 @@ bool Attribute::add_buff(const Ref<AttributeBuff> &p_buff)
 	if (can_receive_buff(p_buff)) {
 		if (p_buff->get_buff_type() == BT_ONESHOT) {
 			float prev_value = underlying_value;
-			underlying_value = p_buff->operate(underlying_value);
+			underlying_value = Math::clamp(p_buff->operate(underlying_value), min_value, max_value);
 			emit_signal("attribute_changed", this, prev_value, underlying_value);
 		} else {
 			buffs.append(p_buff);
