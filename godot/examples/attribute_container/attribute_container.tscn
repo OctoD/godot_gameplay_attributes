@@ -13,7 +13,6 @@ script = ExtResource("1_x7rde")
 
 [node name="AttributeContainer" type="AttributeContainer" parent="."]
 attributes = Array[Attribute]([ExtResource("2_emh2w")])
-server_authoritative = false
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 2

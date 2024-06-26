@@ -71,6 +71,7 @@ void AttributeContainer::_on_attribute_changed(Ref<Attribute> p_attribute, const
 void AttributeContainer::_on_buff_dequeued(Ref<AttributeBuff> p_buff)
 {
 	emit_signal("buff_dequed", p_buff);
+	remove_buff(p_buff);
 }
 
 void AttributeContainer::_on_buff_enqueued(Ref<AttributeBuff> p_buff)
