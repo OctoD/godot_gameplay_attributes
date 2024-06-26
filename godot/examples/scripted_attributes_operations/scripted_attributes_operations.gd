@@ -33,7 +33,7 @@ func _ready():
 	buff000.operation = AttributeOperation.add(5.0)
 	buff000.attribute_name = example_attribute.attribute_name
 	buff000.buff_name = "the_buff_000!"
-	buff000.buff_type = AttributeBuff.STACKABLE
+	buff000.buff_type = AttributeBuff.BT_STACKABLE
 	
 	example_attribute.add_buff(buff000)
 	
@@ -47,7 +47,7 @@ func _ready():
 	buff001.operation = AttributeOperation.add(5.0)
 	buff001.attribute_name = example_attribute.attribute_name
 	buff001.buff_name = "the_unnamed_buff_001?"
-	buff001.buff_type = AttributeBuff.ONE_SHOT
+	buff001.buff_type = AttributeBuff.BT_ONESHOT
 	
 	example_attribute.add_buff(buff001)
 
