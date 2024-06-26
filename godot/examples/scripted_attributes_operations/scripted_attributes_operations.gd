@@ -25,7 +25,7 @@ func _ready():
 	example_attribute.initial_value = 50.0
 	example_attribute.max_value = 100.0
 	example_attribute.min_value = 0.0
-	example_attribute.setup_underlying_value()
+	example_attribute.setup()
 	
 	print(example_attribute.current_value)
 
