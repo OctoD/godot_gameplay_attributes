@@ -8,6 +8,7 @@ const ADD_5_FOR_5_SECONDS = preload("res://examples/attribute_container/buffs/ad
 const REMOVE_1_PERCENT = preload("res://examples/attribute_container/buffs/remove_1_percent.tres")
 const REMOVE_1_PERCENT_FOR_5_SECONDS = preload("res://examples/attribute_container/buffs/remove_1_percent_for_5_seconds.tres")
 const REMOVE_5_FOR_5_SECONDS = preload("res://examples/attribute_container/buffs/remove_5_for_5_seconds.tres")
+const BUFF_DURATION: PackedScene = preload("res://examples/attribute_container/buff_duration.tscn")
 
 const BUFFS = [
 	ADD_1_PERCENT,
@@ -24,6 +25,7 @@ const BUFFS = [
 @onready var decrease_value: Button = %DecreaseValue
 @onready var increase_value: Button = %IncreaseValue
 @onready var buffs_selection: MenuButton = %BuffsSelection
+@onready var buffs_selection_container: VBoxContainer = %BuffsSelectionContainer
 
 
 func _on_attribute_buff_added(buff) -> void:
@@ -39,6 +41,10 @@ func _on_attribute_buff_dequeued(buff) -> void:
 func _on_attribute_buff_enqueued(buff) -> void:
 	print("_on_attribute_buff_enqueued", buff)
 	draw_attribute()
+	
+	var progress = BUFF_DURATION.instantiate()
+	buffs_selection_container.add_child(progress)
+	progress.set_buff(buff)
 
 
 func _on_attribute_buff_removed(buff) -> void:
@@ -55,7 +61,7 @@ func _on_attribute_changed(attribute: Attribute, previous_value: float, new_valu
 
 func _ready():
 	var popup = buffs_selection.get_popup()
-	
+	print(BUFF_DURATION)
 	popup.id_pressed.connect(func (id: int) -> void:
 		attribute_container.apply_buff(BUFFS[id])
 	)

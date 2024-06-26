@@ -13,6 +13,7 @@ script = ExtResource("1_x7rde")
 
 [node name="AttributeContainer" type="AttributeContainer" parent="."]
 attributes = Array[Attribute]([ExtResource("2_emh2w")])
+server_authoritative = false
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 2
@@ -44,11 +45,12 @@ text = "+"
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+[node name="BuffsSelectionContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="BuffsSelection" type="MenuButton" parent="CenterContainer/VBoxContainer/HBoxContainer2"]
+[node name="BuffsSelection" type="MenuButton" parent="CenterContainer/VBoxContainer/BuffsSelectionContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Buffs selection"
+text = "Select a buff or debuff to apply"
