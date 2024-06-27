@@ -52,11 +52,6 @@ bool BuffPoolQueueItem::get_eligible_for_removal()
 	return eligible_for_removal;
 }
 
-float BuffPoolQueueItem::get_seconds_remaining()
-{
-	return seconds_remaining;
-}
-
 void BuffPoolQueueItem::set_buff(Ref<AttributeBuff> p_buff)
 {
 	buff = p_buff;

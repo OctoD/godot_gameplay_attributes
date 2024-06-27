@@ -52,7 +52,6 @@ namespace gga
 		void second_passed();
 		Ref<AttributeBuff> get_buff();
 		bool get_eligible_for_removal();
-		float get_seconds_remaining();
 		void set_buff(Ref<AttributeBuff> p_buff);
 	};
 
