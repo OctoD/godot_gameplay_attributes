@@ -4,7 +4,7 @@ extends ProgressBar
 
 
 func _physics_process(delta: float) -> void:
-	if max_value <= value + delta:
+	if max_value <= value:
 		queue_free()
 	else:
 		value = value + delta

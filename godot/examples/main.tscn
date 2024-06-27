@@ -33,7 +33,7 @@ stretch = true
 [node name="RunningExample" type="SubViewport" parent="SubViewportContainer"]
 unique_name_in_owner = true
 handle_input_locally = false
-size = Vector2i(1152, 304)
+size = Vector2i(2, 2)
 render_target_update_mode = 0
 
 [node name="MainView" type="VBoxContainer" parent="."]
@@ -49,8 +49,11 @@ size_flags_vertical = 6
 layout_mode = 2
 
 [node name="Label" type="Label" parent="MainView/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+theme_type_variation = &"HeaderLarge"
 text = "Godot Gameplay Attributes"
+horizontal_alignment = 1
 
 [node name="ExampleSelection" type="VBoxContainer" parent="MainView/CenterContainer/VBoxContainer"]
 unique_name_in_owner = true

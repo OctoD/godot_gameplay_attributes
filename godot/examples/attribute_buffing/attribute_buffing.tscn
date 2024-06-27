@@ -36,6 +36,10 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Remove buff (10)"
 
+[node name="ClearAll" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+text = "Clear All"
+
 [node name="Stats" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 

@@ -10,6 +10,7 @@ var BUFF_10 = load("res://examples/attribute_buffing/buffs/buff_10.tres")
 @onready var remove_buff_10 = %RemoveBuff10
 @onready var current_value = %CurrentValue
 @onready var applied_buffs = %AppliedBuffs
+@onready var clear_all: Button = $HBoxContainer/Buttons/ClearAll
 
 var attribute: Attribute
 
@@ -44,6 +45,10 @@ func _ready():
 		_draw_buffs()
 		_draw_current_value()
 	)
+	attribute.buffs_cleared.connect(func ():
+		_draw_buffs()
+		_draw_current_value()	
+	)
 
 	attribute.setup()
 
@@ -53,3 +58,4 @@ func _ready():
 	add_buff_10.pressed.connect(Callable.create(attribute, "add_buff").bind(BUFF_10))
 	remove_buff_5.pressed.connect(Callable.create(attribute, "remove_buff").bind(BUFF_5))
 	remove_buff_10.pressed.connect(Callable.create(attribute, "remove_buff").bind(BUFF_10))
+	clear_all.pressed.connect(Callable.create(attribute, "clear_buffs"))
