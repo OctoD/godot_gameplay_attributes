@@ -61,6 +61,7 @@ namespace gga
 
 	protected:
 		static void _bind_methods();
+		uint16_t current_queue_size;
 		float tick;
 		bool server_authoritative;
 		TypedArray<BuffPoolQueueItem> queue;

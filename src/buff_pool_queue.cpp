@@ -71,7 +71,10 @@ void BuffPoolQueue::_physics_process(double p_delta)
 
 	if (tick >= 1) {
 		tick = tick - 1.0f;
-		process_items();
+
+		if (current_queue_size > 0) {
+			process_items();
+		}
 	}
 }
 
@@ -84,6 +87,8 @@ void BuffPoolQueue::add_attribute_buff(Ref<AttributeBuff> p_buff)
 	Ref<BuffPoolQueueItem> item = memnew(BuffPoolQueueItem);
 	item->set_buff(p_buff);
 	queue.push_back(item.ptr());
+
+	current_queue_size += 1;
 
 	emit_signal("attribute_buff_enqueued", p_buff);
 }
@@ -101,6 +106,8 @@ void BuffPoolQueue::cleanup()
 		if (item->get_eligible_for_removal()) {
 			emit_signal("attribute_buff_dequeued", item->get_buff());
 			queue.remove_at(i);
+
+			current_queue_size -= 1;
 		}
 	}
 }
