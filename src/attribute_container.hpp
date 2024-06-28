@@ -48,6 +48,8 @@ namespace gga
 		static void _bind_methods();
 		TypedArray<Attribute> attributes;
 		BuffPoolQueue *buff_pool_queue;
+		bool autostart;
+		bool paused;
 		bool server_authoritative;
 
 		void _on_attribute_changed(Ref<Attribute> p_attribute, const float p_previous_value, const float p_new_value);
@@ -58,16 +60,24 @@ namespace gga
 		bool has_attribute(Ref<Attribute> p_attribute);
 
 	public:
+		AttributeContainer();
+		~AttributeContainer();
+
 		void _ready() override;
 		void add_attribute(Ref<Attribute> p_attribute);
 		void apply_buff(Ref<AttributeBuff> p_buff);
+		void pause();
+		bool is_paused() const;
 		void remove_attribute(Ref<Attribute> p_attribute);
 		void remove_buff(Ref<AttributeBuff> p_buff);
+		void resume();
 
 		// getters/setters
 		TypedArray<Attribute> get_attributes() const;
+		bool get_autostart() const;
 		bool get_server_authoritative() const;
 		void set_attributes(const TypedArray<Attribute> p_attributes);
+		void set_autostart(const bool p_autostart);
 		void set_server_authoritative(const bool p_server_authoritative);
 	};
 } //namespace gga

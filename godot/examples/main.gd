@@ -12,10 +12,6 @@ extends VBoxContainer
 
 
 func _ready() -> void:
-	running_example.size = size
-	
-	print(size)
-	
 	back_button.pressed.connect(func ():
 		for child in running_example.get_children():
 			child.queue_free()

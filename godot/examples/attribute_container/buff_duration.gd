@@ -4,10 +4,10 @@ extends ProgressBar
 
 
 func _physics_process(delta: float) -> void:
+	value += delta
+	
 	if max_value <= value:
 		queue_free()
-	else:
-		value = value + delta
 
 
 func set_buff(p_buff: AttributeBuff) -> void:

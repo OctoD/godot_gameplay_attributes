@@ -63,16 +63,21 @@ namespace gga
 		static void _bind_methods();
 		uint16_t current_queue_size;
 		float tick;
-		bool server_authoritative;
 		TypedArray<BuffPoolQueueItem> queue;
+		bool server_authoritative;
+		bool started;
 
 	public:
+		void _exit_tree() override;
 		void _physics_process(double p_delta) override;
 		void add_attribute_buff(Ref<AttributeBuff> p_buff);
 		bool get_server_authoritative() const;
+		void clear();
 		void cleanup();
 		void process_items();
 		void set_server_authoritative(const bool p_server_authoritative);
+		void start();
+		void stop();
 	};
 } //namespace gga
 

@@ -61,7 +61,7 @@ func _on_attribute_changed(attribute: Attribute, previous_value: float, new_valu
 
 func _ready():
 	var popup = buffs_selection.get_popup()
-	print(BUFF_DURATION)
+
 	popup.id_pressed.connect(func (id: int) -> void:
 		attribute_container.apply_buff(BUFFS[id])
 	)

@@ -60,13 +60,26 @@ void BuffPoolQueueItem::set_buff(Ref<AttributeBuff> p_buff)
 
 void BuffPoolQueue::_bind_methods()
 {
+	/// binds methods to godot
+	ClassDB::bind_method(D_METHOD("start"), &BuffPoolQueue::start);
+	ClassDB::bind_method(D_METHOD("stop"), &BuffPoolQueue::stop);
+
 	/// adds signals
 	ADD_SIGNAL(MethodInfo("attribute_buff_dequeued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "AttributeBuff")));
 	ADD_SIGNAL(MethodInfo("attribute_buff_enqueued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "AttributeBuff")));
 }
 
+void BuffPoolQueue::_exit_tree()
+{
+	clear();
+}
+
 void BuffPoolQueue::_physics_process(double p_delta)
 {
+	if (!started) {
+		return;
+	}
+
 	tick += p_delta;
 
 	if (tick >= 1) {
@@ -98,6 +111,12 @@ bool BuffPoolQueue::get_server_authoritative() const
 	return server_authoritative;
 }
 
+void BuffPoolQueue::clear()
+{
+	queue.clear();
+	current_queue_size = 0;
+}
+
 void BuffPoolQueue::cleanup()
 {
 	for (int i = queue.size() - 1; i >= 0; i--) {
@@ -106,7 +125,6 @@ void BuffPoolQueue::cleanup()
 		if (item->get_eligible_for_removal()) {
 			emit_signal("attribute_buff_dequeued", item->get_buff());
 			queue.remove_at(i);
-
 			current_queue_size -= 1;
 		}
 	}
@@ -129,4 +147,14 @@ void BuffPoolQueue::process_items()
 void BuffPoolQueue::set_server_authoritative(const bool p_server_authoritative)
 {
 	server_authoritative = p_server_authoritative;
+}
+
+void BuffPoolQueue::start()
+{
+	started = true;
+}
+
+void BuffPoolQueue::stop()
+{
+	started = false;
 }
