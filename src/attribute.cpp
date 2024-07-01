@@ -495,3 +495,299 @@ void Attribute::set_min_value(const float p_value)
 }
 
 #pragma endregion
+
+#pragma region AttributeSet
+
+void AttributeSet::_bind_methods()
+{
+	/// binds methods to godot
+	ClassDB::bind_method(D_METHOD("add_attribute", "p_attribute"), &AttributeSet::add_attribute);
+	ClassDB::bind_method(D_METHOD("add_attributes", "p_attributes"), &AttributeSet::add_attributes);
+	ClassDB::bind_method(D_METHOD("get_attributes_names"), &AttributeSet::get_attributes_names);
+	ClassDB::bind_method(D_METHOD("get_attributes"), &AttributeSet::get_attributes);
+	ClassDB::bind_method(D_METHOD("get_set_name"), &AttributeSet::get_set_name);
+	ClassDB::bind_method(D_METHOD("has_attribute", "p_attribute"), &AttributeSet::has_attribute);
+	ClassDB::bind_method(D_METHOD("remove_attribute", "p_attribute"), &AttributeSet::remove_attribute);
+	ClassDB::bind_method(D_METHOD("remove_attributes", "p_attributes"), &AttributeSet::remove_attributes);
+	ClassDB::bind_method(D_METHOD("set_attributes", "p_attributes"), &AttributeSet::set_attributes);
+	ClassDB::bind_method(D_METHOD("set_set_name", "p_value"), &AttributeSet::set_set_name);
+	ClassDB::bind_method(D_METHOD("sort_attributes"), &AttributeSet::sort_attributes);
+
+	/// binds properties to godot
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "attributes", PROPERTY_HINT_RESOURCE_TYPE, "24/17:Attribute"), "set_attributes", "get_attributes");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "set_name"), "set_set_name", "get_set_name");
+
+	/// adds signals to godot
+	ADD_SIGNAL(MethodInfo("attribute_added", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "Attribute")));
+	ADD_SIGNAL(MethodInfo("attribute_removed", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "Attribute")));
+}
+
+int AttributeSet::sort_attributes_by_name(const Ref<Attribute> &p_a, const Ref<Attribute> &p_b) const
+{
+	return p_a->get_attribute_name().casecmp_to(p_b->get_attribute_name());
+}
+
+void AttributeSet::sort_attributes()
+{
+	attributes.sort_custom(Callable::create(this, "sort_attributes_by_name"));
+}
+
+bool AttributeSet::operator==(const Ref<AttributeSet> &set) const
+{
+	if (attributes.size() != set->attributes.size()) {
+		return false;
+	}
+
+	if (set_name != set->set_name) {
+		return false;
+	}
+
+	for (int i = 0; i < attributes.size(); i++) {
+		if (attributes[i] != set->attributes[i]) {
+			return false;
+		}
+	}
+
+	return false;
+}
+
+AttributeSet::AttributeSet()
+{
+	attributes = TypedArray<Attribute>();
+}
+
+AttributeSet::AttributeSet(TypedArray<Attribute> p_attributes, String p_set_name)
+{
+	attributes = p_attributes;
+	set_name = p_set_name;
+}
+
+bool AttributeSet::add_attribute(const Ref<Attribute> &p_attribute)
+{
+	if (!has_attribute(p_attribute)) {
+		attributes.push_back(p_attribute);
+		emit_signal("attribute_added", p_attribute);
+		emit_changed();
+		sort_attributes();
+		return true;
+	}
+
+	return false;
+}
+
+uint16_t AttributeSet::add_attributes(const TypedArray<Attribute> &p_attributes)
+{
+	uint16_t count = 0;
+
+	for (int i = 0; i < p_attributes.size(); i++) {
+		if (!has_attribute(p_attributes[i])) {
+			attributes.push_back(p_attributes[i]);
+			count++;
+			emit_signal("attribute_added", p_attributes[i]);
+		}
+	}
+
+	if (count > 0) {
+		emit_changed();
+		sort_attributes();
+	}
+
+	return count;
+}
+
+int AttributeSet::find(const Ref<Attribute> &p_attribute) const
+{
+	return attributes.find(p_attribute);
+}
+
+PackedStringArray AttributeSet::get_attributes_names() const
+{
+	PackedStringArray names = PackedStringArray();
+
+	for (int i = 0; i < attributes.size(); i++) {
+		Ref<Attribute> attribute = attributes[i];
+		names.push_back(attribute->get_attribute_name());
+	}
+
+	return names;
+}
+
+TypedArray<Attribute> AttributeSet::get_attributes() const
+{
+	return attributes;
+}
+
+Ref<Attribute> AttributeSet::get(int index) const
+{
+	if (index >= 0 && index < attributes.size()) {
+		return attributes[index];
+	}
+
+	return Ref<Attribute>();
+}
+
+String AttributeSet::get_set_name() const
+{
+	return set_name;
+}
+
+bool AttributeSet::has_attribute(const Ref<Attribute> &p_attribute) const
+{
+	for (int i = 0; i < attributes.size(); i++) {
+		if (attributes[i] == p_attribute) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool AttributeSet::remove_attribute(const Ref<Attribute> &p_attribute)
+{
+	int index = attributes.find(p_attribute);
+	bool result = false;
+
+	if (index != -1) {
+		attributes.remove_at(index);
+		emit_signal("attribute_removed", p_attribute);
+		emit_changed();
+		sort_attributes();
+		return true;
+	}
+
+	return false;
+}
+
+uint16_t AttributeSet::remove_attributes(const TypedArray<Attribute> &p_attributes)
+{
+	uint16_t count = 0;
+
+	for (int i = 0; i < p_attributes.size(); i++) {
+		int index = attributes.find(p_attributes[i]);
+
+		if (index != -1) {
+			attributes.remove_at(index);
+			count++;
+			emit_signal("attribute_removed", p_attributes[i]);
+		}
+	}
+
+	if (count > 0) {
+		emit_changed();
+		sort_attributes();
+	}
+
+	return count;
+}
+
+void AttributeSet::push_back(const Ref<Attribute> &p_attribute)
+{
+	attributes.push_back(p_attribute);
+	emit_signal("attribute_added", p_attribute);
+	emit_changed();
+}
+
+void AttributeSet::set_attributes(const TypedArray<Attribute> &p_attributes)
+{
+	attributes = p_attributes;
+	emit_changed();
+	sort_attributes();
+}
+
+void AttributeSet::set_set_name(const String &p_value)
+{
+	set_name = p_value;
+	emit_changed();
+}
+
+int AttributeSet::count() const
+{
+	return attributes.size();
+}
+
+#pragma endregion
+
+#pragma region AttributesTable
+
+void AttributesTable::_bind_methods()
+{
+	/// binds methods to godot
+	ClassDB::bind_method(D_METHOD("add_attribute_set", "p_attribute_set"), &AttributesTable::add_attribute_set);
+	ClassDB::bind_method(D_METHOD("get_attribute_names"), &AttributesTable::get_attribute_names);
+	ClassDB::bind_method(D_METHOD("get_attribute_sets"), &AttributesTable::get_attribute_sets);
+	ClassDB::bind_method(D_METHOD("has_attribute_set", "p_attribute_set"), &AttributesTable::has_attribute_set);
+	ClassDB::bind_method(D_METHOD("remove_attribute_set", "p_attribute_set"), &AttributesTable::remove_attribute_set);
+	ClassDB::bind_method(D_METHOD("set_attribute_sets", "p_attribute_sets"), &AttributesTable::set_attribute_sets);
+
+	/// binds properties to godot
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "attribute_sets", PROPERTY_HINT_RESOURCE_TYPE, "24/17:AttributeSet"), "set_attribute_sets", "get_attribute_sets");
+}
+
+AttributesTable::AttributesTable()
+{
+	attribute_sets = TypedArray<AttributeSet>();
+}
+
+AttributesTable::AttributesTable(TypedArray<AttributeSet> p_attribute_sets) :
+		attribute_sets(p_attribute_sets)
+{
+}
+
+void AttributesTable::add_attribute_set(const Ref<AttributeSet> &p_attribute_set)
+{
+	if (!has_attribute_set(p_attribute_set)) {
+		attribute_sets.push_back(p_attribute_set);
+	}
+}
+
+TypedArray<AttributeSet> AttributesTable::get_attribute_sets() const
+{
+	return attribute_sets;
+}
+
+PackedStringArray AttributesTable::get_attribute_names() const
+{
+	PackedStringArray names = PackedStringArray();
+
+	for (int i = 0; i < attribute_sets.size(); i++) {
+		Ref<AttributeSet> attribute_set = attribute_sets[i];
+		PackedStringArray set_names = attribute_set->get_attributes_names();
+
+		for (int j = 0; j < set_names.size(); j++) {
+			if (!names.has(set_names[j])) {
+				names.push_back(set_names[j]);
+			}
+		}
+	}
+
+	names.sort();
+
+	return names;
+}
+
+bool AttributesTable::has_attribute_set(const Ref<AttributeSet> &p_attribute_set) const
+{
+	for (int i = 0; i < attribute_sets.size(); i++) {
+		if (attribute_sets[i] == p_attribute_set) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void AttributesTable::remove_attribute_set(const Ref<AttributeSet> &p_attribute_set)
+{
+	int index = attribute_sets.find(p_attribute_set);
+
+	if (index != -1) {
+		attribute_sets.remove_at(index);
+	}
+}
+
+void AttributesTable::set_attribute_sets(const TypedArray<AttributeSet> &p_attribute_sets)
+{
+	attribute_sets = p_attribute_sets;
+}
+
+#pragma endregion

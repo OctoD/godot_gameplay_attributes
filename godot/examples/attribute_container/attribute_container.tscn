@@ -1,7 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://4lm2ofr1pb88"]
+[gd_scene load_steps=4 format=3 uid="uid://4lm2ofr1pb88"]
 
 [ext_resource type="Script" path="res://examples/attribute_container/attribute_container.gd" id="1_x7rde"]
-[ext_resource type="Attribute" uid="uid://cu6o02molycn1" path="res://examples/attribute_buffing/attributes/attribute_000.tres" id="2_emh2w"]
+
+[sub_resource type="Attribute" id="Attribute_q1w2f"]
+attribute_name = "attribute_000"
+initial_value = 50.0
+max_value = 100.0
+
+[sub_resource type="AttributeSet" id="AttributeSet_jo0bf"]
+attributes = Array[Attribute]([SubResource("Attribute_q1w2f")])
 
 [node name="AttributeContainer" type="VBoxContainer"]
 anchors_preset = 15
@@ -10,9 +17,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_x7rde")
-
-[node name="AttributeContainer" type="AttributeContainer" parent="."]
-attributes = Array[Attribute]([ExtResource("2_emh2w")])
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 2
@@ -53,3 +57,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Select a buff or debuff to apply"
+
+[node name="AttributeContainer" type="AttributeContainer" parent="."]
+attribute_set = Array[AttributeSet]([SubResource("AttributeSet_jo0bf")])

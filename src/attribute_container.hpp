@@ -38,6 +38,7 @@ namespace gga
 {
 	class Attribute;
 	class AttributeBuff;
+	class AttributeSet;
 	class BuffPoolQueue;
 
 	class AttributeContainer : public Node
@@ -48,7 +49,7 @@ namespace gga
 		/// @brief Bind methods to Godot.
 		static void _bind_methods();
 		/// @brief Attributes.
-		TypedArray<Attribute> attributes;
+		Ref<AttributeSet> attribute_set;
 		/// @brief Buff pool queue. It is used to store buffs that have a limited duration.
 		BuffPoolQueue *buff_pool_queue;
 		/// @brief Autostart. If set to true, the container will start processing buffs as soon as it is ready.
@@ -77,6 +78,11 @@ namespace gga
 	public:
 		/// @brief Constructor.
 		AttributeContainer();
+		/// @brief Constructor.
+		/// @param p_attribute_set The attribute set to use. 
+		/// @param p_autostart The autostart value.
+		/// @param p_server_authoritative The server authoritative value.
+		AttributeContainer(const Ref<AttributeSet> &p_attribute_set, const bool p_autostart, const bool p_server_authoritative, const bool p_paused);
 		/// @brief Destructor.
 		~AttributeContainer();
 		/// @brief Override of the _ready method.
@@ -104,7 +110,7 @@ namespace gga
 		// getters/setters
 		/// @brief Returns the attributes of the container.
 		/// @return The attributes of the container.
-		TypedArray<Attribute> get_attributes() const;
+		Ref<AttributeSet> get_attribute_set() const;
 		/// @brief Returns the autostart value.
 		/// @return The autostart value.
 		bool get_autostart() const;
@@ -113,7 +119,7 @@ namespace gga
 		bool get_server_authoritative() const;
 		/// @brief Sets the attributes of the container.
 		/// @param p_attributes The attributes to set.
-		void set_attributes(const TypedArray<Attribute> p_attributes);
+		void set_attribute_set(const Ref<AttributeSet> &p_attributes);
 		/// @brief Sets the autostart value.
 		/// @param p_autostart The autostart value to set.
 		void set_autostart(const bool p_autostart);
