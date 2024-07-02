@@ -1,12 +1,10 @@
-[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://f4axoef5kmi0"]
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://brko4e52w6amh"]
 
-[sub_resource type="AttributeOperation" id="AttributeOperation_vrqtg"]
-operand = 3
-value = -1.0
+[ext_resource type="AttributeOperation" uid="uid://d1240pmejx0be" path="res://examples/attribute_container/buffs/operations/-1_p.tres" id="1_lslj3"]
 
 [resource]
 attribute_name = "attribute_000"
-buff_name = "Remove 1% for 5 seconds"
+buff_name = "remove_1_percent_for_5_seconds"
 buff_type = 1
 duration = 5.0
-operation = SubResource("AttributeOperation_vrqtg")
+operation = ExtResource("1_lslj3")

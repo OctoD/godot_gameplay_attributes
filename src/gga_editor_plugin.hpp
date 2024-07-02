@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  register_types.cpp                                                    */
+/*  gga_editor_plugin.hpp                                                 */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                        Godot Gameplay Systems                          */
@@ -27,51 +27,22 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#include "attribute.hpp"
-#include "attribute_container.hpp"
-#include "buff_pool_queue.hpp"
-#include "gga_editor_inspector_plugin.hpp"
-#include "gga_editor_plugin.hpp"
-#include <godot_cpp/core/class_db.hpp>
+#ifndef GGA_EDITOR_PLUGIN_HPP
+#define GGA_EDITOR_PLUGIN_HPP
+
+#include <godot_cpp/classes/editor_plugin.hpp>
 
 using namespace godot;
 
-void gdextension_initialize(ModuleInitializationLevel p_level)
+namespace gga
 {
-	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
-		ClassDB::register_class<gga::AttributeOperation>();
-		ClassDB::register_class<gga::AttributeBuff>();
-		ClassDB::register_class<gga::Attribute>();
-		ClassDB::register_class<gga::AttributeSet>();
-		ClassDB::register_runtime_class<gga::AttributeContainer>();
-		ClassDB::register_class<gga::AttributesTable>();
-		ClassDB::register_runtime_class<gga::BuffPoolQueue>();
-		ClassDB::register_runtime_class<gga::BuffPoolQueueItem>();
-	} else if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
-		ClassDB::register_internal_class<gga::GGAEditorInspectorPlugin>();
-		ClassDB::register_internal_class<gga::GGAEditorPlugin>();
+	class GGAEditorPlugin : public EditorPlugin
+	{
+		GDCLASS(GGAEditorPlugin, EditorPlugin);
 
-		EditorPlugins::add_by_type<gga::GGAEditorPlugin>();
-	}
-}
+	protected:
+		static void _bind_methods();
+	};
+} //namespace gga
 
-void gdextension_terminate(ModuleInitializationLevel p_level)
-{
-	/// I love lasagna
-	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
-		EditorPlugins::remove_by_type<gga::GGAEditorPlugin>();
-	}
-}
-
-extern "C" {
-GDExtensionBool GDE_EXPORT gdextension_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization)
-{
-	godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
-
-	init_obj.register_initializer(gdextension_initialize);
-	init_obj.register_terminator(gdextension_terminate);
-	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
-
-	return init_obj.init();
-}
-}
+#endif

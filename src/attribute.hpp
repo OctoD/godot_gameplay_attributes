@@ -38,10 +38,10 @@ namespace gga
 {
 	enum BuffType
 	{
-		/// @brief One-shot buff. This buff will be removed from the container immediately after it is processed and will affect the attribute directly.
-		BT_ONESHOT = 0,
 		/// @brief Stackable buff.
-		BT_STACKABLE = 1,
+		BT_STACKABLE = 0,
+		/// @brief Unique buff.
+		BT_UNIQUE = 1,
 	};
 
 	enum OperationType
@@ -71,7 +71,7 @@ namespace gga
 		/// @param p_value The operation value.
 		/// @return A new instance of AttributeOperation as a Ref.
 		static Ref<AttributeOperation> create(const OperationType p_operand, const float p_value);
-		
+
 		/// @brief Operand.
 		OperationType operand;
 		/// @brief Value.
@@ -145,12 +145,11 @@ namespace gga
 
 		AttributeBuff();
 		AttributeBuff(
-			const String &p_attribute_name, 
-			const String &p_buff_name, 
-			const int p_buff_type, 
-			const float p_duration, 
-			const Ref<AttributeOperation> &p_operation
-		);
+				const String &p_attribute_name,
+				const String &p_buff_name,
+				const int p_buff_type,
+				const float p_duration,
+				const Ref<AttributeOperation> &p_operation);
 		~AttributeBuff();
 
 		/// @brief Returns the result of the operation on the base value.
@@ -281,6 +280,122 @@ namespace gga
 		/// @brief Set the minimum value of the attribute.
 		/// @param p_value The minimum value of the attribute.
 		void set_min_value(const float p_value);
+	};
+
+	class AttributeSet : public Resource
+	{
+		GDCLASS(AttributeSet, Resource);
+
+	protected:
+		/// @brief Bind methods to Godot.
+		static void _bind_methods();
+		/// @brief The attributes in the set.
+		TypedArray<Attribute> attributes;
+		/// @brief The set name.
+		String set_name;
+		/// @brief Sort the attributes by name.
+		/// @param p_a The first attribute.
+		/// @param p_b The second attribute.
+		/// @return The comparison result.
+		int sort_attributes_by_name(const Ref<Attribute> &p_a, const Ref<Attribute> &p_b) const;
+		/// @brief Sort the attributes in the set.
+		void sort_attributes();
+
+	public:
+		/// @brief Equal operator overload.
+		/// @param set The AttributeSet to compare.
+		/// @return True if the AttributeSet is equal, false otherwise.
+		bool operator==(const Ref<AttributeSet> &set) const;
+
+		/// @brief Create an attribute set.
+		AttributeSet();
+		/// @brief Create an attribute set.
+		/// @param p_attributes The attributes in the set.
+		/// @param p_set_name The set name.
+		AttributeSet(TypedArray<Attribute> p_attributes, String p_set_name);
+
+		/// @brief Add an attribute to the set.
+		/// @param p_attribute The attribute to add.
+		/// @return True if the attribute was added, false otherwise.
+		bool add_attribute(const Ref<Attribute> &p_attribute);
+		/// @brief Add attributes to the set.
+		/// @param p_attributes The attributes to add.
+		/// @return The number of attributes added.
+		uint16_t add_attributes(const TypedArray<Attribute> &p_attributes);
+		/// @brief Finds the index of an attribute in the set.
+		/// @param p_attribute The attribute to find.
+		/// @return The index of the attribute.
+		int find(const Ref<Attribute> &p_attribute) const;
+		/// @brief Gets all the attributes names in the set.
+		/// @return The attributes names.
+		PackedStringArray get_attributes_names() const;
+		/// @brief Get the attributes in the set.
+		/// @return The attributes.
+		TypedArray<Attribute> get_attributes() const;
+		/// @brief Get an attribute from the set.
+		/// @param index The index of the attribute.
+		/// @return The attribute.
+		Ref<Attribute> get_at(int index) const;
+		/// @brief Get the set name. I dunno if it gets or sets but the pun is intended.
+		/// @return The set name.
+		String get_set_name() const;
+		/// @brief Check if the set has an attribute.
+		/// @param p_attribute The attribute to check.
+		/// @return True if the set has the attribute, false otherwise.
+		bool has_attribute(const Ref<Attribute> &p_attribute) const;
+		/// @brief Remove an attribute from the set.
+		/// @param p_attribute The attribute to remove.
+		/// @return True if the attribute was removed, false otherwise.
+		bool remove_attribute(const Ref<Attribute> &p_attribute);
+		/// @brief Remove attributes from the set.
+		/// @param p_attributes The attributes to remove.
+		/// @return The number of attributes removed.
+		uint16_t remove_attributes(const TypedArray<Attribute> &p_attributes);
+		/// @brief Push an attribute to the set.
+		/// @param p_attribute The attribute to push.
+		void push_back(const Ref<Attribute> &p_attribute);
+		/// @brief Set the attributes in the set.
+		/// @param p_attributes The attributes in the set.
+		void set_attributes(const TypedArray<Attribute> &p_attributes);
+		/// @brief Set the set name. Sorry for the pun.
+		/// @param p_value The set name.
+		void set_set_name(const String &p_value);
+		/// @brief Get the number of attributes in the set.
+		/// @return The number of attributes.
+		int count() const;
+	};
+
+	class AttributesTable : public Resource
+	{
+		GDCLASS(AttributesTable, Resource);
+
+	protected:
+		static void _bind_methods();
+		/// @brief The attribute sets in the table.
+		TypedArray<AttributeSet> attribute_sets;
+
+	public:
+		AttributesTable();
+		AttributesTable(TypedArray<AttributeSet> p_attribute_sets);
+
+		/// @brief Add an attribute set to the table.
+		/// @param p_attribute_set The attribute set to add.
+		void add_attribute_set(const Ref<AttributeSet> &p_attribute_set);
+		/// @brief Get the attribute sets in the table.
+		/// @return The attribute sets.
+		TypedArray<AttributeSet> get_attribute_sets() const;
+		/// @brief Get the attribute names in the table.
+		/// @return The attribute names.
+		PackedStringArray get_attribute_names() const;
+		/// @brief Check if the table has an attribute set.
+		/// @param p_attribute_set The attribute set to check.
+		bool has_attribute_set(const Ref<AttributeSet> &p_attribute_set) const;
+		/// @brief Remove an attribute set from the table.
+		/// @param p_attribute_set The attribute set to remove.
+		void remove_attribute_set(const Ref<AttributeSet> &p_attribute_set);
+		/// @brief Remove an attribute set from the table.
+		/// @param p_attribute_set The attribute set to remove.
+		void set_attribute_sets(const TypedArray<AttributeSet> &p_attribute_sets);
 	};
 } //namespace gga
 
