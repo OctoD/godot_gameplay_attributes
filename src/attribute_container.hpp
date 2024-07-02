@@ -102,6 +102,9 @@ namespace gga
 		/// @brief Returns the attributes of the container.
 		/// @return The attributes of the container.
 		Ref<AttributeSet> get_attribute_set() const;
+		/// @brief Returns the attributes of the container.
+		/// @return The attributes of the container.
+		TypedArray<Attribute> get_attributes() const;
 		/// @brief Returns the autostart value.
 		/// @return The autostart value.
 		bool get_autostart() const;

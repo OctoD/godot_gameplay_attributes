@@ -6,6 +6,7 @@
 attribute_name = "attribute_000"
 initial_value = 50.0
 max_value = 100.0
+min_value = 1.4013e-45
 
 [sub_resource type="AttributeSet" id="AttributeSet_7dso0"]
 attributes = Array[Attribute]([SubResource("Attribute_jndah")])

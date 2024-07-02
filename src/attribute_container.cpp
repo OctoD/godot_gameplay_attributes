@@ -43,6 +43,7 @@ void AttributeContainer::_bind_methods()
 	ClassDB::bind_method(D_METHOD("add_attribute", "p_attribute"), &AttributeContainer::add_attribute);
 	ClassDB::bind_method(D_METHOD("apply_buff", "p_buff"), &AttributeContainer::apply_buff);
 	ClassDB::bind_method(D_METHOD("get_attribute_set"), &AttributeContainer::get_attribute_set);
+	ClassDB::bind_method(D_METHOD("get_attributes"), &AttributeContainer::get_attributes);
 	ClassDB::bind_method(D_METHOD("get_autostart"), &AttributeContainer::get_autostart);
 	ClassDB::bind_method(D_METHOD("get_server_authoritative"), &AttributeContainer::get_server_authoritative);
 	ClassDB::bind_method(D_METHOD("is_paused"), &AttributeContainer::is_paused);
@@ -208,6 +209,15 @@ void AttributeContainer::resume()
 Ref<AttributeSet> AttributeContainer::get_attribute_set() const
 {
 	return attribute_set;
+}
+
+TypedArray<Attribute> AttributeContainer::get_attributes() const
+{
+	if (attribute_set.is_valid()) {
+		return attribute_set->get_attributes();
+	}
+
+	return TypedArray<Attribute>();
 }
 
 bool AttributeContainer::get_autostart() const

@@ -1,9 +1,8 @@
-[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://dywx4cyhu0jqt"]
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://6ponxun3wc6o"]
 
-[sub_resource type="AttributeOperation" id="AttributeOperation_li0sn"]
+[ext_resource type="AttributeOperation" uid="uid://5id06q5x83r" path="res://examples/attribute_container/buffs/operations/+1_p.tres" id="1_v86cc"]
 
 [resource]
 attribute_name = "attribute_000"
-buff_name = "Add 1 Percent"
-buff_type = 1
-operation = SubResource("AttributeOperation_li0sn")
+buff_name = "add_1_percent"
+operation = ExtResource("1_v86cc")

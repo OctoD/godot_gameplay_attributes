@@ -1,0 +1,5 @@
+[gd_resource type="AttributeOperation" format=3 uid="uid://c0jm1exxap75d"]
+
+[resource]
+operand = 4
+value = 5.0

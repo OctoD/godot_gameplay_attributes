@@ -187,13 +187,13 @@ void AttributeBuff::_bind_methods()
 	/// binds properties to godot
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "attribute_name"), "set_attribute_name", "get_attribute_name");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "buff_name"), "set_buff_name", "get_buff_name");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "buff_type", PROPERTY_HINT_ENUM, "Oneshot,Stackable"), "set_buff_type", "get_buff_type");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "buff_type", PROPERTY_HINT_ENUM, "Stackable,Unique"), "set_buff_type", "get_buff_type");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "duration"), "set_duration", "get_duration");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "24/17:AttributeOperation"), "set_operation", "get_operation");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "AttributeOperation"), "set_operation", "get_operation");
 
 	/// binds enum as consts
-	BIND_ENUM_CONSTANT(BT_ONESHOT);
 	BIND_ENUM_CONSTANT(BT_STACKABLE);
+	BIND_ENUM_CONSTANT(BT_UNIQUE);
 }
 
 bool AttributeBuff::operator==(const Ref<AttributeBuff> &buff) const
@@ -205,7 +205,7 @@ AttributeBuff::AttributeBuff()
 {
 	attribute_name = "";
 	buff_name = "";
-	buff_type = BT_ONESHOT;
+	buff_type = BT_STACKABLE;
 	duration = 0.0f;
 	operation = AttributeOperation::add(0);
 }
@@ -274,7 +274,7 @@ void AttributeBuff::set_buff_type(const int p_value)
 
 	switch (p_value) {
 		case 0:
-			buff_type = BT_ONESHOT;
+			buff_type = BT_UNIQUE;
 			break;
 		case 1:
 			buff_type = BT_STACKABLE;
@@ -349,7 +349,7 @@ Ref<Attribute> Attribute::create(const String &p_attribute_name, const float p_i
 bool Attribute::add_buff(const Ref<AttributeBuff> &p_buff)
 {
 	if (can_receive_buff(p_buff)) {
-		if (p_buff->get_buff_type() == BT_ONESHOT) {
+		if (p_buff->get_buff_type() == BT_UNIQUE) {
 			float prev_value = underlying_value;
 			underlying_value = Math::clamp(p_buff->operate(underlying_value), min_value, max_value);
 			emit_signal("attribute_changed", this, prev_value, underlying_value);
@@ -379,6 +379,10 @@ uint16_t Attribute::add_buffs(const TypedArray<AttributeBuff> &p_buffs)
 
 bool Attribute::can_receive_buff(const Ref<AttributeBuff> &p_buff) const
 {
+	if (p_buff->get_buff_type() == BT_UNIQUE && has_buff(p_buff)) {
+		return false;
+	}
+
 	return p_buff->get_attribute_name() == attribute_name;
 }
 

@@ -39,14 +39,14 @@ using namespace godot;
 void gdextension_initialize(ModuleInitializationLevel p_level)
 {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
-		ClassDB::register_class<gga::Attribute>();
+		ClassDB::register_class<gga::AttributeOperation>();
 		ClassDB::register_class<gga::AttributeBuff>();
+		ClassDB::register_class<gga::Attribute>();
 		ClassDB::register_class<gga::AttributeSet>();
 		ClassDB::register_runtime_class<gga::AttributeContainer>();
 		ClassDB::register_class<gga::AttributesTable>();
 		ClassDB::register_runtime_class<gga::BuffPoolQueue>();
 		ClassDB::register_runtime_class<gga::BuffPoolQueueItem>();
-		ClassDB::register_runtime_class<gga::AttributeOperation>();
 	} else if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
 		ClassDB::register_internal_class<gga::GGAEditorInspectorPlugin>();
 		ClassDB::register_internal_class<gga::GGAEditorPlugin>();

@@ -38,10 +38,10 @@ namespace gga
 {
 	enum BuffType
 	{
-		/// @brief One-shot buff. This buff will be removed from the container immediately after it is processed and will affect the attribute directly.
-		BT_ONESHOT = 0,
 		/// @brief Stackable buff.
-		BT_STACKABLE = 1,
+		BT_STACKABLE = 0,
+		/// @brief Unique buff.
+		BT_UNIQUE = 1,
 	};
 
 	enum OperationType

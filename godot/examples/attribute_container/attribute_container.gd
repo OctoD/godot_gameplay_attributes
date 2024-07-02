@@ -28,18 +28,18 @@ const BUFFS = [
 @onready var buffs_selection_container: VBoxContainer = %BuffsSelectionContainer
 
 
-func _on_attribute_buff_added(buff) -> void:
+func _on_attribute_buff_added(buff: AttributeBuff) -> void:
 	print("_on_attribute_buff_added", buff)
 	draw_attribute()
 
 
-func _on_attribute_buff_dequeued(buff) -> void:
+func _on_attribute_buff_dequeued(buff: AttributeBuff) -> void:
 	print("_on_attribute_buff_dequeued", buff)
 	draw_attribute()
 
 
-func _on_attribute_buff_enqueued(buff) -> void:
-	print("_on_attribute_buff_enqueued", buff)
+func _on_attribute_buff_enqueued(buff: AttributeBuff) -> void:
+	print("_on_attribute_buff_enqueued", buff, buff.buff_name)
 	draw_attribute()
 	
 	var progress = BUFF_DURATION.instantiate()
@@ -47,7 +47,7 @@ func _on_attribute_buff_enqueued(buff) -> void:
 	progress.set_buff(buff)
 
 
-func _on_attribute_buff_removed(buff) -> void:
+func _on_attribute_buff_removed(buff: AttributeBuff) -> void:
 	print("attribute_buff_removed", buff)
 	draw_attribute()
 
@@ -75,7 +75,7 @@ func _ready():
 	attribute_container.buff_enqued.connect(_on_attribute_buff_enqueued)
 	attribute_container.buff_removed.connect(_on_attribute_buff_removed)
 
-	for attr in attribute_container.attribute_set.attributes:
+	for attr in attribute_container.get_attributes():
 		attr.attribute_changed.connect(_on_attribute_changed)
 	
 	decrease_value.pressed.connect(func ():
@@ -97,6 +97,7 @@ func make_debuff(value: float) -> AttributeBuff:
 
 	return buff
 
+
 func make_buff(value: float) -> AttributeBuff:
 	var buff = AttributeBuff.new()
 
@@ -109,7 +110,7 @@ func make_buff(value: float) -> AttributeBuff:
 func draw_attribute() -> void:
 	var attribute: Attribute
 	
-	for attr in attribute_container.attribute_set.attributes:
+	for attr in attribute_container.get_attributes():
 		if attr.attribute_name == ATTRIBUTE_NAME:
 			attribute = attr
 			break
