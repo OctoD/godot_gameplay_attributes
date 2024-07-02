@@ -335,7 +335,7 @@ namespace gga
 		/// @brief Get an attribute from the set.
 		/// @param index The index of the attribute.
 		/// @return The attribute.
-		Ref<Attribute> get(int index) const;
+		Ref<Attribute> get_at(int index) const;
 		/// @brief Get the set name. I dunno if it gets or sets but the pun is intended.
 		/// @return The set name.
 		String get_set_name() const;

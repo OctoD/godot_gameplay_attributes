@@ -1,12 +1,10 @@
 [gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://beaq6x7vp2tae"]
 
-[sub_resource type="AttributeOperation" id="AttributeOperation_16bes"]
-operand = 3
-value = 1.0
+[sub_resource type="AttributeOperation" id="AttributeOperation_gbe7i"]
 
 [resource]
 attribute_name = "attribute_000"
 buff_name = "Add 1% for 5 seconds"
 buff_type = 1
 duration = 5.0
-operation = SubResource("AttributeOperation_16bes")
+operation = SubResource("AttributeOperation_gbe7i")

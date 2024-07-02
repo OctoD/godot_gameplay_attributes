@@ -189,7 +189,7 @@ void AttributeBuff::_bind_methods()
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "buff_name"), "set_buff_name", "get_buff_name");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "buff_type", PROPERTY_HINT_ENUM, "Oneshot,Stackable"), "set_buff_type", "get_buff_type");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "duration"), "set_duration", "get_duration");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "AttributeOperation"), "set_operation", "get_operation");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "24/17:AttributeOperation"), "set_operation", "get_operation");
 
 	/// binds enum as consts
 	BIND_ENUM_CONSTANT(BT_ONESHOT);
@@ -617,7 +617,7 @@ TypedArray<Attribute> AttributeSet::get_attributes() const
 	return attributes;
 }
 
-Ref<Attribute> AttributeSet::get(int index) const
+Ref<Attribute> AttributeSet::get_at(int index) const
 {
 	if (index >= 0 && index < attributes.size()) {
 		return attributes[index];

@@ -1,12 +1,10 @@
 [gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://f4axoef5kmi0"]
 
-[sub_resource type="AttributeOperation" id="AttributeOperation_vrqtg"]
-operand = 3
-value = -1.0
+[sub_resource type="AttributeOperation" id="AttributeOperation_6webo"]
 
 [resource]
 attribute_name = "attribute_000"
 buff_name = "Remove 1% for 5 seconds"
 buff_type = 1
 duration = 5.0
-operation = SubResource("AttributeOperation_vrqtg")
+operation = SubResource("AttributeOperation_6webo")

@@ -75,7 +75,7 @@ func _ready():
 	attribute_container.buff_enqued.connect(_on_attribute_buff_enqueued)
 	attribute_container.buff_removed.connect(_on_attribute_buff_removed)
 
-	for attr in attribute_container.attributes:
+	for attr in attribute_container.attribute_set.attributes:
 		attr.attribute_changed.connect(_on_attribute_changed)
 	
 	decrease_value.pressed.connect(func ():
@@ -109,7 +109,7 @@ func make_buff(value: float) -> AttributeBuff:
 func draw_attribute() -> void:
 	var attribute: Attribute
 	
-	for attr in attribute_container.attributes:
+	for attr in attribute_container.attribute_set.attributes:
 		if attr.attribute_name == ATTRIBUTE_NAME:
 			attribute = attr
 			break

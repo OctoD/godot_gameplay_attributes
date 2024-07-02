@@ -2,13 +2,13 @@
 
 [ext_resource type="Script" path="res://examples/attribute_container/attribute_container.gd" id="1_x7rde"]
 
-[sub_resource type="Attribute" id="Attribute_q1w2f"]
+[sub_resource type="Attribute" id="Attribute_jndah"]
 attribute_name = "attribute_000"
 initial_value = 50.0
 max_value = 100.0
 
-[sub_resource type="AttributeSet" id="AttributeSet_jo0bf"]
-attributes = Array[Attribute]([SubResource("Attribute_q1w2f")])
+[sub_resource type="AttributeSet" id="AttributeSet_7dso0"]
+attributes = Array[Attribute]([SubResource("Attribute_jndah")])
 
 [node name="AttributeContainer" type="VBoxContainer"]
 anchors_preset = 15
@@ -59,4 +59,4 @@ size_flags_horizontal = 3
 text = "Select a buff or debuff to apply"
 
 [node name="AttributeContainer" type="AttributeContainer" parent="."]
-attribute_set = Array[AttributeSet]([SubResource("AttributeSet_jo0bf")])
+attribute_set = SubResource("AttributeSet_7dso0")

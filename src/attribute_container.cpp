@@ -43,7 +43,6 @@ void AttributeContainer::_bind_methods()
 	ClassDB::bind_method(D_METHOD("add_attribute", "p_attribute"), &AttributeContainer::add_attribute);
 	ClassDB::bind_method(D_METHOD("apply_buff", "p_buff"), &AttributeContainer::apply_buff);
 	ClassDB::bind_method(D_METHOD("get_attribute_set"), &AttributeContainer::get_attribute_set);
-	ClassDB::bind_method(D_METHOD("get"), &AttributeContainer::get);
 	ClassDB::bind_method(D_METHOD("get_autostart"), &AttributeContainer::get_autostart);
 	ClassDB::bind_method(D_METHOD("get_server_authoritative"), &AttributeContainer::get_server_authoritative);
 	ClassDB::bind_method(D_METHOD("is_paused"), &AttributeContainer::is_paused);
@@ -56,7 +55,7 @@ void AttributeContainer::_bind_methods()
 	ClassDB::bind_method(D_METHOD("set_server_authoritative", "p_server_authoritative"), &AttributeContainer::set_server_authoritative);
 
 	/// binds properties to godot
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "attribute_set", PROPERTY_HINT_RESOURCE_TYPE, "24/17:AttributeSet"), "set_attribute_set", "get_attribute_set");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "attribute_set", PROPERTY_HINT_RESOURCE_TYPE, "AttributeSet"), "set_attribute_set", "get_attribute_set");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autostart"), "set_autostart", "get_autostart");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "server_authoritative"), "set_server_authoritative", "get_server_authoritative");
 
@@ -94,7 +93,7 @@ void AttributeContainer::bind_attribute(Ref<Attribute> p_attribute)
 bool AttributeContainer::has_attribute(Ref<Attribute> p_attribute)
 {
 	for (int i = 0; i < attribute_set->count(); i++) {
-		Ref<Attribute> attribute = attribute_set->get(i);
+		Ref<Attribute> attribute = attribute_set->get_at(i);
 
 		if (!attribute.is_null() && attribute == p_attribute) {
 			return true;
@@ -102,27 +101,6 @@ bool AttributeContainer::has_attribute(Ref<Attribute> p_attribute)
 	}
 
 	return false;
-}
-
-AttributeContainer::AttributeContainer()
-{
-	Ref<AttributeSet> x_attribute_set = memnew(AttributeSet);
-	attribute_set = x_attribute_set;
-	autostart = true;
-	paused = false;
-	server_authoritative = false;
-}
-
-AttributeContainer::AttributeContainer(const Ref<AttributeSet> &p_attribute_set, const bool p_autostart, const bool p_server_authoritative, const bool p_paused)
-{
-	attribute_set = p_attribute_set;
-	autostart = p_autostart;
-	paused = p_paused;
-	server_authoritative = p_server_authoritative;
-}
-
-AttributeContainer::~AttributeContainer()
-{
 }
 
 void AttributeContainer::_ready()
@@ -135,10 +113,12 @@ void AttributeContainer::_ready()
 
 	add_child(buff_pool_queue);
 
-	for (int i = 0; i < attribute_set->count(); i++) {
-		Ref<Attribute> attribute = attribute_set->get(i);
-		bind_attribute(attribute);
-		attribute->setup();
+	if (attribute_set.is_valid()) {
+		for (int i = 0; i < attribute_set->count(); i++) {
+			Ref<Attribute> attribute = attribute_set->get_at(i);
+			bind_attribute(attribute);
+			attribute->setup();
+		}
 	}
 
 	if (autostart) {
@@ -163,7 +143,7 @@ void AttributeContainer::apply_buff(Ref<AttributeBuff> p_buff)
 	}
 
 	for (int i = 0; i < attribute_set->count(); i++) {
-		Ref<Attribute> attribute = attribute_set->get(i);
+		Ref<Attribute> attribute = attribute_set->get_at(i);
 
 		if (attribute->add_buff(p_buff)) {
 			if (p_buff->get_duration() != 0.0f) {
@@ -195,7 +175,7 @@ void AttributeContainer::remove_attribute(Ref<Attribute> p_attribute)
 		int index = attribute_set->find(p_attribute);
 
 		if (index != -1) {
-			Ref<Attribute> attribute = attribute_set->get(index);
+			Ref<Attribute> attribute = attribute_set->get_at(index);
 			attribute->disconnect("changed", Callable::create(this, "_on_attribute_changed"));
 		}
 	}
@@ -208,7 +188,7 @@ void AttributeContainer::remove_buff(Ref<AttributeBuff> p_buff)
 	}
 
 	for (int i = 0; i < attribute_set->count(); i++) {
-		Ref<Attribute> attribute = attribute_set->get(i);
+		Ref<Attribute> attribute = attribute_set->get_at(i);
 
 		if (attribute->remove_buff(p_buff)) {
 			emit_signal("buff_removed", p_buff);
@@ -240,9 +220,9 @@ bool AttributeContainer::get_server_authoritative() const
 	return server_authoritative;
 }
 
-void AttributeContainer::set_attribute_set(const Ref<AttributeSet> &p_attributes)
+void AttributeContainer::set_attribute_set(const Ref<AttributeSet> &p_attribute_set)
 {
-	attribute_set = p_attributes;
+	attribute_set = p_attribute_set;
 }
 
 void AttributeContainer::set_autostart(const bool p_autostart)

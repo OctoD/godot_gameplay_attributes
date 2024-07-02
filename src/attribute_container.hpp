@@ -76,15 +76,6 @@ namespace gga
 		bool has_attribute(Ref<Attribute> p_attribute);
 
 	public:
-		/// @brief Constructor.
-		AttributeContainer();
-		/// @brief Constructor.
-		/// @param p_attribute_set The attribute set to use. 
-		/// @param p_autostart The autostart value.
-		/// @param p_server_authoritative The server authoritative value.
-		AttributeContainer(const Ref<AttributeSet> &p_attribute_set, const bool p_autostart, const bool p_server_authoritative, const bool p_paused);
-		/// @brief Destructor.
-		~AttributeContainer();
 		/// @brief Override of the _ready method.
 		void _ready() override;
 		/// @brief Adds an attribute to the container.
@@ -118,8 +109,8 @@ namespace gga
 		/// @return The server authoritative value.
 		bool get_server_authoritative() const;
 		/// @brief Sets the attributes of the container.
-		/// @param p_attributes The attributes to set.
-		void set_attribute_set(const Ref<AttributeSet> &p_attributes);
+		/// @param p_attribute_set The attributes to set.
+		void set_attribute_set(const Ref<AttributeSet> &p_attribute_set);
 		/// @brief Sets the autostart value.
 		/// @param p_autostart The autostart value to set.
 		void set_autostart(const bool p_autostart);
