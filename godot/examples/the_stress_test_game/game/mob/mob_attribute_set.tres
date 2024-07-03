@@ -1,0 +1,28 @@
+[gd_resource type="AttributeSet" load_steps=7 format=3 uid="uid://de6nvo444dek8"]
+
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/damage.gd" id="1_p38gt"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/health.gd" id="2_2s6xn"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/movement_speed.gd" id="3_7yohv"]
+
+[sub_resource type="Attribute" id="Attribute_erkol"]
+attribute_name = "damage"
+max_value = 7.8753e-43
+min_value = 7.03447e-15
+script = ExtResource("1_p38gt")
+
+[sub_resource type="Attribute" id="Attribute_gbwsy"]
+attribute_name = "health"
+initial_value = 10.0
+max_value = 10.0
+min_value = 7.03447e-15
+script = ExtResource("2_2s6xn")
+
+[sub_resource type="Attribute" id="Attribute_57ef8"]
+attribute_name = "movement_speed"
+initial_value = 7.0
+max_value = 7.0
+min_value = 9.3723e-20
+script = ExtResource("3_7yohv")
+
+[resource]
+attributes = Array[Attribute]([SubResource("Attribute_erkol"), SubResource("Attribute_gbwsy"), SubResource("Attribute_57ef8")])

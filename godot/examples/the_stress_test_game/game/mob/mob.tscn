@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://cumtfbocqvxq4"]
+
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/mob/mob.gd" id="1_rxwoj"]
+[ext_resource type="Texture2D" uid="uid://dxde7a4bl6bx2" path="res://icon.svg" id="2_jd0h3"]
+[ext_resource type="AttributeSet" uid="uid://de6nvo444dek8" path="res://examples/the_stress_test_game/game/mob/mob_attribute_set.tres" id="3_85msk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fs1mt"]
+size = Vector2(80, 80)
+
+[node name="Mob" type="Node2D"]
+script = ExtResource("1_rxwoj")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_fs1mt")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("2_jd0h3")
+
+[node name="AttributeContainer" type="AttributeContainer" parent="."]
+attribute_set = ExtResource("3_85msk")

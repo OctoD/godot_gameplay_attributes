@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://x3tfcm4wi1u2"]
+
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/player/player.gd" id="1_pbqcu"]
+[ext_resource type="AttributeSet" uid="uid://nswjdhjxocg1" path="res://examples/the_stress_test_game/game/player/player_attribute_set.tres" id="2_vs408"]
+
+[node name="Player" type="Node2D"]
+script = ExtResource("1_pbqcu")
+
+[node name="AttributeContainer" type="AttributeContainer" parent="."]
+attribute_set = ExtResource("2_vs408")

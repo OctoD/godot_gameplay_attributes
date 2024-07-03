@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://8wxe6g2jwwxu"]
+
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/game.gd" id="1_a0mos"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_a0mos")
+
+[node name="Mobs" type="Node2D" parent="."]
