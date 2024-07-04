@@ -74,10 +74,21 @@ func _ready() -> void:
 
 ## AttributeContainer
 
-To manage multiple attributes in a single object, you can use the `AttributeContainer` node. This node has an `Array` of `Attribute` resources. It also has a method to add new attribute programmatically to the container, to add and to remove buffs.
+To manage multiple attributes in a single object, you can use the `AttributeContainer` node. This node has an `AttributeSet` resource (which is a collection of `Attribute` resources). 
+It also has methods to add/remove attributes programmatically to the container, to add and to remove buffs.
 
-It handles time based buffs so you do not need to worry about managing them manually.
+This node handles time based buffs so you do not need to worry about managing them manually.
 
 I would recommend using the `AttributeContainer` node to manage the attributes of your objects, as it provides a more convenient way to manage multiple attributes.
 
 An example of using an `AttributeContainer` node is located in the `godot` folder of this repository.
+
+## Contributing
+
+If you want to contribute to this project, please read the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+Don't be shy, this project is open to any kind of contribution!
+
+## License
+
+[MIT](LICENSE)
