@@ -1,13 +1,15 @@
-[gd_resource type="AttributeSet" load_steps=11 format=3 uid="uid://nswjdhjxocg1"]
+[gd_resource type="AttributeSet" load_steps=13 format=3 uid="uid://nswjdhjxocg1"]
 
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/damage.gd" id="1_env54"]
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/health.gd" id="2_bsj7q"]
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/health_regen.gd" id="3_jc603"]
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/movement_speed.gd" id="4_7xcs8"]
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/stamina.gd" id="5_pm2dq"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/fire_rate.gd" id="6_5erm6"]
 
 [sub_resource type="Attribute" id="Attribute_o56mt"]
 attribute_name = "damage"
+initial_value = 1.63952e-43
 max_value = 20.0
 min_value = 9.3723e-20
 script = ExtResource("1_env54")
@@ -28,7 +30,8 @@ script = ExtResource("3_jc603")
 
 [sub_resource type="Attribute" id="Attribute_cye61"]
 attribute_name = "movement_speed"
-initial_value = 0.0
+initial_value = 100.0
+max_value = 500.0
 min_value = 9.3723e-20
 script = ExtResource("4_7xcs8")
 
@@ -39,5 +42,12 @@ max_value = 10.0
 min_value = 9.3723e-20
 script = ExtResource("5_pm2dq")
 
+[sub_resource type="Attribute" id="Attribute_x86gy"]
+attribute_name = "fire_rate"
+initial_value = 1.0
+max_value = 10.0
+min_value = -6.09915e+16
+script = ExtResource("6_5erm6")
+
 [resource]
-attributes = Array[Attribute]([SubResource("Attribute_o56mt"), SubResource("Attribute_yu740"), SubResource("Attribute_n8rb4"), SubResource("Attribute_cye61"), SubResource("Attribute_i2pdw")])
+attributes = Array[Attribute]([SubResource("Attribute_o56mt"), SubResource("Attribute_yu740"), SubResource("Attribute_n8rb4"), SubResource("Attribute_cye61"), SubResource("Attribute_i2pdw"), SubResource("Attribute_x86gy")])

@@ -1,8 +1,31 @@
-[gd_scene load_steps=2 format=3 uid="uid://8wxe6g2jwwxu"]
+[gd_scene load_steps=7 format=3 uid="uid://8wxe6g2jwwxu"]
 
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/game.gd" id="1_a0mos"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/mobs.gd" id="2_g0rfa"]
+[ext_resource type="PackedScene" uid="uid://x3tfcm4wi1u2" path="res://examples/the_stress_test_game/game/player/player.tscn" id="2_ho6o3"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/mob_spawner.gd" id="3_uvbcx"]
+[ext_resource type="PackedScene" uid="uid://cumtfbocqvxq4" path="res://examples/the_stress_test_game/game/mob/mob.tscn" id="4_02vqc"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/projectile_spawner.gd" id="6_f22ae"]
 
 [node name="Game" type="Node2D"]
+scale = Vector2(3, 3)
 script = ExtResource("1_a0mos")
 
-[node name="Mobs" type="Node2D" parent="."]
+[node name="Mobs" type="Node2D" parent="." node_paths=PackedStringArray("chase_target")]
+script = ExtResource("2_g0rfa")
+chase_target = NodePath("../Player")
+
+[node name="Player" parent="." node_paths=PackedStringArray("enemies_container") instance=ExtResource("2_ho6o3")]
+enemies_container = NodePath("../Mobs")
+
+[node name="MobSpawner" type="Node" parent="." node_paths=PackedStringArray("spawn_target")]
+script = ExtResource("3_uvbcx")
+mobs_types = Array[PackedScene]([ExtResource("4_02vqc")])
+spawn_target = NodePath("../Mobs")
+max_mobs_at_once = 200
+
+[node name="ProjectileSpawner" type="Node" parent="." node_paths=PackedStringArray("spawn_target")]
+script = ExtResource("6_f22ae")
+spawn_target = NodePath("../Projectiles")
+
+[node name="Projectiles" type="Node2D" parent="."]

@@ -6,6 +6,7 @@
 
 [sub_resource type="Attribute" id="Attribute_erkol"]
 attribute_name = "damage"
+initial_value = 1.63952e-43
 max_value = 7.8753e-43
 min_value = 7.03447e-15
 script = ExtResource("1_p38gt")
@@ -19,8 +20,8 @@ script = ExtResource("2_2s6xn")
 
 [sub_resource type="Attribute" id="Attribute_57ef8"]
 attribute_name = "movement_speed"
-initial_value = 7.0
-max_value = 7.0
+initial_value = 30.0
+max_value = 1000.0
 min_value = 9.3723e-20
 script = ExtResource("3_7yohv")
 

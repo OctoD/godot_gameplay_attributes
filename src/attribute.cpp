@@ -187,13 +187,13 @@ void AttributeBuff::_bind_methods()
 	/// binds properties to godot
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "attribute_name"), "set_attribute_name", "get_attribute_name");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "buff_name"), "set_buff_name", "get_buff_name");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "buff_type", PROPERTY_HINT_ENUM, "Stackable,Unique"), "set_buff_type", "get_buff_type");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "buff_type", PROPERTY_HINT_ENUM, "Stackable,One Shot"), "set_buff_type", "get_buff_type");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "duration"), "set_duration", "get_duration");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "AttributeOperation"), "set_operation", "get_operation");
 
 	/// binds enum as consts
 	BIND_ENUM_CONSTANT(BT_STACKABLE);
-	BIND_ENUM_CONSTANT(BT_UNIQUE);
+	BIND_ENUM_CONSTANT(BT_ONESHOT);
 }
 
 bool AttributeBuff::operator==(const Ref<AttributeBuff> &buff) const
@@ -274,10 +274,13 @@ void AttributeBuff::set_buff_type(const int p_value)
 
 	switch (p_value) {
 		case 0:
-			buff_type = BT_UNIQUE;
+			buff_type = BT_ONESHOT;
 			break;
 		case 1:
 			buff_type = BT_STACKABLE;
+			break;
+		case 2:
+			buff_type = BT_STACKABLE_UNIQUE;
 			break;
 	}
 }
@@ -349,7 +352,7 @@ Ref<Attribute> Attribute::create(const String &p_attribute_name, const float p_i
 bool Attribute::add_buff(const Ref<AttributeBuff> &p_buff)
 {
 	if (can_receive_buff(p_buff)) {
-		if (p_buff->get_buff_type() == BT_UNIQUE) {
+		if (p_buff->get_buff_type() == BT_ONESHOT) {
 			float prev_value = underlying_value;
 			underlying_value = Math::clamp(p_buff->operate(underlying_value), min_value, max_value);
 			emit_signal("attribute_changed", this, prev_value, underlying_value);
@@ -379,7 +382,7 @@ uint16_t Attribute::add_buffs(const TypedArray<AttributeBuff> &p_buffs)
 
 bool Attribute::can_receive_buff(const Ref<AttributeBuff> &p_buff) const
 {
-	if (p_buff->get_buff_type() == BT_UNIQUE && has_buff(p_buff)) {
+	if (p_buff->get_buff_type() == BT_STACKABLE_UNIQUE && has_buff(p_buff)) {
 		return false;
 	}
 
@@ -507,6 +510,8 @@ void AttributeSet::_bind_methods()
 	/// binds methods to godot
 	ClassDB::bind_method(D_METHOD("add_attribute", "p_attribute"), &AttributeSet::add_attribute);
 	ClassDB::bind_method(D_METHOD("add_attributes", "p_attributes"), &AttributeSet::add_attributes);
+	ClassDB::bind_method(D_METHOD("find_by_classname", "p_classname"), &AttributeSet::find_by_classname);
+	ClassDB::bind_method(D_METHOD("find_by_name", "p_name"), &AttributeSet::find_by_name);
 	ClassDB::bind_method(D_METHOD("get_attributes_names"), &AttributeSet::get_attributes_names);
 	ClassDB::bind_method(D_METHOD("get_attributes"), &AttributeSet::get_attributes);
 	ClassDB::bind_method(D_METHOD("get_set_name"), &AttributeSet::get_set_name);
@@ -515,7 +520,6 @@ void AttributeSet::_bind_methods()
 	ClassDB::bind_method(D_METHOD("remove_attributes", "p_attributes"), &AttributeSet::remove_attributes);
 	ClassDB::bind_method(D_METHOD("set_attributes", "p_attributes"), &AttributeSet::set_attributes);
 	ClassDB::bind_method(D_METHOD("set_set_name", "p_value"), &AttributeSet::set_set_name);
-	ClassDB::bind_method(D_METHOD("sort_attributes"), &AttributeSet::sort_attributes);
 
 	/// binds properties to godot
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "attributes", PROPERTY_HINT_RESOURCE_TYPE, "24/17:Attribute"), "set_attributes", "get_attributes");
@@ -524,16 +528,6 @@ void AttributeSet::_bind_methods()
 	/// adds signals to godot
 	ADD_SIGNAL(MethodInfo("attribute_added", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "Attribute")));
 	ADD_SIGNAL(MethodInfo("attribute_removed", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "Attribute")));
-}
-
-int AttributeSet::sort_attributes_by_name(const Ref<Attribute> &p_a, const Ref<Attribute> &p_b) const
-{
-	return p_a->get_attribute_name().casecmp_to(p_b->get_attribute_name());
-}
-
-void AttributeSet::sort_attributes()
-{
-	attributes.sort_custom(Callable::create(this, "sort_attributes_by_name"));
 }
 
 bool AttributeSet::operator==(const Ref<AttributeSet> &set) const
@@ -572,7 +566,6 @@ bool AttributeSet::add_attribute(const Ref<Attribute> &p_attribute)
 		attributes.push_back(p_attribute);
 		emit_signal("attribute_added", p_attribute);
 		emit_changed();
-		sort_attributes();
 		return true;
 	}
 
@@ -593,7 +586,6 @@ uint16_t AttributeSet::add_attributes(const TypedArray<Attribute> &p_attributes)
 
 	if (count > 0) {
 		emit_changed();
-		sort_attributes();
 	}
 
 	return count;
@@ -602,6 +594,32 @@ uint16_t AttributeSet::add_attributes(const TypedArray<Attribute> &p_attributes)
 int AttributeSet::find(const Ref<Attribute> &p_attribute) const
 {
 	return attributes.find(p_attribute);
+}
+
+Ref<Attribute> AttributeSet::find_by_classname(const String &p_classname) const
+{
+	for (int i = 0; i < attributes.size(); i++) {
+		Ref<Attribute> attribute = attributes[i];
+
+		if (attribute->get_class() == p_classname) {
+			return attributes[i];
+		}
+	}
+
+	return Ref<Attribute>();
+}
+
+Ref<Attribute> AttributeSet::find_by_name(const String &p_name) const
+{
+	for (int i = 0; i < attributes.size(); i++) {
+		Ref<Attribute> attribute = attributes[i];
+
+		if (attribute->get_attribute_name() == p_name) {
+			return attributes[i];
+		}
+	}
+
+	return Ref<Attribute>();
 }
 
 PackedStringArray AttributeSet::get_attributes_names() const
@@ -655,7 +673,6 @@ bool AttributeSet::remove_attribute(const Ref<Attribute> &p_attribute)
 		attributes.remove_at(index);
 		emit_signal("attribute_removed", p_attribute);
 		emit_changed();
-		sort_attributes();
 		return true;
 	}
 
@@ -678,7 +695,6 @@ uint16_t AttributeSet::remove_attributes(const TypedArray<Attribute> &p_attribut
 
 	if (count > 0) {
 		emit_changed();
-		sort_attributes();
 	}
 
 	return count;
@@ -695,7 +711,6 @@ void AttributeSet::set_attributes(const TypedArray<Attribute> &p_attributes)
 {
 	attributes = p_attributes;
 	emit_changed();
-	sort_attributes();
 }
 
 void AttributeSet::set_set_name(const String &p_value)

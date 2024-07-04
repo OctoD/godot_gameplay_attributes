@@ -9,6 +9,10 @@ extends Node
 var tick: float = 0.0
 
 
+func _ready() -> void:
+	spawn()
+
+
 func _physics_process(delta: float) -> void:
 	tick += delta
 	
@@ -19,6 +23,9 @@ func _physics_process(delta: float) -> void:
 
 func spawn() -> void:
 	var mobs_to_spawn = max_mobs_at_once - spawn_target.get_child_count()
-	
-	for i in range(mobs_to_spawn + 1):
-		spawn_target.add_child(mobs_types.pick_random().instantiate())
+
+	for i in range(mobs_to_spawn):
+		var mob = mobs_types.pick_random().instantiate() as Node2D
+		mob.global_position.x = randi() % 300 + 40
+		mob.global_position.y = randi() % 300 + 40
+		spawn_target.add_child(mob)

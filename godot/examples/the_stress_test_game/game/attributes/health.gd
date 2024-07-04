@@ -1,5 +1,5 @@
 @tool
 class_name HealthAttribute extends Attribute
 
-func _init(attribute_name = "health") -> void:
-	self.attribute_name = attribute_name
+func _init(_attribute_name = "health") -> void:
+	self.attribute_name = _attribute_name

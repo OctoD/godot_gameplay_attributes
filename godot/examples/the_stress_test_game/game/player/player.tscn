@@ -1,10 +1,23 @@
-[gd_scene load_steps=3 format=3 uid="uid://x3tfcm4wi1u2"]
+[gd_scene load_steps=5 format=3 uid="uid://x3tfcm4wi1u2"]
 
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/player/player.gd" id="1_pbqcu"]
-[ext_resource type="AttributeSet" uid="uid://nswjdhjxocg1" path="res://examples/the_stress_test_game/game/player/player_attribute_set.tres" id="2_vs408"]
+[ext_resource type="AttributeSet" uid="uid://nswjdhjxocg1" path="res://examples/the_stress_test_game/game/player/player_attribute_set.tres" id="2_fuwfl"]
+[ext_resource type="Texture2D" uid="uid://cwksubrx8xh1c" path="res://examples/the_stress_test_game/kenney_tiny-dungeon/Tiles/tile_0084.png" id="3_doy2s"]
 
-[node name="Player" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hsc63"]
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 7
 script = ExtResource("1_pbqcu")
 
 [node name="AttributeContainer" type="AttributeContainer" parent="."]
-attribute_set = ExtResource("2_vs408")
+attribute_set = ExtResource("2_fuwfl")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_hsc63")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_doy2s")

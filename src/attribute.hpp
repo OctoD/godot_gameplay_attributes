@@ -38,10 +38,12 @@ namespace gga
 {
 	enum BuffType
 	{
+		/// @brief One shot buff. Alters the attribute directly.
+		BT_ONESHOT = 0,
 		/// @brief Stackable buff.
-		BT_STACKABLE = 0,
-		/// @brief Unique buff.
-		BT_UNIQUE = 1,
+		BT_STACKABLE = 1,
+		/// @brief Stackable unique buff.
+		BT_STACKABLE_UNIQUE = 2,
 	};
 
 	enum OperationType
@@ -293,13 +295,6 @@ namespace gga
 		TypedArray<Attribute> attributes;
 		/// @brief The set name.
 		String set_name;
-		/// @brief Sort the attributes by name.
-		/// @param p_a The first attribute.
-		/// @param p_b The second attribute.
-		/// @return The comparison result.
-		int sort_attributes_by_name(const Ref<Attribute> &p_a, const Ref<Attribute> &p_b) const;
-		/// @brief Sort the attributes in the set.
-		void sort_attributes();
 
 	public:
 		/// @brief Equal operator overload.
@@ -326,6 +321,14 @@ namespace gga
 		/// @param p_attribute The attribute to find.
 		/// @return The index of the attribute.
 		int find(const Ref<Attribute> &p_attribute) const;
+		/// @brief Finds an attribute by it's own class_name name in the set.
+		/// @param p_classname The class_name name of the attribute.
+		/// @return The attribute.
+		Ref<Attribute> find_by_classname(const String &p_classname) const;
+		/// @brief Finds an attribute by it's name in the set.
+		/// @param p_name The name of the attribute.
+		/// @return The attribute.
+		Ref<Attribute> find_by_name(const String &p_name) const;
 		/// @brief Gets all the attributes names in the set.
 		/// @return The attributes names.
 		PackedStringArray get_attributes_names() const;

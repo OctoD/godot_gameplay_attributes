@@ -1,10 +1,10 @@
-[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://disvuo2jp7axt"]
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://bsjqbplokctwg"]
 
-[sub_resource type="AttributeOperation" id="AttributeOperation_gevgr"]
+[sub_resource type="AttributeOperation" id="AttributeOperation_jyihi"]
 operand = 4
-value = 3.5
+value = 10.0
 
 [resource]
 attribute_name = "health"
-buff_name = "projectile_damage"
-operation = SubResource("AttributeOperation_gevgr")
+buff_name = "pewpew"
+operation = SubResource("AttributeOperation_jyihi")

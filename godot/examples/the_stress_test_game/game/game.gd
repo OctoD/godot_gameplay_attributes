@@ -1,11 +1,11 @@
 extends Node2D
 
 
-# Called when the node enters the scene tree for the first time.
+@onready var player: CharacterBody2D = $Player
+@onready var projectile_spawner: Node = $ProjectileSpawner
+
+
 func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+	player.projectile_fired.connect(func (f, t):
+		projectile_spawner.fire_at(f, t)
+	)
