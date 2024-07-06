@@ -1,6 +1,9 @@
 extends CharacterBody2D
 
 @export var chase_target: Node2D
+@export var mob_type: MobType
+
+@onready var sprite_2d: Sprite2D = $Sprite2D
 
 
 @onready var attribute_container: AttributeContainer = $AttributeContainer
@@ -12,16 +15,22 @@ var movement_speed: Attribute
 
 
 func check_if_dead() -> void:
-	if health.current_value() <= 0.0:
+	if health and health.current_value() <= 0.0:
 		queue_free()
 
 
 func _ready() -> void:
 	add_to_group("mobs")
 	
-	health = attribute_container.attribute_set.find_by_name("health")
-	movement_speed = attribute_container.attribute_set.find_by_name("movement_speed")
+	attribute_container.attribute_set = mob_type.attribute_set
+	sprite_2d.texture = mob_type.texture_2d
 
+	health = mob_type.attribute_set.find_by_name("health")
+	movement_speed = mob_type.attribute_set.find_by_name("movement_speed")
+
+	health.setup()
+	movement_speed.setup()
+	
 	attribute_container.attribute_changed.connect(func (_attribute, _old_value, _new_value): 
 		check_if_dead()
 	)

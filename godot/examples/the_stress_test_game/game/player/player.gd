@@ -4,11 +4,11 @@ extends CharacterBody2D
 signal projectile_fired(starting_position: Vector2, target_position: Vector2)
 
 
-@export var enemies_container: Node2D
-
 @onready var attribute_container: AttributeContainer = $AttributeContainer
+@onready var progress_bar: ProgressBar = $ProgressBar
 
 
+var health: Attribute
 var fire_rate: Attribute
 var movement_speed: Attribute
 var target: Node2D
@@ -16,8 +16,17 @@ var tick: float
 
 
 func _ready() -> void:
+	health = attribute_container.attribute_set.find_by_name("health")
 	movement_speed = attribute_container.attribute_set.find_by_name("movement_speed")
 	fire_rate = attribute_container.attribute_set.find_by_name("fire_rate")
+
+	progress_bar.max_value = health.max_value
+	progress_bar.min_value = health.min_value
+	progress_bar.value = health.current_value()
+	
+	health.attribute_changed.connect(func (_attribute, _old_value, _new_value):
+		progress_bar.value = _new_value
+	)
 
 
 func _physics_process(delta: float) -> void:
@@ -37,12 +46,11 @@ func _physics_process(delta: float) -> void:
 func fire_projectile() -> void:
 	var next: Node2D = null
 	
-	if enemies_container:
-		for child in enemies_container.get_children():
-			if next == null:
-				next = child
-			elif (transform.origin - next.transform.origin) < child.transform.origin:
-				next = child
+	for child in get_tree().get_nodes_in_group("mobs"):
+		if next == null:
+			next = child
+		elif (transform.origin - next.transform.origin) < child.transform.origin:
+			next = child
 	
 	if next:
 		projectile_fired.emit(global_position, next.global_position)

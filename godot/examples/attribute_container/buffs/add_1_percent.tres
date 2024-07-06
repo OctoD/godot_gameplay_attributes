@@ -1,5 +1,8 @@
-[gd_resource type="AttributeBuff" format=3 uid="uid://dywx4cyhu0jqt"]
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://dywx4cyhu0jqt"]
+
+[sub_resource type="AttributeOperation" id="AttributeOperation_d7bcb"]
 
 [resource]
 attribute_name = "attribute_000"
 buff_name = "add_1_percent"
+operation = SubResource("AttributeOperation_d7bcb")

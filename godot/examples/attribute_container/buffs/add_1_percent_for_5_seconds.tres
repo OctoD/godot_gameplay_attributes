@@ -1,7 +1,9 @@
-[gd_resource type="AttributeBuff" format=3 uid="uid://beaq6x7vp2tae"]
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://beaq6x7vp2tae"]
+
+[sub_resource type="AttributeOperation" id="AttributeOperation_osa3j"]
 
 [resource]
 attribute_name = "attribute_000"
 buff_name = "add_1_percent_for_5_seconds"
-buff_type = 1
 duration = 5.0
+operation = SubResource("AttributeOperation_osa3j")

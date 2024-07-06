@@ -21,3 +21,11 @@ shape = SubResource("RectangleShape2D_hsc63")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("3_doy2s")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -14.0
+offset_top = -13.0
+offset_right = 42.0
+offset_bottom = 14.0
+scale = Vector2(0.5, 0.1)
+show_percentage = false

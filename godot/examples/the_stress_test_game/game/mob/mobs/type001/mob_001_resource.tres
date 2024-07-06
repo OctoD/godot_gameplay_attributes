@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="MobType" load_steps=4 format=3 uid="uid://e0jhpmsckr07"]
+
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/mob/mob_type.gd" id="1_notwk"]
+[ext_resource type="AttributeSet" uid="uid://ckimkjo1mlq6b" path="res://examples/the_stress_test_game/game/mob/mobs/type001/mob_001_attribute_set.tres" id="1_uv700"]
+[ext_resource type="Texture2D" uid="uid://dxh4ni5urk165" path="res://examples/the_stress_test_game/kenney_tiny-dungeon/Tiles/tile_0122.png" id="3_bbcgk"]
+
+[resource]
+script = ExtResource("1_notwk")
+attribute_set = ExtResource("1_uv700")
+texture_2d = ExtResource("3_bbcgk")
