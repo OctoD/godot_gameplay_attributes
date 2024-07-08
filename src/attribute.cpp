@@ -556,15 +556,17 @@ AttributeSet::AttributeSet()
 
 AttributeSet::AttributeSet(TypedArray<Attribute> p_attributes, String p_set_name)
 {
-	attributes = p_attributes;
+	attributes = p_attributes.duplicate(true);
 	set_name = p_set_name;
 }
 
 bool AttributeSet::add_attribute(const Ref<Attribute> &p_attribute)
 {
 	if (!has_attribute(p_attribute)) {
-		attributes.push_back(p_attribute);
-		emit_signal("attribute_added", p_attribute);
+		Ref<Attribute> d_attribute = p_attribute->duplicate(true);
+		
+		attributes.push_back(d_attribute);
+		emit_signal("attribute_added", d_attribute);
 		emit_changed();
 		return true;
 	}
@@ -578,9 +580,13 @@ uint16_t AttributeSet::add_attributes(const TypedArray<Attribute> &p_attributes)
 
 	for (int i = 0; i < p_attributes.size(); i++) {
 		if (!has_attribute(p_attributes[i])) {
-			attributes.push_back(p_attributes[i]);
+			Ref<Attribute> d_attribute = p_attributes[i];
+			
+			d_attribute = d_attribute->duplicate(true);
+
+			attributes.push_back(d_attribute);
 			count++;
-			emit_signal("attribute_added", p_attributes[i]);
+			emit_signal("attribute_added", d_attribute);
 		}
 	}
 
@@ -679,9 +685,9 @@ bool AttributeSet::remove_attribute(const Ref<Attribute> &p_attribute)
 	return false;
 }
 
-uint16_t AttributeSet::remove_attributes(const TypedArray<Attribute> &p_attributes)
+int AttributeSet::remove_attributes(const TypedArray<Attribute> &p_attributes)
 {
-	uint16_t count = 0;
+	int count = 0;
 
 	for (int i = 0; i < p_attributes.size(); i++) {
 		int index = attributes.find(p_attributes[i]);

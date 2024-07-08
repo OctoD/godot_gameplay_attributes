@@ -24,7 +24,7 @@ script = ExtResource("3_uvbcx")
 mobs_types = Array[ExtResource("5_0psn8")]([ExtResource("6_i5h1m"), ExtResource("7_82f10")])
 spawn_target = NodePath("../Mobs")
 player_target = NodePath("../Player")
-max_mobs_at_once = 100
+max_mobs_at_once = 500
 
 [node name="ProjectileSpawner" type="Node" parent="." node_paths=PackedStringArray("spawn_target")]
 script = ExtResource("6_f22ae")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://x3tfcm4wi1u2"]
+[gd_scene load_steps=7 format=3 uid="uid://x3tfcm4wi1u2"]
 
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/player/player.gd" id="1_pbqcu"]
 [ext_resource type="AttributeSet" uid="uid://nswjdhjxocg1" path="res://examples/the_stress_test_game/game/player/player_attribute_set.tres" id="2_fuwfl"]
@@ -6,11 +6,19 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hsc63"]
 
-[sub_resource type="Curve2D" id="Curve2D_lpfs8"]
-_data = {
-"points": PackedVector2Array(0, 0, 0, 0, -456, -316, 0, 0, 0, 0, -454, 321, 0, 0, 0, 0, 403, 317)
-}
-point_count = 3
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l22pv"]
+bg_color = Color(0.6, 0.6, 0.6, 0.152941)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_grbbx"]
+bg_color = Color(0.515257, 0, 0.131321, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
@@ -20,13 +28,13 @@ script = ExtResource("1_pbqcu")
 [node name="AttributeContainer" type="AttributeContainer" parent="."]
 attribute_set = ExtResource("2_fuwfl")
 
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_doy2s")
+
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_hsc63")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("3_doy2s")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 offset_left = -14.0
@@ -34,9 +42,7 @@ offset_top = -13.0
 offset_right = 42.0
 offset_bottom = 14.0
 scale = Vector2(0.5, 0.1)
+theme_override_styles/background = SubResource("StyleBoxFlat_l22pv")
+theme_override_styles/fill = SubResource("StyleBoxFlat_grbbx")
+value = 50.0
 show_percentage = false
-
-[node name="SpawnSafeguard" type="Path2D" parent="."]
-position = Vector2(-3.8147e-06, -3)
-scale = Vector2(0.273877, 0.284601)
-curve = SubResource("Curve2D_lpfs8")

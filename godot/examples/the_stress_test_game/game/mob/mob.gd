@@ -11,15 +11,17 @@ signal died(global_position: Vector2)
 
 @onready var sprite_2d: Sprite2D = $Sprite2D
 @onready var attribute_container: AttributeContainer = $AttributeContainer
+@onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 
 
+var damage_tick: float = 0.0
 var latest_position := Vector2.ZERO
 var health: Attribute
 var movement_speed: Attribute
 
 
 func check_if_dead() -> void:
-	if health and health.current_value() <= 0.0:
+	if health and health.current_value() <= 0.01:
 		died.emit(global_position)
 		queue_free()
 
@@ -42,10 +44,22 @@ func _ready() -> void:
 	attribute_container.buff_applied.connect(func (_buff):
 		check_if_dead()
 	)
-	
-func _process(_d: float) -> void:
+
+
+func _process(delta: float) -> void:
 	if chase_target:
 		latest_position = chase_target.transform.origin
+
+		if abs(global_position.distance_to(chase_target.global_position)) < 50.0:
+			damage_tick += delta
+			
+			if damage_tick > 1.0:
+				var damage = AttributeBuff.new()
+				damage.attribute_name = "health"
+				damage.operation = AttributeOperation.subtract(1.0)
+				damage.buff_type = damage.BT_ONESHOT
+				damage_tick = damage_tick - 1.0
+				chase_target.attribute_container.apply_buff(damage)
 
 
 func _physics_process(_d: float) -> void:

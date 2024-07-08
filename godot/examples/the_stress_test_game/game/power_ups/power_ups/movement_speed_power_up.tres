@@ -3,13 +3,12 @@
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/power_ups/power_up_resource.gd" id="1_kil0w"]
 [ext_resource type="Texture2D" uid="uid://owosly7wqjwg" path="res://examples/the_stress_test_game/kenney_tiny-dungeon/Tiles/tile_0116.png" id="2_2y270"]
 
-[sub_resource type="AttributeOperation" id="AttributeOperation_d8rml"]
-value = 1.0
+[sub_resource type="AttributeOperation" id="AttributeOperation_n1gip"]
 
 [sub_resource type="AttributeBuff" id="AttributeBuff_phnmx"]
 attribute_name = "movement_speed"
 buff_name = "Movement Speed Power Up"
-operation = SubResource("AttributeOperation_d8rml")
+operation = SubResource("AttributeOperation_n1gip")
 
 [resource]
 script = ExtResource("1_kil0w")

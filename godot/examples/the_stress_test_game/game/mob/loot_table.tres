@@ -1,10 +1,12 @@
-[gd_resource type="Resource" script_class="PowerUpSpawnTable" load_steps=5 format=3 uid="uid://mvx2npg78omg"]
+[gd_resource type="Resource" script_class="PowerUpSpawnTable" load_steps=7 format=3 uid="uid://mvx2npg78omg"]
 
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/power_ups/power_up_resource.gd" id="1_hsm72"]
 [ext_resource type="Resource" uid="uid://dp4hgh2wa35xe" path="res://examples/the_stress_test_game/game/power_ups/power_ups/fire_rate_power_up.tres" id="2_byuxa"]
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/power_ups/power_up_spawn_table.gd" id="2_xr8vg"]
 [ext_resource type="Resource" uid="uid://bda6xak7kth4v" path="res://examples/the_stress_test_game/game/power_ups/power_ups/movement_speed_power_up.tres" id="3_rxy2w"]
+[ext_resource type="Resource" uid="uid://cmdbpv5edlggr" path="res://examples/the_stress_test_game/game/power_ups/power_ups/damage_power_up.tres" id="4_pdkx8"]
+[ext_resource type="Resource" uid="uid://ek7bfhf24m11" path="res://examples/the_stress_test_game/game/power_ups/power_ups/health_powerup.tres" id="5_pxo4c"]
 
 [resource]
 script = ExtResource("2_xr8vg")
-power_ups = Array[ExtResource("1_hsm72")]([ExtResource("2_byuxa"), ExtResource("3_rxy2w")])
+power_ups = Array[ExtResource("1_hsm72")]([ExtResource("2_byuxa"), ExtResource("3_rxy2w"), ExtResource("4_pdkx8"), ExtResource("5_pxo4c")])

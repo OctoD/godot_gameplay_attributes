@@ -89,7 +89,11 @@ void AttributeContainer::_on_buff_enqueued(Ref<AttributeBuff> p_buff)
 
 void AttributeContainer::bind_attribute(Ref<Attribute> p_attribute)
 {
-	p_attribute->connect("attribute_changed", Callable::create(this, "_on_attribute_changed"));
+	Callable callable = Callable::create(this, "_on_attribute_changed");
+
+	if (!p_attribute->is_connected("attribute_changed", callable)) {
+		p_attribute->connect("attribute_changed", Callable::create(this, "_on_attribute_changed"));
+	}
 }
 
 bool AttributeContainer::has_attribute(Ref<Attribute> p_attribute)

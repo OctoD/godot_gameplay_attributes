@@ -16,6 +16,7 @@ const LOOT_TABLE = preload("res://examples/the_stress_test_game/game/mob/loot_ta
 
 
 var tick: float = 0.0
+var wave_timer: Timer
 
 
 func _on_mob_died(position: Vector2) -> void:
@@ -30,8 +31,7 @@ func _on_mob_died(position: Vector2) -> void:
 
 
 func _ready() -> void:
-	var wave_timer = Timer.new()
-	
+	wave_timer = Timer.new()
 	wave_timer.timeout.connect(func ():
 		wave += 1	
 	)
@@ -40,6 +40,12 @@ func _ready() -> void:
 	add_child(wave_timer)
 	wave_timer.start()
 	spawn()
+
+
+func random_point_on_circle(center_of_circle: Vector2) -> Vector2:
+	var distance = 150.0
+	var angle = randf_range(0, TAU)
+	return center_of_circle + Vector2(distance * cos(angle), distance * sin(angle))
 
 
 func spawn() -> void:
@@ -59,11 +65,8 @@ func spawn_loot(loot: Node2D, p_global_position: Vector2) -> void:
 
 func spawn_mob(mob_type: MobType) -> void:
 	var instance = MOB.instantiate()
-	var path = player_target.spawn_safeguard as Path2D
-	
-	var pathlen = path.curve.get_baked_length()
-	var randpoint = randf_range(0, pathlen)
-	var xy = path.curve.sample_baked(randpoint)
+	var xy = random_point_on_circle(player_target.global_position)
+
 	instance.mob_type = mob_type
 	instance.global_position.x = xy.x
 	instance.global_position.y = xy.y

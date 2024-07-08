@@ -353,7 +353,7 @@ namespace gga
 		/// @brief Remove attributes from the set.
 		/// @param p_attributes The attributes to remove.
 		/// @return The number of attributes removed.
-		uint16_t remove_attributes(const TypedArray<Attribute> &p_attributes);
+		int remove_attributes(const TypedArray<Attribute> &p_attributes);
 		/// @brief Push an attribute to the set.
 		/// @param p_attribute The attribute to push.
 		void push_back(const Ref<Attribute> &p_attribute);
