@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://vwe01ud4t85i"]
+
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/projectile/projectile.gd" id="1_tvmok"]
+[ext_resource type="Texture2D" uid="uid://dxde7a4bl6bx2" path="res://icon.svg" id="2_c5cm3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8q7eq"]
+
+[node name="Projectile" type="Area2D"]
+collision_layer = 8
+collision_mask = 4
+script = ExtResource("1_tvmok")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_8q7eq")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_c5cm3")

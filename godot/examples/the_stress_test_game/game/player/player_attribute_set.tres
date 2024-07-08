@@ -1,0 +1,58 @@
+[gd_resource type="AttributeSet" load_steps=14 format=3 uid="uid://nswjdhjxocg1"]
+
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/damage.gd" id="1_env54"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/health.gd" id="2_bsj7q"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/health_regen.gd" id="3_jc603"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/movement_speed.gd" id="4_7xcs8"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/stamina.gd" id="5_pm2dq"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/pickup_radius.gd" id="7_ivnag"]
+
+[sub_resource type="Attribute" id="Attribute_o56mt"]
+attribute_name = "damage"
+initial_value = 3.0
+max_value = 300.0
+min_value = 1.0
+script = ExtResource("1_env54")
+
+[sub_resource type="Attribute" id="Attribute_yu740"]
+attribute_name = "health"
+initial_value = 10.0
+max_value = 10.0
+min_value = 7.03447e-15
+script = ExtResource("2_bsj7q")
+
+[sub_resource type="Attribute" id="Attribute_n8rb4"]
+attribute_name = "health_regen"
+initial_value = 0.05
+max_value = 2.5
+min_value = 9.50663e-21
+script = ExtResource("3_jc603")
+
+[sub_resource type="Attribute" id="Attribute_cye61"]
+attribute_name = "movement_speed"
+initial_value = 100.0
+max_value = 500.0
+min_value = 2.43222e-14
+script = ExtResource("4_7xcs8")
+
+[sub_resource type="Attribute" id="Attribute_i2pdw"]
+attribute_name = "stamina"
+initial_value = 10.0
+max_value = 10.0
+min_value = 0.0
+script = ExtResource("5_pm2dq")
+
+[sub_resource type="Attribute" id="Attribute_x86gy"]
+attribute_name = "fire_rate"
+initial_value = 3.0
+max_value = 10.0
+min_value = 1.1162e-11
+
+[sub_resource type="Attribute" id="Attribute_ad25v"]
+initial_value = 30.0
+max_value = 150.0
+min_value = -9.29549e-07
+script = ExtResource("7_ivnag")
+
+[resource]
+attributes = Array[Attribute]([SubResource("Attribute_o56mt"), SubResource("Attribute_yu740"), SubResource("Attribute_n8rb4"), SubResource("Attribute_cye61"), SubResource("Attribute_i2pdw"), SubResource("Attribute_x86gy"), SubResource("Attribute_ad25v")])

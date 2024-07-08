@@ -1,0 +1,21 @@
+[gd_resource type="AttributeSet" load_steps=5 format=3 uid="uid://ca7i5wsi151yy"]
+
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/health.gd" id="1_0mh1f"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/movement_speed.gd" id="2_0wlov"]
+
+[sub_resource type="Attribute" id="Attribute_2l4xd"]
+attribute_name = "health"
+initial_value = 2.0
+max_value = 5.0
+min_value = 0.0
+script = ExtResource("1_0mh1f")
+
+[sub_resource type="Attribute" id="Attribute_v4o5h"]
+attribute_name = "movement_speed"
+initial_value = 20.0
+max_value = 40.0
+min_value = 9.50663e-21
+script = ExtResource("2_0wlov")
+
+[resource]
+attributes = Array[Attribute]([SubResource("Attribute_2l4xd"), SubResource("Attribute_v4o5h")])

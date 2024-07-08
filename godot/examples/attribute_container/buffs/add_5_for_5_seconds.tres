@@ -1,10 +1,9 @@
-[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://n8eh6myf52m4"]
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://dq0pdx450yj8m"]
 
-[ext_resource type="AttributeOperation" uid="uid://ct3ghfr1hjstd" path="res://examples/attribute_container/buffs/operations/+5.tres" id="1_p8q26"]
+[sub_resource type="AttributeOperation" id="AttributeOperation_bf3dv"]
 
 [resource]
 attribute_name = "attribute_000"
 buff_name = "add_5_for_5_seconds"
-buff_type = 1
 duration = 5.0
-operation = ExtResource("1_p8q26")
+operation = SubResource("AttributeOperation_bf3dv")

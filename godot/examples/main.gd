@@ -11,15 +11,17 @@ extends VBoxContainer
 @onready var sub_viewport_container: SubViewportContainer = %SubViewportContainer
 
 
-func _ready() -> void:
-	back_button.pressed.connect(func ():
-		for child in running_example.get_children():
+func reset() -> void:
+	for child in running_example.get_children():
 			child.queue_free()
 			
-		main_view.visible = true
-		toolbar.visible = false
-		sub_viewport_container.visible = false
-	)
+	main_view.visible = true
+	toolbar.visible = false
+	sub_viewport_container.visible = false
+
+
+func _ready() -> void:
+	back_button.pressed.connect(reset)
 	
 	toolbar.visible = false
 	

@@ -1,10 +1,9 @@
-[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://b5lwtkumxmyv1"]
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://beaq6x7vp2tae"]
 
-[ext_resource type="AttributeOperation" uid="uid://5id06q5x83r" path="res://examples/attribute_container/buffs/operations/+1_p.tres" id="1_wqy1i"]
+[sub_resource type="AttributeOperation" id="AttributeOperation_osa3j"]
 
 [resource]
 attribute_name = "attribute_000"
 buff_name = "add_1_percent_for_5_seconds"
-buff_type = 1
 duration = 5.0
-operation = ExtResource("1_wqy1i")
+operation = SubResource("AttributeOperation_osa3j")

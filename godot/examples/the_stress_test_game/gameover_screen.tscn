@@ -1,0 +1,46 @@
+[gd_scene load_steps=4 format=3 uid="uid://bhnef4115hrm4"]
+
+[ext_resource type="Script" path="res://examples/the_stress_test_game/gameover_screen.gd" id="1_8jt5f"]
+[ext_resource type="Texture2D" uid="uid://dxde7a4bl6bx2" path="res://icon.svg" id="2_f8udi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6r5dt"]
+bg_color = Color(0.223529, 0.0235294, 0.054902, 1)
+
+[node name="GameoverScreen" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8jt5f")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_6r5dt")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/CenterContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_f8udi")
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+text = "Game over"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqbfduronibb5"]
+
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/power_ups/power_up.gd" id="1_xg7bb"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cuqt2"]
+
+[node name="PowerUp" type="Area2D"]
+collision_layer = 16
+collision_mask = 34
+script = ExtResource("1_xg7bb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_cuqt2")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]

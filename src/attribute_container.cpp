@@ -54,6 +54,7 @@ void AttributeContainer::_bind_methods()
 	ClassDB::bind_method(D_METHOD("set_attribute_set", "p_attribute_set"), &AttributeContainer::set_attribute_set);
 	ClassDB::bind_method(D_METHOD("set_autostart", "p_autostart"), &AttributeContainer::set_autostart);
 	ClassDB::bind_method(D_METHOD("set_server_authoritative", "p_server_authoritative"), &AttributeContainer::set_server_authoritative);
+	ClassDB::bind_method(D_METHOD("setup"), &AttributeContainer::setup);
 
 	/// binds properties to godot
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "attribute_set", PROPERTY_HINT_RESOURCE_TYPE, "AttributeSet"), "set_attribute_set", "get_attribute_set");
@@ -88,7 +89,11 @@ void AttributeContainer::_on_buff_enqueued(Ref<AttributeBuff> p_buff)
 
 void AttributeContainer::bind_attribute(Ref<Attribute> p_attribute)
 {
-	p_attribute->connect("attribute_changed", Callable::create(this, "_on_attribute_changed"));
+	Callable callable = Callable::create(this, "_on_attribute_changed");
+
+	if (!p_attribute->is_connected("attribute_changed", callable)) {
+		p_attribute->connect("attribute_changed", Callable::create(this, "_on_attribute_changed"));
+	}
 }
 
 bool AttributeContainer::has_attribute(Ref<Attribute> p_attribute)
@@ -114,17 +119,7 @@ void AttributeContainer::_ready()
 
 	add_child(buff_pool_queue);
 
-	if (attribute_set.is_valid()) {
-		for (int i = 0; i < attribute_set->count(); i++) {
-			Ref<Attribute> attribute = attribute_set->get_at(i);
-			bind_attribute(attribute);
-			attribute->setup();
-		}
-	}
-
-	if (autostart) {
-		resume();
-	}
+	setup();
 }
 
 void AttributeContainer::add_attribute(Ref<Attribute> p_attribute)
@@ -203,6 +198,21 @@ void AttributeContainer::resume()
 
 	if (buff_pool_queue) {
 		buff_pool_queue->start();
+	}
+}
+
+void AttributeContainer::setup()
+{
+	if (attribute_set.is_valid()) {
+		for (int i = 0; i < attribute_set->count(); i++) {
+			Ref<Attribute> attribute = attribute_set->get_at(i);
+			bind_attribute(attribute);
+			attribute->setup();
+		}
+	}
+
+	if (autostart) {
+		resume();
 	}
 }
 
