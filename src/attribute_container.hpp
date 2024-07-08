@@ -97,6 +97,8 @@ namespace gga
 		void remove_buff(Ref<AttributeBuff> p_buff);
 		/// @brief Resumes the container.
 		void resume();
+		/// @brief Setups the container.
+		void setup();
 
 		// getters/setters
 		/// @brief Returns the attributes of the container.
