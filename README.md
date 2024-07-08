@@ -74,7 +74,7 @@ func _ready() -> void:
 
 ## AttributeContainer
 
-To manage multiple attributes in a single object, you can use the `AttributeContainer` node. This node has an `Array` of `Attribute` resources. It also has a method to add new attribute programmatically to the container, to add and to remove buffs.
+To manage multiple attributes in a single object, you can use the `AttributeContainer` node. This node has an `AttributeSet`, which holds many `Attribute` resources. It also has a method to add new attribute programmatically to the container, to add and remove buffs, signals and more.
 
 It handles time based buffs so you do not need to worry about managing them manually.
 
