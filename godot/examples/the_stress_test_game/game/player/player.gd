@@ -49,7 +49,7 @@ func fire_projectile() -> void:
 	for child in get_tree().get_nodes_in_group("mobs"):
 		if next == null:
 			next = child
-		elif (transform.origin - next.transform.origin) < child.transform.origin:
+		elif child.global_position.distance_to(global_position) < next.global_position.distance_to(global_position):
 			next = child
 	
 	if next:
