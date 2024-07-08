@@ -44,9 +44,9 @@ script = ExtResource("5_pm2dq")
 
 [sub_resource type="Attribute" id="Attribute_x86gy"]
 attribute_name = "fire_rate"
-initial_value = 1.0
+initial_value = 3.0
 max_value = 10.0
-min_value = -6.09915e+16
+min_value = 0.8
 script = ExtResource("6_5erm6")
 
 [resource]

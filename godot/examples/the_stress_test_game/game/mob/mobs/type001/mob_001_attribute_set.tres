@@ -12,7 +12,7 @@ script = ExtResource("1_8il63")
 
 [sub_resource type="Attribute" id="Attribute_c5xch"]
 attribute_name = "movement_speed"
-initial_value = 60.0
+initial_value = 40.0
 max_value = 60.0
 min_value = -4.63031e-34
 script = ExtResource("2_ht5l0")

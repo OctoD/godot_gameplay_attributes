@@ -1,10 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://x3tfcm4wi1u2"]
+[gd_scene load_steps=6 format=3 uid="uid://x3tfcm4wi1u2"]
 
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/player/player.gd" id="1_pbqcu"]
 [ext_resource type="AttributeSet" uid="uid://nswjdhjxocg1" path="res://examples/the_stress_test_game/game/player/player_attribute_set.tres" id="2_fuwfl"]
 [ext_resource type="Texture2D" uid="uid://cwksubrx8xh1c" path="res://examples/the_stress_test_game/kenney_tiny-dungeon/Tiles/tile_0084.png" id="3_doy2s"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hsc63"]
+
+[sub_resource type="Curve2D" id="Curve2D_lpfs8"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -456, -316, 0, 0, 0, 0, -454, 321, 0, 0, 0, 0, 403, 317)
+}
+point_count = 3
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
@@ -29,3 +35,8 @@ offset_right = 42.0
 offset_bottom = 14.0
 scale = Vector2(0.5, 0.1)
 show_percentage = false
+
+[node name="SpawnSafeguard" type="Path2D" parent="."]
+position = Vector2(-3.8147e-06, -3)
+scale = Vector2(0.273877, 0.284601)
+curve = SubResource("Curve2D_lpfs8")

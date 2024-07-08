@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/game.gd" id="1_a0mos"]
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/mobs.gd" id="2_g0rfa"]
 [ext_resource type="PackedScene" uid="uid://x3tfcm4wi1u2" path="res://examples/the_stress_test_game/game/player/player.tscn" id="2_ho6o3"]
-[ext_resource type="Script" path="res://examples/the_stress_test_game/game/mob_spawner.gd" id="3_uvbcx"]
+[ext_resource type="Script" path="res://examples/the_stress_test_game/game/game_mode.gd" id="3_uvbcx"]
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/mob/mob_type.gd" id="5_0psn8"]
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/projectile_spawner.gd" id="6_f22ae"]
 [ext_resource type="Resource" uid="uid://bqk0er6gflwv2" path="res://examples/the_stress_test_game/game/mob/mobs/type000/mob_000_resource.tres" id="6_i5h1m"]
@@ -19,7 +19,7 @@ chase_target = NodePath("../Player")
 
 [node name="Player" parent="." instance=ExtResource("2_ho6o3")]
 
-[node name="MobSpawner" type="Node" parent="." node_paths=PackedStringArray("spawn_target", "player_target")]
+[node name="GameMode" type="Node" parent="." node_paths=PackedStringArray("spawn_target", "player_target")]
 script = ExtResource("3_uvbcx")
 mobs_types = Array[ExtResource("5_0psn8")]([ExtResource("6_i5h1m"), ExtResource("7_82f10")])
 spawn_target = NodePath("../Mobs")

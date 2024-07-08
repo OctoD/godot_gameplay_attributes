@@ -1,4 +1,4 @@
-extends CharacterBody2D
+class_name Player extends CharacterBody2D
 
 
 signal projectile_fired(starting_position: Vector2, target_position: Vector2)
@@ -6,6 +6,7 @@ signal projectile_fired(starting_position: Vector2, target_position: Vector2)
 
 @onready var attribute_container: AttributeContainer = $AttributeContainer
 @onready var progress_bar: ProgressBar = $ProgressBar
+@onready var spawn_safeguard: Path2D = $SpawnSafeguard
 
 
 var health: Attribute
@@ -29,17 +30,20 @@ func _ready() -> void:
 	)
 
 
-func _physics_process(delta: float) -> void:
-	var current_speed = movement_speed.current_value()
-	var move_vector = Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
-
+func _process(delta: float) -> void:
 	tick += delta
-	velocity =  (move_vector * current_speed)
-	
+
 	if tick > fire_rate.current_value():
 		tick = tick - fire_rate.current_value()
 		fire_projectile()
 
+
+func _physics_process(delta: float) -> void:
+	var current_speed = movement_speed.current_value()
+	var move_vector = Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
+
+	velocity =  (move_vector * current_speed)
+	
 	move_and_slide()
 
 
