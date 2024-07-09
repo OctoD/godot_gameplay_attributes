@@ -39,7 +39,7 @@ void BuffPoolQueueItem::_bind_methods()
 void BuffPoolQueueItem::second_passed()
 {
 	seconds_remaining -= 1;
-	eligible_for_removal = seconds_remaining <= 0;
+	eligible_for_removal = seconds_remaining <= 0.01;
 }
 
 Ref<AttributeBuff> BuffPoolQueueItem::get_buff()
