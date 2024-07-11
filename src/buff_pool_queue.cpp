@@ -32,32 +32,6 @@
 
 using namespace gga;
 
-void BuffPoolQueueItem::_bind_methods()
-{
-}
-
-void BuffPoolQueueItem::second_passed()
-{
-	seconds_remaining -= 1;
-	eligible_for_removal = seconds_remaining <= 0.01;
-}
-
-Ref<AttributeBuff> BuffPoolQueueItem::get_buff()
-{
-	return buff;
-}
-
-bool BuffPoolQueueItem::get_eligible_for_removal()
-{
-	return eligible_for_removal;
-}
-
-void BuffPoolQueueItem::set_buff(Ref<AttributeBuff> p_buff)
-{
-	buff = p_buff;
-	seconds_remaining = buff->get_duration();
-}
-
 void BuffPoolQueue::_bind_methods()
 {
 	/// binds methods to godot
@@ -65,8 +39,8 @@ void BuffPoolQueue::_bind_methods()
 	ClassDB::bind_method(D_METHOD("stop"), &BuffPoolQueue::stop);
 
 	/// adds signals
-	ADD_SIGNAL(MethodInfo("attribute_buff_dequeued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "AttributeBuff")));
-	ADD_SIGNAL(MethodInfo("attribute_buff_enqueued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "AttributeBuff")));
+	ADD_SIGNAL(MethodInfo("attribute_buff_dequeued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeBuff")));
+	ADD_SIGNAL(MethodInfo("attribute_buff_enqueued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeBuff")));
 }
 
 void BuffPoolQueue::_exit_tree()
@@ -91,15 +65,13 @@ void BuffPoolQueue::_physics_process(double p_delta)
 	}
 }
 
-void BuffPoolQueue::add_attribute_buff(Ref<AttributeBuff> p_buff)
+void BuffPoolQueue::enqueue(Ref<RuntimeBuff> p_buff)
 {
 	if (server_authoritative && !is_multiplayer_authority()) {
 		return;
 	}
 
-	Ref<BuffPoolQueueItem> item = memnew(BuffPoolQueueItem);
-	item->set_buff(p_buff);
-	queue.push_back(item.ptr());
+	queue.push_back(p_buff);
 
 	current_queue_size += 1;
 
@@ -120,10 +92,10 @@ void BuffPoolQueue::clear()
 void BuffPoolQueue::cleanup()
 {
 	for (int i = queue.size() - 1; i >= 0; i--) {
-		Ref<BuffPoolQueueItem> item = queue[i];
+		Ref<RuntimeBuff> item = queue[i];
 
-		if (item->get_eligible_for_removal()) {
-			emit_signal("attribute_buff_dequeued", item->get_buff());
+		if (item->can_dispose()) {
+			emit_signal("attribute_buff_dequeued", item);
 			queue.remove_at(i);
 			current_queue_size -= 1;
 		}
@@ -137,8 +109,8 @@ void BuffPoolQueue::process_items()
 	}
 
 	for (int i = 0; i < queue.size(); i++) {
-		Ref<BuffPoolQueueItem> item = queue[i];
-		item->second_passed();
+		Ref<RuntimeBuff> item = queue[i];
+		item->set_time_left(item->get_time_left() - 1.0);
 	}
 
 	cleanup();

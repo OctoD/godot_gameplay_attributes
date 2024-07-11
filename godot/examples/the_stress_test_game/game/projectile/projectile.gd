@@ -13,8 +13,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	global_position += (direction * delta) * 100.0
-	#update position
-	pass
+	look_at(direction)
+
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("mobs"):

@@ -3,14 +3,12 @@
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/power_ups/power_up_resource.gd" id="1_1c6de"]
 [ext_resource type="Texture2D" uid="uid://fdnedphs6cgh" path="res://examples/the_stress_test_game/kenney_tiny-dungeon/Tiles/tile_0114.png" id="2_jmbem"]
 
-[sub_resource type="AttributeOperation" id="AttributeOperation_0p4uy"]
-operand = 4
-value = 0.1
+[sub_resource type="AttributeOperation" id="AttributeOperation_bh5bp"]
 
 [sub_resource type="AttributeBuff" id="AttributeBuff_dko2g"]
 attribute_name = "fire_rate"
 buff_name = "Fire Rate Attribute Buff"
-operation = SubResource("AttributeOperation_0p4uy")
+operation = SubResource("AttributeOperation_bh5bp")
 
 [resource]
 script = ExtResource("1_1c6de")

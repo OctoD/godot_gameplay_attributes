@@ -7,7 +7,7 @@
 attribute_name = "health"
 initial_value = 2.0
 max_value = 5.0
-min_value = 0.0
+min_value = 2.83227e-16
 script = ExtResource("1_0mh1f")
 
 [sub_resource type="Attribute" id="Attribute_v4o5h"]

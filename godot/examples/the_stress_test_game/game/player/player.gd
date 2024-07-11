@@ -10,24 +10,25 @@ signal projectile_fired(starting_position: Vector2, target_position: Vector2)
 @onready var camera_2d: Camera2D = $Camera2D
 
 
-var health: Attribute
-var fire_rate: Attribute
+var health: RuntimeAttribute
+var fire_rate: RuntimeAttribute
 var is_dead: bool = false
-var movement_speed: Attribute
-var pickup_radius: Attribute
+var movement_speed: RuntimeAttribute
+var pickup_radius: RuntimeAttribute
 var target: Node2D
 var tick: float
 
 
 func _ready() -> void:
-	health = attribute_container.attribute_set.find_by_name("health")
-	movement_speed = attribute_container.attribute_set.find_by_name("movement_speed")
-	fire_rate = attribute_container.attribute_set.find_by_name("fire_rate")
-	pickup_radius = attribute_container.attribute_set.find_by_name("pickup_radius")
+	health = attribute_container.get_attribute_by_name("health")
+	movement_speed = attribute_container.get_attribute_by_name("movement_speed")
+	fire_rate = attribute_container.get_attribute_by_name("fire_rate")
+	pickup_radius = attribute_container.get_attribute_by_name("pickup_radius")
 
-	progress_bar.max_value = health.max_value
-	progress_bar.min_value = health.min_value
-	progress_bar.value = health.current_value()
+	if health:
+		progress_bar.max_value = health.max_value
+		progress_bar.min_value = health.min_value
+		progress_bar.value = health.current_value()
 	
 	attribute_container.attribute_changed.connect(func (attribute, _old, new_value):
 		if attribute is HealthAttribute:

@@ -12,15 +12,18 @@ signal died(global_position: Vector2)
 @onready var sprite_2d: Sprite2D = $Sprite2D
 @onready var attribute_container: AttributeContainer = $AttributeContainer
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
+@onready var label: Label = $Label
 
 
 var damage_tick: float = 0.0
 var latest_position := Vector2.ZERO
-var health: Attribute
-var movement_speed: Attribute
+var health: RuntimeAttribute
+var movement_speed: RuntimeAttribute
 
 
 func check_if_dead() -> void:
+	label.text = str(health.current_value())
+
 	if health and health.current_value() <= 0.01:
 		died.emit(global_position)
 		queue_free()
@@ -28,14 +31,16 @@ func check_if_dead() -> void:
 
 func _ready() -> void:
 	add_to_group("mobs")
-	
+
 	attribute_container.attribute_set = mob_type.attribute_set
 	sprite_2d.texture = mob_type.texture_2d
 
-	health = mob_type.attribute_set.find_by_name("health")
-	movement_speed = mob_type.attribute_set.find_by_name("movement_speed")
+	health = attribute_container.get_attribute_by_name("health")
+	movement_speed = attribute_container.get_attribute_by_name("movement_speed")
 
 	attribute_container.setup()
+	
+	label.text = str(health.current_value())
 	
 	attribute_container.attribute_changed.connect(func (_attribute, _old_value, _new_value): 
 		check_if_dead()

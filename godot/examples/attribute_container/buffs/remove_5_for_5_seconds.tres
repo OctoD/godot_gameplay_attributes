@@ -1,7 +1,9 @@
-[gd_resource type="AttributeBuff" format=3 uid="uid://75isl7i0vud"]
+[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://75isl7i0vud"]
+
+[ext_resource type="AttributeOperation" uid="uid://c0jm1exxap75d" path="res://examples/attribute_container/buffs/operations/-5.tres" id="1_7yylq"]
 
 [resource]
 attribute_name = "attribute_000"
 buff_name = "remove_5_for_5_seconds"
-buff_type = 1
 duration = 5.0
+operation = ExtResource("1_7yylq")

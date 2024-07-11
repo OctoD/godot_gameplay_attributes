@@ -3,14 +3,13 @@
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/power_ups/power_up_resource.gd" id="1_ei2v6"]
 [ext_resource type="Texture2D" uid="uid://omahn1mrvi5o" path="res://examples/the_stress_test_game/kenney_tiny-dungeon/Tiles/tile_0115.png" id="2_snstl"]
 
-[sub_resource type="AttributeOperation" id="AttributeOperation_gklfi"]
-value = 0.5
+[sub_resource type="AttributeOperation" id="AttributeOperation_b2wqo"]
 
 [sub_resource type="AttributeBuff" id="AttributeBuff_2qs2y"]
 attribute_name = "health"
 buff_name = "Health powerup"
 buff_type = 0
-operation = SubResource("AttributeOperation_gklfi")
+operation = SubResource("AttributeOperation_b2wqo")
 
 [resource]
 script = ExtResource("1_ei2v6")

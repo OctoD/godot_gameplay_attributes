@@ -40,6 +40,8 @@ namespace gga
 	class AttributeBuff;
 	class AttributeSet;
 	class BuffPoolQueue;
+	class RuntimeAttribute;
+	class RuntimeBuff;
 
 	class AttributeContainer : public Node
 	{
@@ -48,8 +50,10 @@ namespace gga
 	protected:
 		/// @brief Bind methods to Godot.
 		static void _bind_methods();
-		/// @brief Attributes.
+		/// @brief Attribute's set.
 		Ref<AttributeSet> attribute_set;
+		/// @brief TypedArray of attributes.
+		TypedArray<RuntimeAttribute> attributes;
 		/// @brief Buff pool queue. It is used to store buffs that have a limited duration.
 		BuffPoolQueue *buff_pool_queue;
 		/// @brief Autostart. If set to true, the container will start processing buffs as soon as it is ready.
@@ -63,15 +67,19 @@ namespace gga
 		/// @param p_attribute The attribute that changed.
 		/// @param p_previous_value The previous value of the attribute.
 		/// @param p_new_value The new value of the attribute.
-		void _on_attribute_changed(Ref<Attribute> p_attribute, const float p_previous_value, const float p_new_value);
+		void _on_attribute_changed(Ref<RuntimeAttribute> p_attribute, const float p_previous_value, const float p_new_value);
+		/// @brief Handles the buff_applied signal.
+		/// @param p_buff The buff that was applied.
+		void _on_buff_applied(Ref<RuntimeBuff> p_buff);
 		/// @brief Handles the buff_dequeued signal.
 		/// @param p_buff The buff that was dequeued.
-		void _on_buff_dequeued(Ref<AttributeBuff> p_buff);
+		void _on_buff_dequeued(Ref<RuntimeBuff> p_buff);
 		/// @brief Handles the buff_enqueued signal.
 		/// @param p_buff The buff that was enqueued.
-		void _on_buff_enqueued(Ref<AttributeBuff> p_buff);
-		/// @brief Binds an attribute to the container.
-		void bind_attribute(Ref<Attribute> p_attribute);
+		void _on_buff_enqueued(Ref<RuntimeBuff> p_buff);
+		/// @brief Handles the buff_removed signal.
+		/// @param p_buff The buff that was removed.
+		void _on_buff_removed(Ref<RuntimeBuff> p_buff);
 		/// @brief Checks if the container has a specific attribute.
 		bool has_attribute(Ref<Attribute> p_attribute);
 
@@ -100,6 +108,10 @@ namespace gga
 		/// @brief Setups the container.
 		void setup();
 
+		/// @brief Finds an attribute in the container.
+		/// @param p_predicate The predicate to use to find the attribute.
+		/// @return The attribute found.
+		Ref<RuntimeAttribute> find(Callable p_predicate) const;
 		// getters/setters
 		/// @brief Returns the attributes of the container.
 		/// @return The attributes of the container.
@@ -107,6 +119,10 @@ namespace gga
 		/// @brief Returns the attributes of the container.
 		/// @return The attributes of the container.
 		TypedArray<Attribute> get_attributes() const;
+		/// @brief Gets an attribute by name.
+		/// @param p_name The name of the attribute to get.
+		/// @return The attribute with the given name.
+		Ref<RuntimeAttribute> get_attribute_by_name(const String &p_name) const;
 		/// @brief Returns the autostart value.
 		/// @return The autostart value.
 		bool get_autostart() const;
