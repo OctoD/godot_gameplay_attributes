@@ -52,11 +52,11 @@ func _on_attribute_buff_removed(buff: RuntimeBuff) -> void:
 	draw_attribute()
 
 
-func _on_attribute_changed(attribute: Attribute, previous_value: float, new_value: float) -> void:
+func _on_attribute_changed(attribute: RuntimeAttribute, previous_value: float, new_value: float) -> void:
 	print("_on_attribute_changed", attribute, previous_value, new_value)
 	attribute_value_display.max_value = attribute.max_value
 	attribute_value_display.min_value = attribute.min_value
-	attribute_value_display.value = attribute.current_value()
+	attribute_value_display.value = attribute.get_buffed_value()
 
 
 func _ready():

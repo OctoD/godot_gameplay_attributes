@@ -56,12 +56,9 @@ void BuffPoolQueue::_physics_process(double p_delta)
 
 	tick += p_delta;
 
-	if (tick >= 1) {
+	if (tick >= 1.0) {
 		tick = tick - 1.0f;
-
-		if (current_queue_size > 0) {
-			process_items();
-		}
+		process_items();
 	}
 }
 
@@ -72,9 +69,6 @@ void BuffPoolQueue::enqueue(Ref<RuntimeBuff> p_buff)
 	}
 
 	queue.push_back(p_buff);
-
-	current_queue_size += 1;
-
 	emit_signal("attribute_buff_enqueued", p_buff);
 }
 
@@ -86,20 +80,6 @@ bool BuffPoolQueue::get_server_authoritative() const
 void BuffPoolQueue::clear()
 {
 	queue.clear();
-	current_queue_size = 0;
-}
-
-void BuffPoolQueue::cleanup()
-{
-	for (int i = queue.size() - 1; i >= 0; i--) {
-		Ref<RuntimeBuff> item = queue[i];
-
-		if (item->can_dispose()) {
-			emit_signal("attribute_buff_dequeued", item);
-			queue.remove_at(i);
-			current_queue_size -= 1;
-		}
-	}
 }
 
 void BuffPoolQueue::process_items()
@@ -108,12 +88,15 @@ void BuffPoolQueue::process_items()
 		return;
 	}
 
-	for (int i = 0; i < queue.size(); i++) {
-		Ref<RuntimeBuff> item = queue[i];
-		item->set_time_left(item->get_time_left() - 1.0);
-	}
+	for (int i = queue.size() - 1; i >= 0; i--) {
+		Ref<RuntimeBuff> buff = queue[i];
+		buff->set_time_left(buff->get_time_left() - 1.0);
 
-	cleanup();
+		if (buff->can_dequeue()) {
+			emit_signal("attribute_buff_dequeued", buff);
+			queue.remove_at(i);
+		}
+	}
 }
 
 void BuffPoolQueue::set_server_authoritative(const bool p_server_authoritative)

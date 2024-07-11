@@ -394,7 +394,8 @@ namespace gga
 		bool operator==(const Ref<AttributeBuff> &p_attribute) const;
 		bool operator==(const Ref<RuntimeBuff> &p_attribute) const;
 
-		bool can_dispose() const;
+		bool can_dequeue() const;
+		bool equals_to(const Ref<AttributeBuff> &p_buff) const;
 		String get_attribute_name() const;
 		String get_buff_name() const;
 		float get_duration() const;

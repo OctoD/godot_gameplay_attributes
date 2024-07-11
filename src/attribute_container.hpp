@@ -56,10 +56,6 @@ namespace gga
 		TypedArray<RuntimeAttribute> attributes;
 		/// @brief Buff pool queue. It is used to store buffs that have a limited duration.
 		BuffPoolQueue *buff_pool_queue;
-		/// @brief Autostart. If set to true, the container will start processing buffs as soon as it is ready.
-		bool autostart;
-		/// @brief Paused. If set to true, the container will not process buffs.
-		bool paused;
 		/// @brief Server authoritative. If set to true, the container will only process buffs on the server.
 		bool server_authoritative;
 
@@ -92,19 +88,12 @@ namespace gga
 		/// @brief Adds a buff to the container.
 		/// @param p_buff The buff to add.
 		void apply_buff(Ref<AttributeBuff> p_buff);
-		/// @brief Pauses the container.
-		void pause();
-		/// @brief Checks if the container is paused.
-		/// @return True if the container is paused, false otherwise.
-		bool is_paused() const;
 		/// @brief Removes an attribute from the container.
 		/// @param p_attribute The attribute to remove.
 		void remove_attribute(Ref<Attribute> p_attribute);
 		/// @brief Removes a buff from the container.
 		/// @param p_buff The buff to remove.
 		void remove_buff(Ref<AttributeBuff> p_buff);
-		/// @brief Resumes the container.
-		void resume();
 		/// @brief Setups the container.
 		void setup();
 
@@ -123,18 +112,12 @@ namespace gga
 		/// @param p_name The name of the attribute to get.
 		/// @return The attribute with the given name.
 		Ref<RuntimeAttribute> get_attribute_by_name(const String &p_name) const;
-		/// @brief Returns the autostart value.
-		/// @return The autostart value.
-		bool get_autostart() const;
 		/// @brief Returns the server authoritative value.
 		/// @return The server authoritative value.
 		bool get_server_authoritative() const;
 		/// @brief Sets the attributes of the container.
 		/// @param p_attribute_set The attributes to set.
 		void set_attribute_set(const Ref<AttributeSet> &p_attribute_set);
-		/// @brief Sets the autostart value.
-		/// @param p_autostart The autostart value to set.
-		void set_autostart(const bool p_autostart);
 		/// @brief Sets the server authoritative value.
 		/// @param p_server_authoritative The server authoritative value to set.
 		void set_server_authoritative(const bool p_server_authoritative);

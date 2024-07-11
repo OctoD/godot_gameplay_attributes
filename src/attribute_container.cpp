@@ -47,22 +47,16 @@ void AttributeContainer::_bind_methods()
 	ClassDB::bind_method(D_METHOD("find", "p_predicate"), &AttributeContainer::find);
 	ClassDB::bind_method(D_METHOD("get_attribute_set"), &AttributeContainer::get_attribute_set);
 	ClassDB::bind_method(D_METHOD("get_attributes"), &AttributeContainer::get_attributes);
-	ClassDB::bind_method(D_METHOD("get_autostart"), &AttributeContainer::get_autostart);
 	ClassDB::bind_method(D_METHOD("get_attribute_by_name", "p_name"), &AttributeContainer::get_attribute_by_name);
 	ClassDB::bind_method(D_METHOD("get_server_authoritative"), &AttributeContainer::get_server_authoritative);
-	ClassDB::bind_method(D_METHOD("is_paused"), &AttributeContainer::is_paused);
-	ClassDB::bind_method(D_METHOD("pause"), &AttributeContainer::pause);
 	ClassDB::bind_method(D_METHOD("remove_attribute", "p_attribute"), &AttributeContainer::remove_attribute);
 	ClassDB::bind_method(D_METHOD("remove_buff", "p_buff"), &AttributeContainer::remove_buff);
-	ClassDB::bind_method(D_METHOD("resume"), &AttributeContainer::resume);
 	ClassDB::bind_method(D_METHOD("set_attribute_set", "p_attribute_set"), &AttributeContainer::set_attribute_set);
-	ClassDB::bind_method(D_METHOD("set_autostart", "p_autostart"), &AttributeContainer::set_autostart);
 	ClassDB::bind_method(D_METHOD("set_server_authoritative", "p_server_authoritative"), &AttributeContainer::set_server_authoritative);
 	ClassDB::bind_method(D_METHOD("setup"), &AttributeContainer::setup);
 
 	/// binds properties to godot
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "attribute_set", PROPERTY_HINT_RESOURCE_TYPE, "AttributeSet"), "set_attribute_set", "get_attribute_set");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autostart"), "set_autostart", "get_autostart");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "server_authoritative"), "set_server_authoritative", "get_server_authoritative");
 
 	/// signals binding
@@ -85,9 +79,8 @@ void AttributeContainer::_on_buff_applied(Ref<RuntimeBuff> p_buff)
 
 void AttributeContainer::_on_buff_dequeued(Ref<RuntimeBuff> p_buff)
 {
-	Ref<AttributeBuff> attribute_buff = p_buff;
-	emit_signal("buff_dequed", attribute_buff);
-	remove_buff(attribute_buff);
+	emit_signal("buff_dequed", p_buff);
+	remove_buff(RuntimeBuff::to_buff(p_buff));
 }
 
 void AttributeContainer::_on_buff_enqueued(Ref<RuntimeBuff> p_buff)
@@ -103,8 +96,7 @@ void AttributeContainer::_on_buff_removed(Ref<RuntimeBuff> p_buff)
 bool AttributeContainer::has_attribute(Ref<Attribute> p_attribute)
 {
 	for (int i = 0; i < attributes.size(); i++) {
-		Ref<RuntimeAttribute> attribute = attributes[i];
-		if (attribute == p_attribute) {
+		if (attributes[i] == p_attribute) {
 			return true;
 		}
 	}
@@ -121,7 +113,6 @@ void AttributeContainer::_ready()
 	buff_pool_queue->connect("attribute_buff_enqueued", Callable::create(this, "_on_buff_enqueued"));
 
 	add_child(buff_pool_queue);
-
 	setup();
 }
 
@@ -143,38 +134,20 @@ void AttributeContainer::add_attribute(Ref<Attribute> p_attribute)
 
 void AttributeContainer::apply_buff(Ref<AttributeBuff> p_buff)
 {
-	if (paused) {
-		return;
-	}
-
 	for (int i = 0; i < attributes.size(); i++) {
 		Ref<RuntimeAttribute> attribute = attributes[i];
 
 		if (attribute->add_buff(p_buff)) {
-			if (p_buff->get_duration() != 0.0f) {
+			if (p_buff->get_duration() >= 0.01f) {
 				buff_pool_queue->enqueue(RuntimeBuff::from_buff(p_buff));
 			}
 		}
 	}
 }
 
-void AttributeContainer::pause()
-{
-	paused = true;
-
-	if (buff_pool_queue) {
-		buff_pool_queue->stop();
-	}
-}
-
-bool AttributeContainer::is_paused() const
-{
-	return paused;
-}
-
 void AttributeContainer::remove_attribute(Ref<Attribute> p_attribute)
 {
-	if (has_attribute(p_attribute) && !paused) {
+	if (has_attribute(p_attribute)) {
 		Ref<RuntimeAttribute> runtime_attribute = get_attribute_by_name(p_attribute->get_name());
 
 		if (runtime_attribute.is_valid()) {
@@ -192,22 +165,9 @@ void AttributeContainer::remove_attribute(Ref<Attribute> p_attribute)
 
 void AttributeContainer::remove_buff(Ref<AttributeBuff> p_buff)
 {
-	if (paused) {
-		return;
-	}
-
 	for (int i = 0; i < attributes.size(); i++) {
 		Ref<RuntimeAttribute> attribute = attributes[i];
 		attribute->remove_buff(p_buff);
-	}
-}
-
-void AttributeContainer::resume()
-{
-	paused = false;
-
-	if (buff_pool_queue) {
-		buff_pool_queue->start();
 	}
 }
 
@@ -219,10 +179,6 @@ void AttributeContainer::setup()
 		for (int i = 0; i < attribute_set->count(); i++) {
 			add_attribute(attribute_set->get_at(i));
 		}
-	}
-
-	if (autostart) {
-		resume();
 	}
 }
 
@@ -266,11 +222,6 @@ Ref<RuntimeAttribute> AttributeContainer::get_attribute_by_name(const String &p_
 	return Ref<RuntimeAttribute>();
 }
 
-bool AttributeContainer::get_autostart() const
-{
-	return autostart;
-}
-
 bool AttributeContainer::get_server_authoritative() const
 {
 	return server_authoritative;
@@ -280,11 +231,6 @@ void AttributeContainer::set_attribute_set(const Ref<AttributeSet> &p_attribute_
 {
 	attribute_set = p_attribute_set;
 	setup();
-}
-
-void AttributeContainer::set_autostart(const bool p_autostart)
-{
-	autostart = p_autostart;
 }
 
 void AttributeContainer::set_server_authoritative(const bool p_server_authoritative)

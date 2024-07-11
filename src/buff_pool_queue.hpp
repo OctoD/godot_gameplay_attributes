@@ -46,8 +46,6 @@ namespace gga
 	protected:
 		/// @brief Binds methods to Godot.
 		static void _bind_methods();
-		/// @brief The current queue size.
-		uint16_t current_queue_size;
 		/// @brief The current tick.
 		float tick;
 		/// @brief The queue of buffs.

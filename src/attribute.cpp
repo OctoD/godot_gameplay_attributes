@@ -707,7 +707,6 @@ void RuntimeBuff::_bind_methods()
 	/// binds methods to godot
 	ClassDB::bind_static_method("RuntimeBuff", D_METHOD("from_buff", "p_buff"), &RuntimeBuff::from_buff);
 	ClassDB::bind_static_method("RuntimeBuff", D_METHOD("to_buff", "p_buff"), &RuntimeBuff::to_buff);
-	ClassDB::bind_method(D_METHOD("can_dispose"), &RuntimeBuff::can_dispose);
 	ClassDB::bind_method(D_METHOD("get_attribute_name"), &RuntimeBuff::get_attribute_name);
 	ClassDB::bind_method(D_METHOD("get_buff_name"), &RuntimeBuff::get_buff_name);
 	ClassDB::bind_method(D_METHOD("get_buff_type"), &RuntimeBuff::get_buff_type);
@@ -728,6 +727,11 @@ void RuntimeBuff::_bind_methods()
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "duration"), "set_duration", "get_duration");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "AttributeOperation"), "set_operation", "get_operation");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "time_left"), "set_time_left", "get_time_left");
+}
+
+bool RuntimeBuff::equals_to(const Ref<AttributeBuff> &p_buff) const
+{
+	return p_buff->get_attribute_name() == attribute_name && p_buff->get_buff_name() == buff_name && p_buff->get_buff_type() == buff_type && p_buff->get_duration() == duration && p_buff->get_operation() == operation;
 }
 
 Ref<RuntimeBuff> RuntimeBuff::from_buff(const Ref<AttributeBuff> &p_buff)
@@ -755,7 +759,7 @@ Ref<AttributeBuff> RuntimeBuff::to_buff(const Ref<RuntimeBuff> &p_buff)
 
 bool RuntimeBuff::operator==(const Ref<AttributeBuff> &p_attribute_buff) const
 {
-	return p_attribute_buff->get_attribute_name() == attribute_name && p_attribute_buff->get_buff_name() == buff_name && p_attribute_buff->get_buff_type() == buff_type && p_attribute_buff->get_duration() == duration && p_attribute_buff->get_operation() == operation;
+	return equals_to(p_attribute_buff);
 }
 
 bool RuntimeBuff::operator==(const Ref<RuntimeBuff> &p_runtime_buff) const
@@ -763,7 +767,7 @@ bool RuntimeBuff::operator==(const Ref<RuntimeBuff> &p_runtime_buff) const
 	return p_runtime_buff->get_attribute_name() == attribute_name && p_runtime_buff->get_buff_name() == buff_name && p_runtime_buff->get_buff_type() == buff_type && p_runtime_buff->get_duration() == duration && p_runtime_buff->get_operation() == operation;
 }
 
-bool RuntimeBuff::can_dispose() const
+bool RuntimeBuff::can_dequeue() const
 {
 	return time_left <= 0.01f && duration >= 0.01f;
 }
@@ -860,7 +864,7 @@ void RuntimeAttribute::_bind_methods()
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "buffs"), "set_buffs", "get_buffs");
 
 	/// adds signals to godot
-	ADD_SIGNAL(MethodInfo("attribute_changed", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeAttribute"), PropertyInfo(Variant::FLOAT, "prev_value"), PropertyInfo(Variant::FLOAT, "value")));
+	ADD_SIGNAL(MethodInfo("attribute_changed", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeAttribute"), PropertyInfo(Variant::FLOAT, "previous_value"), PropertyInfo(Variant::FLOAT, "new_value")));
 	ADD_SIGNAL(MethodInfo("buff_added", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeBuff")));
 	ADD_SIGNAL(MethodInfo("buff_removed", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeBuff")));
 	ADD_SIGNAL(MethodInfo("buffs_cleared"));
@@ -911,7 +915,6 @@ bool RuntimeAttribute::add_buff(const Ref<AttributeBuff> &p_buff)
 			emit_signal("attribute_changed", this, prev_value, value);
 		} else {
 			Ref<RuntimeBuff> runtime_buff = RuntimeBuff::from_buff(p_buff);
-
 			buffs.push_back(runtime_buff);
 			emit_signal("buff_added", runtime_buff);
 		}
@@ -952,7 +955,9 @@ void RuntimeAttribute::clear_buffs()
 bool RuntimeAttribute::has_buff(const Ref<AttributeBuff> &p_buff) const
 {
 	for (int i = 0; i < buffs.size(); i++) {
-		if (buffs[i] == p_buff) {
+		Ref<RuntimeBuff> buff = buffs[i];
+
+		if (buff->equals_to(p_buff)) {
 			return true;
 		}
 	}
@@ -965,9 +970,9 @@ bool RuntimeAttribute::remove_buff(const Ref<AttributeBuff> &p_buff)
 	for (int i = 0; i < buffs.size(); i++) {
 		Ref<RuntimeBuff> buff = buffs[i];
 
-		if (buff == p_buff) {
-			buffs.remove_at(i);
+		if (buff->equals_to(p_buff)) {
 			emit_signal("buff_removed", buff);
+			buffs.remove_at(i);
 			return true;
 		}
 	}
@@ -981,7 +986,9 @@ int RuntimeAttribute::remove_buffs(const TypedArray<AttributeBuff> &p_buffs)
 
 	for (int i = p_buffs.size() - 1; i >= 0; i--) {
 		for (int j = buffs.size() - 1; j >= 0; j--) {
-			if (buffs[j] == p_buffs[i]) {
+			Ref<RuntimeBuff> buff = buffs[j];
+
+			if (buff->equals_to(p_buffs[i])) {
 				buffs.remove_at(j);
 				count++;
 			}
@@ -1059,7 +1066,7 @@ void RuntimeAttribute::set_min_value(const float p_value)
 
 void RuntimeAttribute::set_value(const float p_value)
 {
-	value = p_value;
+	value = Math::clamp(p_value, min_value, max_value);
 }
 
 void RuntimeAttribute::set_buffs(const TypedArray<AttributeBuff> &p_value)
