@@ -187,7 +187,7 @@ void AttributeBuff::_bind_methods()
 	/// binds properties to godot
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "attribute_name"), "set_attribute_name", "get_attribute_name");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "buff_name"), "set_buff_name", "get_buff_name");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "buff_type", PROPERTY_HINT_ENUM, "Stackable,One Shot"), "set_buff_type", "get_buff_type");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "buff_type", PROPERTY_HINT_ENUM, "Stackable,One Shot,Unique Stackable"), "set_buff_type", "get_buff_type");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "duration"), "set_duration", "get_duration");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "AttributeOperation"), "set_operation", "get_operation");
 
@@ -270,7 +270,7 @@ void AttributeBuff::set_buff_name(const String &p_value)
 
 void AttributeBuff::set_buff_type(const int p_value)
 {
-	ERR_FAIL_COND_MSG(p_value < 0 || p_value > 1, "Invalid buff type value");
+	ERR_FAIL_COND_MSG(p_value < 0 || p_value > 2, "Invalid buff type value");
 
 	switch (p_value) {
 		case 0:
