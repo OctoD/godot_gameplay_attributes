@@ -5,4 +5,5 @@
 [resource]
 attribute_name = "attribute_000"
 buff_name = "remove_1_percent"
+duration = 1.83679e-40
 operation = ExtResource("1_rmw04")

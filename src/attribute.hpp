@@ -72,9 +72,6 @@ namespace gga
 	public:
 		bool operator==(const Ref<AttributeOperation> &buff) const;
 
-		AttributeOperation();
-		~AttributeOperation();
-
 		/// @brief Returns a new instance of AttributeOperation with the add operation.
 		/// @param p_value The value to add.
 		/// @return The new instance of AttributeOperation.
@@ -137,15 +134,6 @@ namespace gga
 		// equal operator overload
 		bool operator==(const Ref<AttributeBuff> &buff) const;
 
-		AttributeBuff();
-		AttributeBuff(
-				const String &p_attribute_name,
-				const String &p_buff_name,
-				const float p_duration,
-				const Ref<AttributeOperation> &p_operation,
-				const bool p_unique);
-		~AttributeBuff();
-
 		/// @brief Returns the result of the operation on the base value.
 		/// @param base_value The base value to operate on. It's the attribute underlying value.
 		/// @return The result of the operation.
@@ -189,6 +177,8 @@ namespace gga
 	class Attribute : public Resource
 	{
 		GDCLASS(Attribute, Resource);
+
+		friend class RuntimeAttribute;
 
 	protected:
 		/// @brief Bind methods to Godot.
@@ -400,44 +390,72 @@ namespace gga
 
 	protected:
 		static void _bind_methods();
-		/// @brief The attribute name.
-		String attribute_name;
-		/// @brief The initial value.
-		float initial_value;
-		/// @brief The maximum value.
-		float max_value;
-		/// @brief The minimum value.
-		float min_value;
+		/// @brief The attribute reference.
+		Ref<Attribute> attribute;
 		/// @brief The attribute value.
 		float value;
 		/// @brief The attribute buffs.
 		TypedArray<RuntimeBuff> buffs;
 
 	public:
+		/// @brief Create a runtime attribute from an attribute.
+		/// @param p_attribute The attribute to create the runtime attribute from.
+		/// @return The new instance of RuntimeAttribute.
 		static Ref<RuntimeAttribute> from_attribute(const Ref<Attribute> &p_attribute);
+		/// @brief Create an attribute from a runtime attribute.
+		/// @param p_attribute The runtime attribute to create the attribute from.
+		/// @return The new instance of Attribute.
 		static Ref<Attribute> to_attribute(const Ref<RuntimeAttribute> &p_attribute);
 
+		/// @brief Add a buff to the attribute.
+		/// @param p_buff The buff to add.
+		/// @return True if the buff was added, false otherwise.
 		bool add_buff(const Ref<AttributeBuff> &p_buff);
+		/// @brief Add buffs to the attribute.
+		/// @param p_buffs The buffs to add.
+		/// @return The number of buffs added.
 		int add_buffs(const TypedArray<AttributeBuff> &p_buffs);
+		/// @brief Check if the attribute can receive a buff.
+		/// @param p_buff The buff to check.
+		/// @return True if the attribute can receive the buff, false otherwise.
 		bool can_receive_buff(const Ref<AttributeBuff> &p_buff) const;
+		/// @brief Clear the buffs from the attribute.
 		void clear_buffs();
+		/// @brief Check if the attribute has a buff.
+		/// @param p_buff The buff to check.
+		/// @return True if the attribute has the buff, false otherwise.
 		bool has_buff(const Ref<AttributeBuff> &p_buff) const;
+		/// @brief Remove a buff from the attribute.
+		/// @param p_buff The buff to remove.
+		/// @return True if the buff was removed, false otherwise.
 		bool remove_buff(const Ref<AttributeBuff> &p_buff);
+		/// @brief Remove buffs from the attribute.
+		/// @param p_buffs The buffs to remove.
+		/// @return The number of buffs removed.
 		int remove_buffs(const TypedArray<AttributeBuff> &p_buffs);
-
-		String get_attribute_name() const;
+		/// @brief Get the attribute.
+		/// @return The attribute.
+		Ref<Attribute> get_attribute() const;
+		/// @brief Get the buffed value of the attribute.
+		/// @return The buffed value.
 		float get_buffed_value() const;
-		float get_initial_value() const;
-		float get_max_value() const;
-		float get_min_value() const;
+		/// @brief Gets the value of the attribute.
+		/// @return The value of the attribute.
 		float get_value() const;
+		/// @brief Get the buffs affecting the attribute.
 		TypedArray<RuntimeBuff> get_buffs() const;
-		void set_attribute_name(const String &p_value);
-		void set_initial_value(const float p_value);
-		void set_max_value(const float p_value);
-		void set_min_value(const float p_value);
-		void set_value(const float p_value);
+		/// @brief Set the attribute.
+		/// @param p_value The attribute.
+		void set_attribute(const Ref<Attribute> &p_value);
+		/// @brief Sets the buffs affecting the attribute.
+		/// @param p_value The buffs affecting the attribute.
 		void set_buffs(const TypedArray<AttributeBuff> &p_value);
+		/// @brief Sets the initial value of the attribute.
+		/// @param p_value The initial value of the attribute.
+		void set_initial_value(const float p_value);
+		/// @brief Sets the value of the attribute.
+		/// @param p_value The value of the attribute.
+		void set_value(const float p_value);
 	};
 } //namespace gga
 

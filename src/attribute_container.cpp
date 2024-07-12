@@ -104,6 +104,13 @@ bool AttributeContainer::has_attribute(Ref<Attribute> p_attribute)
 	return false;
 }
 
+void AttributeContainer::_physics_process(double p_delta)
+{
+	if (buff_pool_queue) {
+		buff_pool_queue->handle_physics_process(p_delta);
+	}
+}
+
 void AttributeContainer::_ready()
 {
 	/// initializes the BuffPoolQueue
@@ -138,7 +145,7 @@ void AttributeContainer::apply_buff(Ref<AttributeBuff> p_buff)
 		Ref<RuntimeAttribute> attribute = attributes[i];
 
 		if (attribute->add_buff(p_buff)) {
-			if (p_buff->get_duration() >= 0.01f) {
+			if (!Math::is_zero_approx(p_buff->get_duration())) {
 				buff_pool_queue->enqueue(RuntimeBuff::from_buff(p_buff));
 			}
 		}
@@ -214,7 +221,7 @@ Ref<RuntimeAttribute> AttributeContainer::get_attribute_by_name(const String &p_
 	for (int i = 0; i < attributes.size(); i++) {
 		Ref<RuntimeAttribute> attribute = attributes[i];
 
-		if (attribute->get_attribute_name() == p_name) {
+		if (attribute->get_attribute()->get_attribute_name() == p_name) {
 			return attribute;
 		}
 	}

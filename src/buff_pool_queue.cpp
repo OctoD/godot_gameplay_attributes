@@ -34,10 +34,6 @@ using namespace gga;
 
 void BuffPoolQueue::_bind_methods()
 {
-	/// binds methods to godot
-	ClassDB::bind_method(D_METHOD("start"), &BuffPoolQueue::start);
-	ClassDB::bind_method(D_METHOD("stop"), &BuffPoolQueue::stop);
-
 	/// adds signals
 	ADD_SIGNAL(MethodInfo("attribute_buff_dequeued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeBuff")));
 	ADD_SIGNAL(MethodInfo("attribute_buff_enqueued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeBuff")));
@@ -48,16 +44,12 @@ void BuffPoolQueue::_exit_tree()
 	clear();
 }
 
-void BuffPoolQueue::_physics_process(double p_delta)
+void BuffPoolQueue::handle_physics_process(double p_delta)
 {
-	if (!started) {
-		return;
-	}
-
 	tick += p_delta;
 
-	if (tick >= 1.0) {
-		float discarded = tick - 1.0f;
+	if (Math::is_equal_approx(tick, 1.0)) {
+		double discarded = tick - 1.0;
 		tick = discarded;
 		process_items(discarded);
 	}
@@ -89,7 +81,7 @@ void BuffPoolQueue::process_items(const double discarded)
 		return;
 	}
 
-	float discarded_float = abs(discarded) + 1.0f;
+	float discarded_float = discarded + 1.0f;
 
 	for (int i = queue.size() - 1; i >= 0; i--) {
 		Ref<RuntimeBuff> buff = queue[i];
@@ -105,14 +97,4 @@ void BuffPoolQueue::process_items(const double discarded)
 void BuffPoolQueue::set_server_authoritative(const bool p_server_authoritative)
 {
 	server_authoritative = p_server_authoritative;
-}
-
-void BuffPoolQueue::start()
-{
-	started = true;
-}
-
-void BuffPoolQueue::stop()
-{
-	started = false;
 }

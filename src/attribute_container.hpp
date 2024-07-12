@@ -80,6 +80,9 @@ namespace gga
 		bool has_attribute(Ref<Attribute> p_attribute);
 
 	public:
+		/// @brief Override of the _physics_process method.
+		/// @param p_delta The delta time.
+		void _physics_process(double p_delta) override;
 		/// @brief Override of the _ready method.
 		void _ready() override;
 		/// @brief Adds an attribute to the container.

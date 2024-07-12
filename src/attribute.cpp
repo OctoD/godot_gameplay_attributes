@@ -74,16 +74,6 @@ bool AttributeOperation::operator==(const Ref<AttributeOperation> &buff) const
 	return operand == buff->operand && value == buff->value;
 }
 
-AttributeOperation::AttributeOperation()
-{
-	operand = OP_ADD;
-	value = 0.0f;
-}
-
-AttributeOperation::~AttributeOperation()
-{
-}
-
 Ref<AttributeOperation> AttributeOperation::add(const float p_value)
 {
 	return create(OP_ADD, p_value);
@@ -139,8 +129,6 @@ float AttributeOperation::operate(float p_base_value) const
 
 void AttributeOperation::set_operand(const int p_value)
 {
-	ERR_FAIL_COND_MSG(p_value < 0 || p_value > 4, "Invalid operand value");
-
 	switch (p_value) {
 		case 0:
 			operand = OP_ADD;
@@ -156,6 +144,9 @@ void AttributeOperation::set_operand(const int p_value)
 			break;
 		case 4:
 			operand = OP_SUBTRACT;
+			break;
+		default:
+			operand = OP_ADD;
 			break;
 	}
 }
@@ -195,32 +186,6 @@ void AttributeBuff::_bind_methods()
 bool AttributeBuff::operator==(const Ref<AttributeBuff> &buff) const
 {
 	return buff->attribute_name == attribute_name && buff->buff_name == buff_name && buff->duration == duration && buff->operation == operation;
-}
-
-AttributeBuff::AttributeBuff()
-{
-	attribute_name = "";
-	buff_name = "";
-	duration = 0.0f;
-	operation = AttributeOperation::add(0);
-}
-
-AttributeBuff::AttributeBuff(
-		const String &p_attribute_name,
-		const String &p_buff_name,
-		const float p_duration,
-		const Ref<AttributeOperation> &p_operation,
-		const bool p_unique)
-{
-	attribute_name = p_attribute_name;
-	buff_name = p_buff_name;
-	duration = p_duration;
-	operation = p_operation;
-	unique = p_unique;
-}
-
-AttributeBuff::~AttributeBuff()
-{
 }
 
 float AttributeBuff::operate(float base_value) const
@@ -737,7 +702,7 @@ bool RuntimeBuff::operator==(const Ref<RuntimeBuff> &p_runtime_buff) const
 
 bool RuntimeBuff::can_dequeue() const
 {
-	return time_left <= 0.01f;
+	return Math::is_zero_approx(time_left);
 }
 
 String RuntimeBuff::get_attribute_name() const
@@ -787,22 +752,19 @@ void RuntimeAttribute::_bind_methods()
 	ClassDB::bind_method(D_METHOD("add_buff", "p_buff"), &RuntimeAttribute::add_buff);
 	ClassDB::bind_method(D_METHOD("add_buffs", "p_buffs"), &RuntimeAttribute::add_buffs);
 	ClassDB::bind_method(D_METHOD("can_receive_buff", "p_buff"), &RuntimeAttribute::can_receive_buff);
-	ClassDB::bind_method(D_METHOD("get_attribute_name"), &RuntimeAttribute::get_attribute_name);
-	ClassDB::bind_method(D_METHOD("get_buffs"), &RuntimeAttribute::get_buffs);
+	ClassDB::bind_method(D_METHOD("clear_buffs"), &RuntimeAttribute::clear_buffs);
+	ClassDB::bind_method(D_METHOD("get_attribute"), &RuntimeAttribute::get_attribute);
 	ClassDB::bind_method(D_METHOD("get_buffed_value"), &RuntimeAttribute::get_buffed_value);
-	ClassDB::bind_method(D_METHOD("get_max_value"), &RuntimeAttribute::get_max_value);
-	ClassDB::bind_method(D_METHOD("get_min_value"), &RuntimeAttribute::get_min_value);
+	ClassDB::bind_method(D_METHOD("get_buffs"), &RuntimeAttribute::get_buffs);
 	ClassDB::bind_method(D_METHOD("get_value"), &RuntimeAttribute::get_value);
-	ClassDB::bind_method(D_METHOD("set_attribute_name", "p_value"), &RuntimeAttribute::set_attribute_name);
+	ClassDB::bind_method(D_METHOD("remove_buff", "p_buff"), &RuntimeAttribute::remove_buff);
+	ClassDB::bind_method(D_METHOD("remove_buffs", "p_buffs"), &RuntimeAttribute::remove_buffs);
+	ClassDB::bind_method(D_METHOD("set_attribute", "p_value"), &RuntimeAttribute::set_attribute);
 	ClassDB::bind_method(D_METHOD("set_buffs", "p_buffs"), &RuntimeAttribute::set_buffs);
-	ClassDB::bind_method(D_METHOD("set_max_value", "p_value"), &RuntimeAttribute::set_max_value);
-	ClassDB::bind_method(D_METHOD("set_min_value", "p_value"), &RuntimeAttribute::set_min_value);
 	ClassDB::bind_method(D_METHOD("set_value", "p_value"), &RuntimeAttribute::set_value);
 
 	/// binds properties to godot
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "attribute_name"), "set_attribute_name", "get_attribute_name");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_value"), "set_max_value", "get_max_value");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "min_value"), "set_min_value", "get_min_value");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "Attribute"), "set_attribute", "get_attribute");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "value"), "set_value", "get_value");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "buffs"), "set_buffs", "get_buffs");
 
@@ -823,30 +785,24 @@ Ref<RuntimeAttribute> RuntimeAttribute::from_attribute(const Ref<Attribute> &p_a
 	}
 
 	Ref<RuntimeAttribute> runtime_attribute = memnew(RuntimeAttribute);
-	runtime_attribute->attribute_name = p_attribute->get_attribute_name();
+	runtime_attribute->attribute = p_attribute;
 	runtime_attribute->buffs = buffs;
-	runtime_attribute->initial_value = p_attribute->get_initial_value();
-	runtime_attribute->max_value = p_attribute->get_max_value();
-	runtime_attribute->min_value = p_attribute->get_min_value();
 	runtime_attribute->value = p_attribute->get_initial_value();
 	return runtime_attribute;
 }
 
 Ref<Attribute> RuntimeAttribute::to_attribute(const Ref<RuntimeAttribute> &p_attribute)
 {
-	Ref<Attribute> attribute = memnew(Attribute);
+	Ref<Attribute> attribute_copy = p_attribute->attribute->duplicate(true);
 	TypedArray<AttributeBuff> buffs = TypedArray<AttributeBuff>();
 
 	for (int i = 0; i < p_attribute->buffs.size(); i++) {
 		buffs.push_back(RuntimeBuff::to_buff(p_attribute->buffs[i]));
 	}
-
-	attribute->set_attribute_name(p_attribute->attribute_name);
-	attribute->set_max_value(p_attribute->max_value);
-	attribute->set_min_value(p_attribute->min_value);
-	attribute->set_initial_value(p_attribute->initial_value);
-	attribute->set_buffs(buffs);
-	return attribute;
+	
+	attribute_copy->buffs = buffs;
+	
+	return attribute_copy;
 }
 
 bool RuntimeAttribute::add_buff(const Ref<AttributeBuff> &p_buff)
@@ -858,7 +814,7 @@ bool RuntimeAttribute::add_buff(const Ref<AttributeBuff> &p_buff)
 			emit_signal("buff_added", runtime_buff);
 		} else {
 			float prev_value = value;
-			value = Math::clamp(p_buff->operate(value), min_value, max_value);
+			value = Math::clamp(p_buff->operate(value), attribute->min_value, attribute->max_value);
 			emit_signal("attribute_changed", this, prev_value, value);
 		}
 
@@ -887,7 +843,7 @@ bool RuntimeAttribute::can_receive_buff(const Ref<AttributeBuff> &p_buff) const
 		return false;
 	}
 
-	return p_buff->get_attribute_name() == attribute_name;
+	return p_buff->get_attribute_name() == attribute->attribute_name;
 }
 
 void RuntimeAttribute::clear_buffs()
@@ -945,9 +901,9 @@ int RuntimeAttribute::remove_buffs(const TypedArray<AttributeBuff> &p_buffs)
 	return count;
 }
 
-String RuntimeAttribute::get_attribute_name() const
+Ref<Attribute> RuntimeAttribute::get_attribute() const
 {
-	return attribute_name;
+	return attribute;
 }
 
 float RuntimeAttribute::get_buffed_value() const
@@ -962,21 +918,6 @@ float RuntimeAttribute::get_buffed_value() const
 	return current_value;
 }
 
-float RuntimeAttribute::get_initial_value() const
-{
-	return initial_value;
-}
-
-float RuntimeAttribute::get_max_value() const
-{
-	return max_value;
-}
-
-float RuntimeAttribute::get_min_value() const
-{
-	return min_value;
-}
-
 float RuntimeAttribute::get_value() const
 {
 	return value;
@@ -987,29 +928,14 @@ TypedArray<RuntimeBuff> RuntimeAttribute::get_buffs() const
 	return buffs;
 }
 
-void RuntimeAttribute::set_attribute_name(const String &p_value)
+void RuntimeAttribute::set_attribute(const Ref<Attribute> &p_value)
 {
-	attribute_name = p_value;
-}
-
-void RuntimeAttribute::set_initial_value(const float p_value)
-{
-	initial_value = p_value;
-}
-
-void RuntimeAttribute::set_max_value(const float p_value)
-{
-	max_value = p_value;
-}
-
-void RuntimeAttribute::set_min_value(const float p_value)
-{
-	min_value = p_value;
+	attribute = p_value;
 }
 
 void RuntimeAttribute::set_value(const float p_value)
 {
-	value = Math::clamp(p_value, min_value, max_value);
+	value = Math::clamp(p_value, attribute->min_value, attribute->max_value);
 }
 
 void RuntimeAttribute::set_buffs(const TypedArray<AttributeBuff> &p_value)

@@ -5,6 +5,5 @@
 [resource]
 attribute_name = "attribute_000"
 buff_name = "add_1_percent_for_5_seconds"
-buff_type = 0
 duration = 5.0
 operation = ExtResource("1_3jg1h")
