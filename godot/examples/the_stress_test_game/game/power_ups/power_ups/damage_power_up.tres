@@ -5,13 +5,13 @@
 
 [sub_resource type="AttributeOperation" id="AttributeOperation_n6uk7"]
 operand = 0
-value = 0.0
+value = 1.0
 
 [sub_resource type="AttributeBuff" id="AttributeBuff_lbg58"]
 attribute_name = "damage"
 buff_name = "Damage power up"
-duration = 0.0
 operation = SubResource("AttributeOperation_n6uk7")
+unique = false
 
 [resource]
 script = ExtResource("1_e4nqt")

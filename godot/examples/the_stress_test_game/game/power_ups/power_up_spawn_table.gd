@@ -8,10 +8,12 @@ const POWER_UP = preload("res://examples/the_stress_test_game/game/power_ups/pow
 
 
 func spawn() -> Node2D:
+	randomize()
+
 	var random = power_ups.pick_random() as PowerUpResource
 	var number = randf_range(0, 100)
 	
-	if random and random.spawn_chance < number:
+	if random and random.spawn_chance > (100 - number):
 		var item_2d = POWER_UP.instantiate()
 		
 		item_2d.power_up_resource = random
