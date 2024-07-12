@@ -8,7 +8,6 @@
 [sub_resource type="AttributeBuff" id="AttributeBuff_2qs2y"]
 attribute_name = "health"
 buff_name = "Health powerup"
-buff_type = 0
 operation = SubResource("AttributeOperation_b2wqo")
 
 [resource]

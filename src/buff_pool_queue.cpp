@@ -57,8 +57,9 @@ void BuffPoolQueue::_physics_process(double p_delta)
 	tick += p_delta;
 
 	if (tick >= 1.0) {
-		tick = tick - 1.0f;
-		process_items();
+		float discarded = tick - 1.0f;
+		tick = discarded;
+		process_items(discarded);
 	}
 }
 
@@ -82,19 +83,21 @@ void BuffPoolQueue::clear()
 	queue.clear();
 }
 
-void BuffPoolQueue::process_items()
+void BuffPoolQueue::process_items(const double discarded)
 {
 	if (server_authoritative && !is_multiplayer_authority()) {
 		return;
 	}
 
+	float discarded_float = abs(discarded) + 1.0f;
+
 	for (int i = queue.size() - 1; i >= 0; i--) {
 		Ref<RuntimeBuff> buff = queue[i];
-		buff->set_time_left(buff->get_time_left() - 1.0);
+		buff->set_time_left(buff->get_time_left() - discarded_float);
 
 		if (buff->can_dequeue()) {
-			emit_signal("attribute_buff_dequeued", buff);
 			queue.remove_at(i);
+			emit_signal("attribute_buff_dequeued", buff);
 		}
 	}
 }

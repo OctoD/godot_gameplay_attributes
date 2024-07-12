@@ -70,7 +70,7 @@ namespace gga
 		/// @brief Cleans up the queue and emit signals.
 		void cleanup();
 		/// @brief Processes the items in the queue.
-		void process_items();
+		void process_items(const double p_discarded);
 		/// @brief Sets the server authoritative flag.
 		/// @param p_server_authoritative The server authoritative flag.
 		void set_server_authoritative(const bool p_server_authoritative);

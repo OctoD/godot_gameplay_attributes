@@ -36,16 +36,6 @@ using namespace godot;
 
 namespace gga
 {
-	enum BuffType
-	{
-		/// @brief One shot buff. Alters the attribute directly.
-		BT_ONESHOT = 0,
-		/// @brief Stackable buff.
-		BT_STACKABLE = 1,
-		/// @brief Stackable unique buff.
-		BT_STACKABLE_UNIQUE = 2,
-	};
-
 	enum OperationType
 	{
 		/// @brief Add operation.
@@ -126,6 +116,8 @@ namespace gga
 	{
 		GDCLASS(AttributeBuff, Resource);
 
+		friend class RuntimeBuff;
+
 	protected:
 		/// @brief Bind methods to Godot.
 		static void _bind_methods();
@@ -134,12 +126,12 @@ namespace gga
 		String attribute_name;
 		/// @brief The buff name.
 		String buff_name;
-		/// @brief The buff type.
-		int buff_type;
 		/// @brief The buff duration.
 		float duration;
 		/// @brief The operation to apply.
 		Ref<AttributeOperation> operation;
+		/// @brief If the buff is unique and only one can be applied.
+		bool unique;
 
 	public:
 		// equal operator overload
@@ -149,9 +141,9 @@ namespace gga
 		AttributeBuff(
 				const String &p_attribute_name,
 				const String &p_buff_name,
-				const int p_buff_type,
 				const float p_duration,
-				const Ref<AttributeOperation> &p_operation);
+				const Ref<AttributeOperation> &p_operation,
+				const bool p_unique);
 		~AttributeBuff();
 
 		/// @brief Returns the result of the operation on the base value.
@@ -164,30 +156,33 @@ namespace gga
 		/// @brief Returns the buff name.
 		/// @return The buff name.
 		String get_buff_name() const;
-		/// @brief Returns the buff type.
-		/// @return The buff type.
-		int get_buff_type() const;
 		/// @brief Returns the buff duration.
 		/// @return The buff duration.
 		float get_duration() const;
+		/// @brief Returns if the buff is unique.
+		/// @return True if the buff is unique, false otherwise.
+		bool get_unique() const;
 		/// @brief Returns the operation to apply as a Ref.
 		/// @return The operation to apply.
 		Ref<AttributeOperation> get_operation() const;
+		/// @brief Returns if the buff is time limited.
+		/// @return True if the buff is time limited, false otherwise.
+		bool is_time_limited() const;
 		/// @brief Sets the affected attribute name.
 		/// @param p_value The affected attribute name.
 		void set_attribute_name(const String &p_value);
 		/// @brief Sets the buff name.
 		/// @param p_value The buff name.
 		void set_buff_name(const String &p_value);
-		/// @brief Sets the buff type.
-		/// @param p_value The buff type.
-		void set_buff_type(const int p_value);
 		/// @brief Sets the buff duration.
 		/// @param p_value The buff duration.
 		void set_duration(const float p_value);
 		/// @brief Sets the operation to apply.
 		/// @param p_value The operation to apply.
 		void set_operation(const Ref<AttributeOperation> &p_value);
+		/// @brief Sets if the buff is unique.
+		/// @param p_value True if the buff is unique, false otherwise.
+		void set_unique(const bool p_value);
 	};
 
 	/// @brief Attribute.
@@ -375,18 +370,12 @@ namespace gga
 
 	protected:
 		static void _bind_methods();
-		/// @brief The attribute name.
-		String attribute_name;
-		/// @brief The buff name.
-		String buff_name;
-		/// @brief The duration of the buff.
-		float duration;
-		/// @brief The buff type.
-		int buff_type;
-		/// @brief The attribute operation.
-		Ref<AttributeOperation> operation;
+		/// @brief The attribute buff reference.
+		Ref<AttributeBuff> buff;
 		/// @brief The time the buff was added.
 		float time_left;
+		/// @brief If the buff is unique.
+		bool unique;
 
 	public:
 		static Ref<RuntimeBuff> from_buff(const Ref<AttributeBuff> &p_buff);
@@ -398,15 +387,10 @@ namespace gga
 		bool equals_to(const Ref<AttributeBuff> &p_buff) const;
 		String get_attribute_name() const;
 		String get_buff_name() const;
+		Ref<AttributeBuff> get_buff() const;
 		float get_duration() const;
-		int get_buff_type() const;
-		Ref<AttributeOperation> get_operation() const;
 		float get_time_left() const;
-		void set_attribute_name(const String &p_value);
-		void set_buff_name(const String &p_value);
-		void set_duration(const float p_value);
-		void set_buff_type(const int p_value);
-		void set_operation(const Ref<AttributeOperation> &p_value);
+		void set_buff(const Ref<AttributeBuff> &p_value);
 		void set_time_left(const float p_value);
 	};
 
@@ -457,7 +441,6 @@ namespace gga
 	};
 } //namespace gga
 
-VARIANT_ENUM_CAST(gga::BuffType);
 VARIANT_ENUM_CAST(gga::OperationType);
 
 #endif

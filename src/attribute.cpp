@@ -174,38 +174,33 @@ void AttributeBuff::_bind_methods()
 	/// binds methods to godot
 	ClassDB::bind_method(D_METHOD("get_attribute_name"), &AttributeBuff::get_attribute_name);
 	ClassDB::bind_method(D_METHOD("get_buff_name"), &AttributeBuff::get_buff_name);
-	ClassDB::bind_method(D_METHOD("get_buff_type"), &AttributeBuff::get_buff_type);
 	ClassDB::bind_method(D_METHOD("get_duration"), &AttributeBuff::get_duration);
 	ClassDB::bind_method(D_METHOD("get_operation"), &AttributeBuff::get_operation);
+	ClassDB::bind_method(D_METHOD("get_unique"), &AttributeBuff::get_unique);
+	ClassDB::bind_method(D_METHOD("operate", "base_value"), &AttributeBuff::operate);
 	ClassDB::bind_method(D_METHOD("set_attribute_name", "p_value"), &AttributeBuff::set_attribute_name);
 	ClassDB::bind_method(D_METHOD("set_buff_name", "p_value"), &AttributeBuff::set_buff_name);
-	ClassDB::bind_method(D_METHOD("set_buff_type", "p_value"), &AttributeBuff::set_buff_type);
 	ClassDB::bind_method(D_METHOD("set_duration", "p_value"), &AttributeBuff::set_duration);
 	ClassDB::bind_method(D_METHOD("set_operation", "p_value"), &AttributeBuff::set_operation);
-	ClassDB::bind_method(D_METHOD("operate", "base_value"), &AttributeBuff::operate);
+	ClassDB::bind_method(D_METHOD("set_unique", "p_value"), &AttributeBuff::set_unique);
 
 	/// binds properties to godot
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "attribute_name"), "set_attribute_name", "get_attribute_name");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "buff_name"), "set_buff_name", "get_buff_name");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "buff_type", PROPERTY_HINT_ENUM, "Stackable,One Shot,Unique Stackable"), "set_buff_type", "get_buff_type");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "duration"), "set_duration", "get_duration");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "AttributeOperation"), "set_operation", "get_operation");
-
-	/// binds enum as consts
-	BIND_ENUM_CONSTANT(BT_STACKABLE);
-	BIND_ENUM_CONSTANT(BT_ONESHOT);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "unique"), "set_unique", "get_unique");
 }
 
 bool AttributeBuff::operator==(const Ref<AttributeBuff> &buff) const
 {
-	return buff->attribute_name == attribute_name && buff->buff_name == buff_name && buff->buff_type == buff_type && buff->duration == duration && buff->operation == operation;
+	return buff->attribute_name == attribute_name && buff->buff_name == buff_name && buff->duration == duration && buff->operation == operation;
 }
 
 AttributeBuff::AttributeBuff()
 {
 	attribute_name = "";
 	buff_name = "";
-	buff_type = BT_STACKABLE;
 	duration = 0.0f;
 	operation = AttributeOperation::add(0);
 }
@@ -213,15 +208,15 @@ AttributeBuff::AttributeBuff()
 AttributeBuff::AttributeBuff(
 		const String &p_attribute_name,
 		const String &p_buff_name,
-		const int p_buff_type,
 		const float p_duration,
-		const Ref<AttributeOperation> &p_operation) :
-		attribute_name(p_attribute_name),
-		buff_name(p_buff_name),
-		buff_type(p_buff_type),
-		duration(p_duration),
-		operation(p_operation)
+		const Ref<AttributeOperation> &p_operation,
+		const bool p_unique)
 {
+	attribute_name = p_attribute_name;
+	buff_name = p_buff_name;
+	duration = p_duration;
+	operation = p_operation;
+	unique = p_unique;
 }
 
 AttributeBuff::~AttributeBuff()
@@ -243,19 +238,24 @@ String AttributeBuff::get_buff_name() const
 	return buff_name;
 }
 
-int AttributeBuff::get_buff_type() const
-{
-	return (int)buff_type;
-}
-
 float AttributeBuff::get_duration() const
 {
 	return duration;
 }
 
+bool AttributeBuff::get_unique() const
+{
+	return unique;
+}
+
 Ref<AttributeOperation> AttributeBuff::get_operation() const
 {
 	return operation;
+}
+
+bool AttributeBuff::is_time_limited() const
+{
+	return abs(1.0f - duration) > 0.0001f;
 }
 
 void AttributeBuff::set_attribute_name(const String &p_value)
@@ -268,23 +268,6 @@ void AttributeBuff::set_buff_name(const String &p_value)
 	buff_name = p_value;
 }
 
-void AttributeBuff::set_buff_type(const int p_value)
-{
-	ERR_FAIL_COND_MSG(p_value < 0 || p_value > 2, "Invalid buff type value");
-
-	switch (p_value) {
-		case 0:
-			buff_type = BT_ONESHOT;
-			break;
-		case 1:
-			buff_type = BT_STACKABLE;
-			break;
-		case 2:
-			buff_type = BT_STACKABLE_UNIQUE;
-			break;
-	}
-}
-
 void AttributeBuff::set_duration(const float p_value)
 {
 	duration = p_value;
@@ -293,6 +276,11 @@ void AttributeBuff::set_duration(const float p_value)
 void AttributeBuff::set_operation(const Ref<AttributeOperation> &p_value)
 {
 	operation = p_value;
+}
+
+void AttributeBuff::set_unique(const bool p_value)
+{
+	unique = p_value;
 }
 
 #pragma endregion
@@ -709,52 +697,32 @@ void RuntimeBuff::_bind_methods()
 	ClassDB::bind_static_method("RuntimeBuff", D_METHOD("to_buff", "p_buff"), &RuntimeBuff::to_buff);
 	ClassDB::bind_method(D_METHOD("get_attribute_name"), &RuntimeBuff::get_attribute_name);
 	ClassDB::bind_method(D_METHOD("get_buff_name"), &RuntimeBuff::get_buff_name);
-	ClassDB::bind_method(D_METHOD("get_buff_type"), &RuntimeBuff::get_buff_type);
 	ClassDB::bind_method(D_METHOD("get_duration"), &RuntimeBuff::get_duration);
-	ClassDB::bind_method(D_METHOD("get_operation"), &RuntimeBuff::get_operation);
 	ClassDB::bind_method(D_METHOD("get_time_left"), &RuntimeBuff::get_time_left);
-	ClassDB::bind_method(D_METHOD("set_attribute_name", "p_value"), &RuntimeBuff::set_attribute_name);
-	ClassDB::bind_method(D_METHOD("set_buff_name", "p_value"), &RuntimeBuff::set_buff_name);
-	ClassDB::bind_method(D_METHOD("set_buff_type", "p_value"), &RuntimeBuff::set_buff_type);
-	ClassDB::bind_method(D_METHOD("set_duration", "p_value"), &RuntimeBuff::set_duration);
-	ClassDB::bind_method(D_METHOD("set_operation", "p_value"), &RuntimeBuff::set_operation);
 	ClassDB::bind_method(D_METHOD("set_time_left", "p_value"), &RuntimeBuff::set_time_left);
+	ClassDB::bind_method(D_METHOD("get_buff"), &RuntimeBuff::get_buff);
+	ClassDB::bind_method(D_METHOD("set_buff", "p_value"), &RuntimeBuff::set_buff);
 
 	/// binds properties to godot
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "attribute_name"), "set_attribute_name", "get_attribute_name");
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "buff_name"), "set_buff_name", "get_buff_name");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "buff_type", PROPERTY_HINT_ENUM, "One Shot,Stackable,Stackable Unique"), "set_buff_type", "get_buff_type");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "duration"), "set_duration", "get_duration");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "AttributeOperation"), "set_operation", "get_operation");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "time_left"), "set_time_left", "get_time_left");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "AttributeBuff"), "set_buff", "get_buff");
 }
 
 bool RuntimeBuff::equals_to(const Ref<AttributeBuff> &p_buff) const
 {
-	return p_buff->get_attribute_name() == attribute_name && p_buff->get_buff_name() == buff_name && p_buff->get_buff_type() == buff_type && p_buff->get_duration() == duration && p_buff->get_operation() == operation;
+	return buff == p_buff;
 }
 
 Ref<RuntimeBuff> RuntimeBuff::from_buff(const Ref<AttributeBuff> &p_buff)
 {
 	Ref<RuntimeBuff> runtime_buff = memnew(RuntimeBuff);
-	runtime_buff->attribute_name = p_buff->get_attribute_name();
-	runtime_buff->buff_name = p_buff->get_buff_name();
-	runtime_buff->buff_type = p_buff->get_buff_type();
-	runtime_buff->duration = p_buff->get_duration();
-	runtime_buff->operation = p_buff->get_operation();
+	runtime_buff->buff = p_buff;
 	runtime_buff->time_left = p_buff->get_duration();
 	return runtime_buff;
 }
 
 Ref<AttributeBuff> RuntimeBuff::to_buff(const Ref<RuntimeBuff> &p_buff)
 {
-	Ref<AttributeBuff> buff = memnew(AttributeBuff);
-	buff->set_attribute_name(p_buff->attribute_name);
-	buff->set_buff_name(p_buff->buff_name);
-	buff->set_buff_type(p_buff->buff_type);
-	buff->set_duration(p_buff->duration);
-	buff->set_operation(p_buff->operation);
-	return buff;
+	return p_buff->buff;
 }
 
 bool RuntimeBuff::operator==(const Ref<AttributeBuff> &p_attribute_buff) const
@@ -764,37 +732,32 @@ bool RuntimeBuff::operator==(const Ref<AttributeBuff> &p_attribute_buff) const
 
 bool RuntimeBuff::operator==(const Ref<RuntimeBuff> &p_runtime_buff) const
 {
-	return p_runtime_buff->get_attribute_name() == attribute_name && p_runtime_buff->get_buff_name() == buff_name && p_runtime_buff->get_buff_type() == buff_type && p_runtime_buff->get_duration() == duration && p_runtime_buff->get_operation() == operation;
+	return buff == p_runtime_buff->buff && time_left == p_runtime_buff->time_left;
 }
 
 bool RuntimeBuff::can_dequeue() const
 {
-	return time_left <= 0.01f && duration >= 0.01f;
+	return time_left <= 0.01f;
 }
 
 String RuntimeBuff::get_attribute_name() const
 {
-	return attribute_name;
+	return buff->attribute_name;
 }
 
 String RuntimeBuff::get_buff_name() const
 {
-	return buff_name;
+	return buff->buff_name;
+}
+
+Ref<AttributeBuff> RuntimeBuff::get_buff() const
+{
+	return buff;
 }
 
 float RuntimeBuff::get_duration() const
 {
-	return duration;
-}
-
-int RuntimeBuff::get_buff_type() const
-{
-	return buff_type;
-}
-
-Ref<AttributeOperation> RuntimeBuff::get_operation() const
-{
-	return operation;
+	return buff->duration;
 }
 
 float RuntimeBuff::get_time_left() const
@@ -802,29 +765,9 @@ float RuntimeBuff::get_time_left() const
 	return time_left;
 }
 
-void RuntimeBuff::set_attribute_name(const String &p_value)
+void RuntimeBuff::set_buff(const Ref<AttributeBuff> &p_value)
 {
-	attribute_name = p_value;
-}
-
-void RuntimeBuff::set_buff_name(const String &p_value)
-{
-	buff_name = p_value;
-}
-
-void RuntimeBuff::set_duration(const float p_value)
-{
-	duration = p_value;
-}
-
-void RuntimeBuff::set_buff_type(const int p_value)
-{
-	buff_type = p_value;
-}
-
-void RuntimeBuff::set_operation(const Ref<AttributeOperation> &p_value)
-{
-	operation = p_value;
+	buff = p_value;
 }
 
 void RuntimeBuff::set_time_left(const float p_value)
@@ -909,14 +852,14 @@ Ref<Attribute> RuntimeAttribute::to_attribute(const Ref<RuntimeAttribute> &p_att
 bool RuntimeAttribute::add_buff(const Ref<AttributeBuff> &p_buff)
 {
 	if (can_receive_buff(p_buff)) {
-		if (p_buff->get_buff_type() == BT_ONESHOT) {
-			float prev_value = value;
-			value = Math::clamp(p_buff->operate(value), min_value, max_value);
-			emit_signal("attribute_changed", this, prev_value, value);
-		} else {
+		if (p_buff->is_time_limited()) {
 			Ref<RuntimeBuff> runtime_buff = RuntimeBuff::from_buff(p_buff);
 			buffs.push_back(runtime_buff);
 			emit_signal("buff_added", runtime_buff);
+		} else {
+			float prev_value = value;
+			value = Math::clamp(p_buff->operate(value), min_value, max_value);
+			emit_signal("attribute_changed", this, prev_value, value);
 		}
 
 		return true;
@@ -940,7 +883,7 @@ int RuntimeAttribute::add_buffs(const TypedArray<AttributeBuff> &p_buffs)
 
 bool RuntimeAttribute::can_receive_buff(const Ref<AttributeBuff> &p_buff) const
 {
-	if (p_buff->get_buff_type() == BT_STACKABLE_UNIQUE && has_buff(p_buff)) {
+	if (p_buff->get_unique() && has_buff(p_buff)) {
 		return false;
 	}
 
@@ -971,8 +914,8 @@ bool RuntimeAttribute::remove_buff(const Ref<AttributeBuff> &p_buff)
 		Ref<RuntimeBuff> buff = buffs[i];
 
 		if (buff->equals_to(p_buff)) {
-			emit_signal("buff_removed", buff);
 			buffs.remove_at(i);
+			emit_signal("buff_removed", buff);
 			return true;
 		}
 	}
@@ -1013,7 +956,7 @@ float RuntimeAttribute::get_buffed_value() const
 
 	for (int i = 0; i < buffs.size(); i++) {
 		Ref<RuntimeBuff> buff = buffs[i];
-		current_value = buff->get_operation()->operate(current_value);
+		current_value = buff->get_buff()->operate(current_value);
 	}
 
 	return current_value;

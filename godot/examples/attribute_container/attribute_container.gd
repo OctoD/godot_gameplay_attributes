@@ -39,7 +39,7 @@ func _on_attribute_buff_dequeued(buff: RuntimeBuff) -> void:
 
 
 func _on_attribute_buff_enqueued(buff: RuntimeBuff) -> void:
-	print("_on_attribute_buff_enqueued", buff, buff.buff_name)
+	print("_on_attribute_buff_enqueued", buff, buff.buff.buff_name)
 	draw_attribute()
 	
 	var progress = BUFF_DURATION.instantiate()
@@ -61,6 +61,15 @@ func _on_attribute_changed(attribute: RuntimeAttribute, previous_value: float, n
 
 func _ready():
 	var popup = buffs_selection.get_popup()
+	var timer = Timer.new()
+	
+	add_child(timer)
+	
+	timer.timeout.connect(func ():
+		print(attribute_container.get_attribute_by_name(ATTRIBUTE_NAME).get_buffed_value())
+	)
+	timer.wait_time = 2.0
+	timer.start()
 
 	popup.id_pressed.connect(func (id: int) -> void:
 		attribute_container.apply_buff(BUFFS[id])
@@ -114,3 +123,4 @@ func draw_attribute() -> void:
 		attribute_value_display.max_value = attribute.max_value
 		attribute_value_display.min_value = attribute.min_value
 		attribute_value_display.value = attribute.get_buffed_value()
+		print("buffed value is " + str(attribute.get_buffed_value()))
