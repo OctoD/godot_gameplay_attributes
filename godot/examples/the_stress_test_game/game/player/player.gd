@@ -10,24 +10,25 @@ signal projectile_fired(starting_position: Vector2, target_position: Vector2)
 @onready var camera_2d: Camera2D = $Camera2D
 
 
-var health: Attribute
-var fire_rate: Attribute
+var health: RuntimeAttribute
+var fire_rate: RuntimeAttribute
 var is_dead: bool = false
-var movement_speed: Attribute
-var pickup_radius: Attribute
+var movement_speed: RuntimeAttribute
+var pickup_radius: RuntimeAttribute
 var target: Node2D
 var tick: float
 
 
 func _ready() -> void:
-	health = attribute_container.attribute_set.find_by_name("health")
-	movement_speed = attribute_container.attribute_set.find_by_name("movement_speed")
-	fire_rate = attribute_container.attribute_set.find_by_name("fire_rate")
-	pickup_radius = attribute_container.attribute_set.find_by_name("pickup_radius")
+	health = attribute_container.get_attribute_by_name("health")
+	movement_speed = attribute_container.get_attribute_by_name("movement_speed")
+	fire_rate = attribute_container.get_attribute_by_name("fire_rate")
+	pickup_radius = attribute_container.get_attribute_by_name("pickup_radius")
 
-	progress_bar.max_value = health.max_value
-	progress_bar.min_value = health.min_value
-	progress_bar.value = health.current_value()
+	if health:
+		progress_bar.max_value = health.attribute.max_value
+		progress_bar.min_value = health.attribute.min_value
+		progress_bar.value = health.get_buffed_value()
 	
 	attribute_container.attribute_changed.connect(func (attribute, _old, new_value):
 		if attribute is HealthAttribute:
@@ -51,8 +52,8 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	tick += delta
 
-	if tick > fire_rate.current_value():
-		tick = tick - fire_rate.current_value()
+	if tick > fire_rate.get_buffed_value():
+		tick = tick - fire_rate.get_buffed_value()
 		fire_projectile()
 
 
@@ -61,7 +62,7 @@ func _physics_process(delta: float) -> void:
 		progress_bar.modulate.a = lerp(progress_bar.modulate.a, 0.0, 1.0 * delta)
 		return
 	
-	var current_speed = movement_speed.current_value()
+	var current_speed = movement_speed.get_buffed_value()
 	var move_vector = Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
 
 	velocity =  (move_vector * current_speed)
@@ -82,4 +83,4 @@ func fire_projectile() -> void:
 			next = child
 	
 	if next:
-		projectile_fired.emit(global_position, next.global_position, attribute_container.attribute_set.find_by_name("damage").current_value())
+		projectile_fired.emit(global_position, next.global_position, attribute_container.get_attribute_by_name("damage").get_buffed_value())

@@ -9,7 +9,7 @@
 
 [sub_resource type="Attribute" id="Attribute_o56mt"]
 attribute_name = "damage"
-initial_value = 3.0
+initial_value = 4.0
 max_value = 300.0
 min_value = 1.0
 script = ExtResource("1_env54")
@@ -39,16 +39,17 @@ script = ExtResource("4_7xcs8")
 attribute_name = "stamina"
 initial_value = 10.0
 max_value = 10.0
-min_value = 0.0
+min_value = 2.83121e-33
 script = ExtResource("5_pm2dq")
 
 [sub_resource type="Attribute" id="Attribute_x86gy"]
 attribute_name = "fire_rate"
-initial_value = 3.0
+initial_value = 1.0
 max_value = 10.0
 min_value = 1.1162e-11
 
 [sub_resource type="Attribute" id="Attribute_ad25v"]
+attribute_name = "pickup_radius"
 initial_value = 30.0
 max_value = 150.0
 min_value = -9.29549e-07

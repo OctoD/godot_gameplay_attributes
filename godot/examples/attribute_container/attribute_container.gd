@@ -28,18 +28,18 @@ const BUFFS = [
 @onready var buffs_selection_container: VBoxContainer = %BuffsSelectionContainer
 
 
-func _on_attribute_buff_added(buff: AttributeBuff) -> void:
+func _on_attribute_buff_added(buff: RuntimeBuff) -> void:
 	print("_on_attribute_buff_added", buff)
 	draw_attribute()
 
 
-func _on_attribute_buff_dequeued(buff: AttributeBuff) -> void:
+func _on_attribute_buff_dequeued(buff: RuntimeBuff) -> void:
 	print("_on_attribute_buff_dequeued", buff)
 	draw_attribute()
 
 
-func _on_attribute_buff_enqueued(buff: AttributeBuff) -> void:
-	print("_on_attribute_buff_enqueued", buff, buff.buff_name)
+func _on_attribute_buff_enqueued(buff: RuntimeBuff) -> void:
+	print("_on_attribute_buff_enqueued", buff, buff.buff.buff_name)
 	draw_attribute()
 	
 	var progress = BUFF_DURATION.instantiate()
@@ -47,25 +47,34 @@ func _on_attribute_buff_enqueued(buff: AttributeBuff) -> void:
 	progress.set_buff(buff)
 
 
-func _on_attribute_buff_removed(buff: AttributeBuff) -> void:
+func _on_attribute_buff_removed(buff: RuntimeBuff) -> void:
 	print("attribute_buff_removed", buff)
 	draw_attribute()
 
 
-func _on_attribute_changed(attribute: Attribute, previous_value: float, new_value: float) -> void:
+func _on_attribute_changed(attribute: RuntimeAttribute, previous_value: float, new_value: float) -> void:
 	print("_on_attribute_changed", attribute, previous_value, new_value)
-	attribute_value_display.max_value = attribute.max_value
-	attribute_value_display.min_value = attribute.min_value
-	attribute_value_display.value = attribute.current_value()
+	attribute_value_display.max_value = attribute.attribute.max_value
+	attribute_value_display.min_value = attribute.attribute.min_value
+	attribute_value_display.value = attribute.get_buffed_value()
 
 
 func _ready():
 	var popup = buffs_selection.get_popup()
+	var timer = Timer.new()
+	
+	add_child(timer)
+	
+	timer.timeout.connect(func ():
+		print(attribute_container.get_attribute_by_name(ATTRIBUTE_NAME).get_buffed_value())
+	)
+	timer.wait_time = 2.0
+	timer.start()
 
 	popup.id_pressed.connect(func (id: int) -> void:
 		attribute_container.apply_buff(BUFFS[id])
 	)
-	
+
 	for buff in BUFFS:
 		popup.add_item(buff.buff_name)
 
@@ -83,7 +92,7 @@ func _ready():
 	)
 	
 	increase_value.pressed.connect(func ():
-		attribute_container.apply_buff(make_buff(1.0))	
+		attribute_container.apply_buff(make_buff(1.0))
 	)
 	
 	draw_attribute()
@@ -108,14 +117,10 @@ func make_buff(value: float) -> AttributeBuff:
 
 
 func draw_attribute() -> void:
-	var attribute: Attribute
-	
-	for attr in attribute_container.get_attributes():
-		if attr.attribute_name == ATTRIBUTE_NAME:
-			attribute = attr
-			break
-	
+	var attribute = attribute_container.get_attribute_by_name(ATTRIBUTE_NAME)
+
 	if attribute:
-		attribute_value_display.max_value = attribute.max_value
-		attribute_value_display.min_value = attribute.min_value
-		attribute_value_display.value = attribute.current_value()
+		attribute_value_display.max_value = attribute.attribute.max_value
+		attribute_value_display.min_value = attribute.attribute.min_value
+		attribute_value_display.value = attribute.get_buffed_value()
+		print("buffed value is " + str(attribute.get_buffed_value()))

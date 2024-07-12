@@ -30,8 +30,6 @@
 #include "attribute.hpp"
 #include "attribute_container.hpp"
 #include "buff_pool_queue.hpp"
-#include "gga_editor_inspector_plugin.hpp"
-#include "gga_editor_plugin.hpp"
 #include <godot_cpp/core/class_db.hpp>
 
 using namespace godot;
@@ -46,12 +44,9 @@ void gdextension_initialize(ModuleInitializationLevel p_level)
 		ClassDB::register_runtime_class<gga::AttributeContainer>();
 		ClassDB::register_class<gga::AttributesTable>();
 		ClassDB::register_runtime_class<gga::BuffPoolQueue>();
-		ClassDB::register_runtime_class<gga::BuffPoolQueueItem>();
+		ClassDB::register_runtime_class<gga::RuntimeBuff>();
+		ClassDB::register_runtime_class<gga::RuntimeAttribute>();
 	} else if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
-		ClassDB::register_internal_class<gga::GGAEditorInspectorPlugin>();
-		ClassDB::register_internal_class<gga::GGAEditorPlugin>();
-
-		EditorPlugins::add_by_type<gga::GGAEditorPlugin>();
 	}
 }
 
@@ -59,7 +54,6 @@ void gdextension_terminate(ModuleInitializationLevel p_level)
 {
 	/// I love lasagna
 	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
-		EditorPlugins::remove_by_type<gga::GGAEditorPlugin>();
 	}
 }
 

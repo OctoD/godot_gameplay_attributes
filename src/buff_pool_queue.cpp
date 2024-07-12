@@ -32,41 +32,11 @@
 
 using namespace gga;
 
-void BuffPoolQueueItem::_bind_methods()
-{
-}
-
-void BuffPoolQueueItem::second_passed()
-{
-	seconds_remaining -= 1;
-	eligible_for_removal = seconds_remaining <= 0.01;
-}
-
-Ref<AttributeBuff> BuffPoolQueueItem::get_buff()
-{
-	return buff;
-}
-
-bool BuffPoolQueueItem::get_eligible_for_removal()
-{
-	return eligible_for_removal;
-}
-
-void BuffPoolQueueItem::set_buff(Ref<AttributeBuff> p_buff)
-{
-	buff = p_buff;
-	seconds_remaining = buff->get_duration();
-}
-
 void BuffPoolQueue::_bind_methods()
 {
-	/// binds methods to godot
-	ClassDB::bind_method(D_METHOD("start"), &BuffPoolQueue::start);
-	ClassDB::bind_method(D_METHOD("stop"), &BuffPoolQueue::stop);
-
 	/// adds signals
-	ADD_SIGNAL(MethodInfo("attribute_buff_dequeued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "AttributeBuff")));
-	ADD_SIGNAL(MethodInfo("attribute_buff_enqueued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "AttributeBuff")));
+	ADD_SIGNAL(MethodInfo("attribute_buff_dequeued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeBuff")));
+	ADD_SIGNAL(MethodInfo("attribute_buff_enqueued", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeBuff")));
 }
 
 void BuffPoolQueue::_exit_tree()
@@ -74,35 +44,24 @@ void BuffPoolQueue::_exit_tree()
 	clear();
 }
 
-void BuffPoolQueue::_physics_process(double p_delta)
+void BuffPoolQueue::handle_physics_process(double p_delta)
 {
-	if (!started) {
-		return;
-	}
-
 	tick += p_delta;
 
-	if (tick >= 1) {
-		tick = tick - 1.0f;
-
-		if (current_queue_size > 0) {
-			process_items();
-		}
+	if (Math::is_equal_approx(tick, 1.0)) {
+		double discarded = tick - 1.0;
+		tick = discarded;
+		process_items(discarded);
 	}
 }
 
-void BuffPoolQueue::add_attribute_buff(Ref<AttributeBuff> p_buff)
+void BuffPoolQueue::enqueue(Ref<RuntimeBuff> p_buff)
 {
 	if (server_authoritative && !is_multiplayer_authority()) {
 		return;
 	}
 
-	Ref<BuffPoolQueueItem> item = memnew(BuffPoolQueueItem);
-	item->set_buff(p_buff);
-	queue.push_back(item.ptr());
-
-	current_queue_size += 1;
-
+	queue.push_back(p_buff);
 	emit_signal("attribute_buff_enqueued", p_buff);
 }
 
@@ -114,47 +73,28 @@ bool BuffPoolQueue::get_server_authoritative() const
 void BuffPoolQueue::clear()
 {
 	queue.clear();
-	current_queue_size = 0;
 }
 
-void BuffPoolQueue::cleanup()
-{
-	for (int i = queue.size() - 1; i >= 0; i--) {
-		Ref<BuffPoolQueueItem> item = queue[i];
-
-		if (item->get_eligible_for_removal()) {
-			emit_signal("attribute_buff_dequeued", item->get_buff());
-			queue.remove_at(i);
-			current_queue_size -= 1;
-		}
-	}
-}
-
-void BuffPoolQueue::process_items()
+void BuffPoolQueue::process_items(const double discarded)
 {
 	if (server_authoritative && !is_multiplayer_authority()) {
 		return;
 	}
 
-	for (int i = 0; i < queue.size(); i++) {
-		Ref<BuffPoolQueueItem> item = queue[i];
-		item->second_passed();
-	}
+	float discarded_float = discarded + 1.0f;
 
-	cleanup();
+	for (int i = queue.size() - 1; i >= 0; i--) {
+		Ref<RuntimeBuff> buff = queue[i];
+		buff->set_time_left(buff->get_time_left() - discarded_float);
+
+		if (buff->can_dequeue()) {
+			queue.remove_at(i);
+			emit_signal("attribute_buff_dequeued", buff);
+		}
+	}
 }
 
 void BuffPoolQueue::set_server_authoritative(const bool p_server_authoritative)
 {
 	server_authoritative = p_server_authoritative;
-}
-
-void BuffPoolQueue::start()
-{
-	started = true;
-}
-
-void BuffPoolQueue::stop()
-{
-	started = false;
 }

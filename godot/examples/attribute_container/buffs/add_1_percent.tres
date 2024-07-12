@@ -1,8 +1,10 @@
 [gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://dywx4cyhu0jqt"]
 
-[sub_resource type="AttributeOperation" id="AttributeOperation_d7bcb"]
+[ext_resource type="AttributeOperation" uid="uid://5id06q5x83r" path="res://examples/attribute_container/buffs/operations/+1_p.tres" id="1_vk5ue"]
 
 [resource]
 attribute_name = "attribute_000"
 buff_name = "add_1_percent"
-operation = SubResource("AttributeOperation_d7bcb")
+duration = 4.05004e+27
+operation = ExtResource("1_vk5ue")
+unique = false

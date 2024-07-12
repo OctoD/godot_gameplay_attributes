@@ -36,16 +36,6 @@ using namespace godot;
 
 namespace gga
 {
-	enum BuffType
-	{
-		/// @brief One shot buff. Alters the attribute directly.
-		BT_ONESHOT = 0,
-		/// @brief Stackable buff.
-		BT_STACKABLE = 1,
-		/// @brief Stackable unique buff.
-		BT_STACKABLE_UNIQUE = 2,
-	};
-
 	enum OperationType
 	{
 		/// @brief Add operation.
@@ -81,9 +71,6 @@ namespace gga
 
 	public:
 		bool operator==(const Ref<AttributeOperation> &buff) const;
-
-		AttributeOperation();
-		~AttributeOperation();
 
 		/// @brief Returns a new instance of AttributeOperation with the add operation.
 		/// @param p_value The value to add.
@@ -126,6 +113,8 @@ namespace gga
 	{
 		GDCLASS(AttributeBuff, Resource);
 
+		friend class RuntimeBuff;
+
 	protected:
 		/// @brief Bind methods to Godot.
 		static void _bind_methods();
@@ -134,25 +123,16 @@ namespace gga
 		String attribute_name;
 		/// @brief The buff name.
 		String buff_name;
-		/// @brief The buff type.
-		int buff_type;
 		/// @brief The buff duration.
 		float duration;
 		/// @brief The operation to apply.
 		Ref<AttributeOperation> operation;
+		/// @brief If the buff is unique and only one can be applied.
+		bool unique;
 
 	public:
 		// equal operator overload
 		bool operator==(const Ref<AttributeBuff> &buff) const;
-
-		AttributeBuff();
-		AttributeBuff(
-				const String &p_attribute_name,
-				const String &p_buff_name,
-				const int p_buff_type,
-				const float p_duration,
-				const Ref<AttributeOperation> &p_operation);
-		~AttributeBuff();
 
 		/// @brief Returns the result of the operation on the base value.
 		/// @param base_value The base value to operate on. It's the attribute underlying value.
@@ -164,36 +144,41 @@ namespace gga
 		/// @brief Returns the buff name.
 		/// @return The buff name.
 		String get_buff_name() const;
-		/// @brief Returns the buff type.
-		/// @return The buff type.
-		int get_buff_type() const;
 		/// @brief Returns the buff duration.
 		/// @return The buff duration.
 		float get_duration() const;
+		/// @brief Returns if the buff is unique.
+		/// @return True if the buff is unique, false otherwise.
+		bool get_unique() const;
 		/// @brief Returns the operation to apply as a Ref.
 		/// @return The operation to apply.
 		Ref<AttributeOperation> get_operation() const;
+		/// @brief Returns if the buff is time limited.
+		/// @return True if the buff is time limited, false otherwise.
+		bool is_time_limited() const;
 		/// @brief Sets the affected attribute name.
 		/// @param p_value The affected attribute name.
 		void set_attribute_name(const String &p_value);
 		/// @brief Sets the buff name.
 		/// @param p_value The buff name.
 		void set_buff_name(const String &p_value);
-		/// @brief Sets the buff type.
-		/// @param p_value The buff type.
-		void set_buff_type(const int p_value);
 		/// @brief Sets the buff duration.
 		/// @param p_value The buff duration.
 		void set_duration(const float p_value);
 		/// @brief Sets the operation to apply.
 		/// @param p_value The operation to apply.
 		void set_operation(const Ref<AttributeOperation> &p_value);
+		/// @brief Sets if the buff is unique.
+		/// @param p_value True if the buff is unique, false otherwise.
+		void set_unique(const bool p_value);
 	};
 
 	/// @brief Attribute.
 	class Attribute : public Resource
 	{
 		GDCLASS(Attribute, Resource);
+
+		friend class RuntimeAttribute;
 
 	protected:
 		/// @brief Bind methods to Godot.
@@ -208,8 +193,6 @@ namespace gga
 		float max_value;
 		/// @brief The minimum value of the attribute.
 		float min_value;
-		/// @brief The underlying value of the attribute.
-		float underlying_value;
 
 	public:
 		/// @brief Create an attribute from some parameters.
@@ -219,37 +202,6 @@ namespace gga
 		/// @param p_max_value The maximum value.
 		/// @return The new instance of Attribute.
 		static Ref<Attribute> create(const String &p_attribute_name, const float p_initial_value, const float p_min_value, const float p_max_value);
-
-		/// @brief Add a buff to the attribute.
-		/// @param p_buff The buff to add.
-		/// @return True if the buff was added, false otherwise.
-		bool add_buff(const Ref<AttributeBuff> &p_buff);
-		/// @brief Add buffs to the attribute.
-		/// @param p_buffs The buffs to add.
-		/// @return The number of buffs added.
-		uint16_t add_buffs(const TypedArray<AttributeBuff> &p_buffs);
-		/// @brief Check if the attribute can receive a buff.
-		/// @param p_buff The buff to check.
-		/// @return True if the attribute can receive the buff, false otherwise.
-		bool can_receive_buff(const Ref<AttributeBuff> &p_buff) const;
-		/// @brief Clear all buffs from the attribute.
-		void clear_buffs();
-		/// @brief Get the current value of the attribute including buffs modifiers.
-		/// @return The current value.
-		float current_value() const;
-		/// @brief Get the current value of the attribute as a percentage.
-		/// @return The current value as a percentage.
-		bool has_buff(const Ref<AttributeBuff> &p_buff) const;
-		/// @brief Remove a buff from the attribute.
-		/// @param p_buff The buff to remove.
-		/// @return True if the buff was removed, false otherwise.
-		bool remove_buff(const Ref<AttributeBuff> &p_buff);
-		/// @brief Remove buffs from the attribute.
-		/// @param p_buffs The buffs to remove.
-		/// @return The number of buffs removed.
-		uint16_t remove_buffs(const TypedArray<AttributeBuff> &p_buffs);
-		/// @brief Setup the attribute.
-		void setup();
 
 		// getters/setters
 		/// @brief Get the attribute name.
@@ -400,9 +352,113 @@ namespace gga
 		/// @param p_attribute_set The attribute set to remove.
 		void set_attribute_sets(const TypedArray<AttributeSet> &p_attribute_sets);
 	};
+
+	/// @brief Runtime buff. Using class because structs seems to not be allowed in Godot yet.
+	class RuntimeBuff : public RefCounted
+	{
+		GDCLASS(RuntimeBuff, RefCounted);
+
+	protected:
+		static void _bind_methods();
+		/// @brief The attribute buff reference.
+		Ref<AttributeBuff> buff;
+		/// @brief The time the buff was added.
+		float time_left;
+		/// @brief If the buff is unique.
+		bool unique;
+
+	public:
+		static Ref<RuntimeBuff> from_buff(const Ref<AttributeBuff> &p_buff);
+		static Ref<AttributeBuff> to_buff(const Ref<RuntimeBuff> &p_buff);
+		bool operator==(const Ref<AttributeBuff> &p_attribute) const;
+		bool operator==(const Ref<RuntimeBuff> &p_attribute) const;
+
+		bool can_dequeue() const;
+		bool equals_to(const Ref<AttributeBuff> &p_buff) const;
+		String get_attribute_name() const;
+		String get_buff_name() const;
+		Ref<AttributeBuff> get_buff() const;
+		float get_duration() const;
+		float get_time_left() const;
+		void set_buff(const Ref<AttributeBuff> &p_value);
+		void set_time_left(const float p_value);
+	};
+
+	class RuntimeAttribute : public RefCounted
+	{
+		GDCLASS(RuntimeAttribute, RefCounted);
+
+	protected:
+		static void _bind_methods();
+		/// @brief The attribute reference.
+		Ref<Attribute> attribute;
+		/// @brief The attribute value.
+		float value;
+		/// @brief The attribute buffs.
+		TypedArray<RuntimeBuff> buffs;
+
+	public:
+		/// @brief Create a runtime attribute from an attribute.
+		/// @param p_attribute The attribute to create the runtime attribute from.
+		/// @return The new instance of RuntimeAttribute.
+		static Ref<RuntimeAttribute> from_attribute(const Ref<Attribute> &p_attribute);
+		/// @brief Create an attribute from a runtime attribute.
+		/// @param p_attribute The runtime attribute to create the attribute from.
+		/// @return The new instance of Attribute.
+		static Ref<Attribute> to_attribute(const Ref<RuntimeAttribute> &p_attribute);
+
+		/// @brief Add a buff to the attribute.
+		/// @param p_buff The buff to add.
+		/// @return True if the buff was added, false otherwise.
+		bool add_buff(const Ref<AttributeBuff> &p_buff);
+		/// @brief Add buffs to the attribute.
+		/// @param p_buffs The buffs to add.
+		/// @return The number of buffs added.
+		int add_buffs(const TypedArray<AttributeBuff> &p_buffs);
+		/// @brief Check if the attribute can receive a buff.
+		/// @param p_buff The buff to check.
+		/// @return True if the attribute can receive the buff, false otherwise.
+		bool can_receive_buff(const Ref<AttributeBuff> &p_buff) const;
+		/// @brief Clear the buffs from the attribute.
+		void clear_buffs();
+		/// @brief Check if the attribute has a buff.
+		/// @param p_buff The buff to check.
+		/// @return True if the attribute has the buff, false otherwise.
+		bool has_buff(const Ref<AttributeBuff> &p_buff) const;
+		/// @brief Remove a buff from the attribute.
+		/// @param p_buff The buff to remove.
+		/// @return True if the buff was removed, false otherwise.
+		bool remove_buff(const Ref<AttributeBuff> &p_buff);
+		/// @brief Remove buffs from the attribute.
+		/// @param p_buffs The buffs to remove.
+		/// @return The number of buffs removed.
+		int remove_buffs(const TypedArray<AttributeBuff> &p_buffs);
+		/// @brief Get the attribute.
+		/// @return The attribute.
+		Ref<Attribute> get_attribute() const;
+		/// @brief Get the buffed value of the attribute.
+		/// @return The buffed value.
+		float get_buffed_value() const;
+		/// @brief Gets the value of the attribute.
+		/// @return The value of the attribute.
+		float get_value() const;
+		/// @brief Get the buffs affecting the attribute.
+		TypedArray<RuntimeBuff> get_buffs() const;
+		/// @brief Set the attribute.
+		/// @param p_value The attribute.
+		void set_attribute(const Ref<Attribute> &p_value);
+		/// @brief Sets the buffs affecting the attribute.
+		/// @param p_value The buffs affecting the attribute.
+		void set_buffs(const TypedArray<AttributeBuff> &p_value);
+		/// @brief Sets the initial value of the attribute.
+		/// @param p_value The initial value of the attribute.
+		void set_initial_value(const float p_value);
+		/// @brief Sets the value of the attribute.
+		/// @param p_value The value of the attribute.
+		void set_value(const float p_value);
+	};
 } //namespace gga
 
-VARIANT_ENUM_CAST(gga::BuffType);
 VARIANT_ENUM_CAST(gga::OperationType);
 
 #endif

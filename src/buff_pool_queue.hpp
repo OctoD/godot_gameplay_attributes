@@ -37,31 +37,7 @@ using namespace godot;
 namespace gga
 {
 	class AttributeBuff;
-
-	class BuffPoolQueueItem : public RefCounted
-	{
-		GDCLASS(BuffPoolQueueItem, RefCounted);
-
-	protected:
-		/// @brief Binds methods to Godot.
-		static void _bind_methods();
-		/// @brief The buff enqueued.
-		Ref<AttributeBuff> buff;
-		/// @brief Whether the buff is eligible for removal.
-		bool eligible_for_removal;
-		/// @brief The remaining time in seconds.
-		float seconds_remaining;
-
-	public:
-		/// @brief Removes one second from the remaining time.
-		void second_passed();
-		/// @brief Returns the buff.
-		Ref<AttributeBuff> get_buff();
-		/// @brief Returns whether the buff is eligible for removal.
-		bool get_eligible_for_removal();
-		/// @brief Sets the buff.
-		void set_buff(Ref<AttributeBuff> p_buff);
-	};
+	class RuntimeBuff;
 
 	class BuffPoolQueue : public Node
 	{
@@ -70,40 +46,30 @@ namespace gga
 	protected:
 		/// @brief Binds methods to Godot.
 		static void _bind_methods();
-		/// @brief The current queue size.
-		uint16_t current_queue_size;
 		/// @brief The current tick.
-		float tick;
+		double tick;
 		/// @brief The queue of buffs.
-		TypedArray<BuffPoolQueueItem> queue;
+		TypedArray<RuntimeBuff> queue;
 		/// @brief Whether the queue is server authoritative.
 		bool server_authoritative;
-		/// @brief Whether the queue has started.
-		bool started;
 
 	public:
 		/// @brief Overridden _exit_tree method.
 		void _exit_tree() override;
 		/// @brief Overridden _physics_process method.
-		void _physics_process(double p_delta) override;
+		void handle_physics_process(double p_delta);
 		/// @brief Adds a buff to the queue.
-		void add_attribute_buff(Ref<AttributeBuff> p_buff);
+		void enqueue(Ref<RuntimeBuff> p_buff);
 		/// @brief Returns if the queue is server authoritative.
 		/// @return Whether the queue is server authoritative.
 		bool get_server_authoritative() const;
 		/// @brief Clears the queue.
 		void clear();
-		/// @brief Cleans up the queue and emit signals.
-		void cleanup();
 		/// @brief Processes the items in the queue.
-		void process_items();
+		void process_items(const double p_discarded);
 		/// @brief Sets the server authoritative flag.
 		/// @param p_server_authoritative The server authoritative flag.
 		void set_server_authoritative(const bool p_server_authoritative);
-		/// @brief Starts the queue.
-		void start();
-		/// @brief Stops the queue.
-		void stop();
 	};
 } //namespace gga
 
