@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://fdnedphs6cgh" path="res://examples/the_stress_test_game/kenney_tiny-dungeon/Tiles/tile_0114.png" id="2_jmbem"]
 
 [sub_resource type="AttributeOperation" id="AttributeOperation_bh5bp"]
-operand = 0
-value = 0.0
+operand = 4
+value = 0.05
 
 [sub_resource type="AttributeBuff" id="AttributeBuff_dko2g"]
 attribute_name = "fire_rate"

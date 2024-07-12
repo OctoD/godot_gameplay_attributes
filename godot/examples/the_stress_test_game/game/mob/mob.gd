@@ -22,9 +22,9 @@ var movement_speed: RuntimeAttribute
 
 
 func check_if_dead() -> void:
-	label.text = str(health.current_value())
+	label.text = str(health.get_buffed_value())
 
-	if health and health.current_value() <= 0.01:
+	if health and health.get_buffed_value() <= 0.01:
 		died.emit(global_position)
 		queue_free()
 
@@ -33,14 +33,14 @@ func _ready() -> void:
 	add_to_group("mobs")
 
 	attribute_container.attribute_set = mob_type.attribute_set
-	sprite_2d.texture = mob_type.texture_2d
+	attribute_container.setup()
 
+	sprite_2d.texture = mob_type.texture_2d
+	
 	health = attribute_container.get_attribute_by_name("health")
 	movement_speed = attribute_container.get_attribute_by_name("movement_speed")
-
-	attribute_container.setup()
 	
-	label.text = str(health.current_value())
+	label.text = str(health.get_buffed_value())
 	
 	attribute_container.attribute_changed.connect(func (_attribute, _old_value, _new_value): 
 		check_if_dead()
@@ -62,12 +62,11 @@ func _process(delta: float) -> void:
 				var damage = AttributeBuff.new()
 				damage.attribute_name = "health"
 				damage.operation = AttributeOperation.subtract(1.0)
-				damage.buff_type = damage.BT_ONESHOT
 				damage_tick = damage_tick - 1.0
 				chase_target.attribute_container.apply_buff(damage)
 
 
 func _physics_process(_d: float) -> void:
 	if movement_speed and chase_target:
-		velocity = (latest_position - transform.origin).normalized() * movement_speed.current_value()
+		velocity = (latest_position - transform.origin).normalized() * movement_speed.get_buffed_value()
 	move_and_slide()

@@ -5,7 +5,7 @@
 
 [sub_resource type="AttributeOperation" id="AttributeOperation_b2wqo"]
 operand = 0
-value = 0.0
+value = 2.0
 
 [sub_resource type="AttributeBuff" id="AttributeBuff_2qs2y"]
 attribute_name = "health"

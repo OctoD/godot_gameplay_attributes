@@ -1,9 +1,11 @@
 [gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://bsjqbplokctwg"]
 
 [sub_resource type="AttributeOperation" id="AttributeOperation_6mch0"]
+operand = 4
 
 [resource]
 attribute_name = "health"
 buff_name = "pewpew"
 duration = 8.58996e-43
 operation = SubResource("AttributeOperation_6mch0")
+unique = false

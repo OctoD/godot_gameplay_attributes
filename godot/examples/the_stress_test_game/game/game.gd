@@ -21,5 +21,6 @@ func _ready() -> void:
 	)
 	
 	player.died.connect(func ():
+		print("Oh no you died!")
 		gameover.emit()
 	)

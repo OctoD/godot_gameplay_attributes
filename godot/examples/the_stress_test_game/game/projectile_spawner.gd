@@ -8,6 +8,7 @@ const PROJECTILE = preload("res://examples/the_stress_test_game/game/projectile/
 
 func fire_at(from: Vector2, to: Vector2, damage: float) -> void:
 	var instance = PROJECTILE.instantiate()
+	print("This pewpew will deal this damage: ", damage)
 	spawn_target.add_child(instance)
 	instance.global_position = from
 	instance.direction = (to - from).normalized()
