@@ -458,9 +458,6 @@ namespace gga
 		/// @brief Sets the buffs affecting the attribute.
 		/// @param p_value The buffs affecting the attribute.
 		void set_buffs(const TypedArray<AttributeBuff> &p_value);
-		/// @brief Sets the initial value of the attribute.
-		/// @param p_value The initial value of the attribute.
-		void set_initial_value(const float p_value);
 		/// @brief Sets the value of the attribute.
 		/// @param p_value The value of the attribute.
 		void set_value(const float p_value);
