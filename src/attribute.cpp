@@ -167,12 +167,14 @@ void AttributeBuff::_bind_methods()
 	ClassDB::bind_method(D_METHOD("get_buff_name"), &AttributeBuff::get_buff_name);
 	ClassDB::bind_method(D_METHOD("get_duration"), &AttributeBuff::get_duration);
 	ClassDB::bind_method(D_METHOD("get_operation"), &AttributeBuff::get_operation);
+	ClassDB::bind_method(D_METHOD("get_transient"), &AttributeBuff::get_transient);
 	ClassDB::bind_method(D_METHOD("get_unique"), &AttributeBuff::get_unique);
 	ClassDB::bind_method(D_METHOD("operate", "base_value"), &AttributeBuff::operate);
 	ClassDB::bind_method(D_METHOD("set_attribute_name", "p_value"), &AttributeBuff::set_attribute_name);
 	ClassDB::bind_method(D_METHOD("set_buff_name", "p_value"), &AttributeBuff::set_buff_name);
 	ClassDB::bind_method(D_METHOD("set_duration", "p_value"), &AttributeBuff::set_duration);
 	ClassDB::bind_method(D_METHOD("set_operation", "p_value"), &AttributeBuff::set_operation);
+	ClassDB::bind_method(D_METHOD("set_transient", "p_value"), &AttributeBuff::set_transient);
 	ClassDB::bind_method(D_METHOD("set_unique", "p_value"), &AttributeBuff::set_unique);
 
 	/// binds properties to godot
@@ -180,6 +182,7 @@ void AttributeBuff::_bind_methods()
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "buff_name"), "set_buff_name", "get_buff_name");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "duration"), "set_duration", "get_duration");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "AttributeOperation"), "set_operation", "get_operation");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "transient"), "set_transient", "get_transient");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "unique"), "set_unique", "get_unique");
 }
 
@@ -206,6 +209,15 @@ String AttributeBuff::get_buff_name() const
 float AttributeBuff::get_duration() const
 {
 	return duration;
+}
+
+bool AttributeBuff::get_transient() const
+{
+	if (Math::is_zero_approx(duration)) {
+		return transient;
+	}
+
+	return Math::is_equal_approx(duration, 0.05f);
 }
 
 bool AttributeBuff::get_unique() const
@@ -241,6 +253,11 @@ void AttributeBuff::set_duration(const float p_value)
 void AttributeBuff::set_operation(const Ref<AttributeOperation> &p_value)
 {
 	operation = p_value;
+}
+
+void AttributeBuff::set_transient(const bool p_value)
+{
+	transient = p_value;
 }
 
 void AttributeBuff::set_unique(const bool p_value)
@@ -799,29 +816,31 @@ Ref<Attribute> RuntimeAttribute::to_attribute(const Ref<RuntimeAttribute> &p_att
 	for (int i = 0; i < p_attribute->buffs.size(); i++) {
 		buffs.push_back(RuntimeBuff::to_buff(p_attribute->buffs[i]));
 	}
-	
+
 	attribute_copy->buffs = buffs;
-	
+
 	return attribute_copy;
 }
 
 bool RuntimeAttribute::add_buff(const Ref<AttributeBuff> &p_buff)
 {
-	if (can_receive_buff(p_buff)) {
-		if (p_buff->is_time_limited()) {
-			Ref<RuntimeBuff> runtime_buff = RuntimeBuff::from_buff(p_buff);
-			buffs.push_back(runtime_buff);
-			emit_signal("buff_added", runtime_buff);
-		} else {
-			float prev_value = value;
-			value = Math::clamp(p_buff->operate(value), attribute->min_value, attribute->max_value);
-			emit_signal("attribute_changed", this, prev_value, value);
-		}
-
-		return true;
+	if (!can_receive_buff(p_buff)) {
+		return false;
 	}
 
-	return false;
+	if (p_buff->get_unique() && has_buff(p_buff)) {
+		return false;
+	} else if (p_buff->get_transient()) {
+		Ref<RuntimeBuff> runtime_buff = RuntimeBuff::from_buff(p_buff);
+		buffs.push_back(runtime_buff);
+		emit_signal("buff_added", runtime_buff);
+	} else {
+		float prev_value = value;
+		value = Math::clamp(p_buff->operate(value), attribute->min_value, attribute->max_value);
+		emit_signal("attribute_changed", this, prev_value, value);
+	}
+
+	return true;
 }
 
 int RuntimeAttribute::add_buffs(const TypedArray<AttributeBuff> &p_buffs)
@@ -839,10 +858,6 @@ int RuntimeAttribute::add_buffs(const TypedArray<AttributeBuff> &p_buffs)
 
 bool RuntimeAttribute::can_receive_buff(const Ref<AttributeBuff> &p_buff) const
 {
-	if (p_buff->get_unique() && has_buff(p_buff)) {
-		return false;
-	}
-
 	return p_buff->get_attribute_name() == attribute->attribute_name;
 }
 

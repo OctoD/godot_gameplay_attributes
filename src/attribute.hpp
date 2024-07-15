@@ -127,6 +127,8 @@ namespace gga
 		float duration;
 		/// @brief The operation to apply.
 		Ref<AttributeOperation> operation;
+		/// @brief The buff is transient and will be not affect the attribute value directly.
+		bool transient;
 		/// @brief If the buff is unique and only one can be applied.
 		bool unique;
 
@@ -147,6 +149,9 @@ namespace gga
 		/// @brief Returns the buff duration.
 		/// @return The buff duration.
 		float get_duration() const;
+		/// @brief Returns if the buff is transient.
+		/// @return True if the buff is transient, false otherwise.
+		bool get_transient() const;
 		/// @brief Returns if the buff is unique.
 		/// @return True if the buff is unique, false otherwise.
 		bool get_unique() const;
@@ -168,6 +173,9 @@ namespace gga
 		/// @brief Sets the operation to apply.
 		/// @param p_value The operation to apply.
 		void set_operation(const Ref<AttributeOperation> &p_value);
+		/// @brief Sets if the buff is transient.
+		/// @param p_value True if the buff is transient, false otherwise.
+		void set_transient(const bool p_value);
 		/// @brief Sets if the buff is unique.
 		/// @param p_value True if the buff is unique, false otherwise.
 		void set_unique(const bool p_value);
