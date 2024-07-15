@@ -32,11 +32,11 @@ func _ready():
 
 	attribute_container.apply_buff(debuff)
 
-	print(attribute_container.get_attribute_by_name(ATTRIBUTE_NAME).get_buffed_value()) # 90
+	print(attribute_container.get_attribute_buffed_value_by_name(ATTRIBUTE_NAME)) # 90
 
 	attribute_container.apply_buff(debuff)
 
-	print(attribute_container.get_attribute_by_name(ATTRIBUTE_NAME).get_buffed_value()) # 80
+	print(attribute_container.find_buffed_value(func (x): return x.attribute.attribute_name == ATTRIBUTE_NAME)) # 80
 
 	attribute_container.apply_buff(buff)
 
@@ -48,4 +48,4 @@ func _ready():
 
 	attribute_container.apply_buff(buff)
 
-	print(attribute_container.get_attribute_by_name(ATTRIBUTE_NAME).get_buffed_value()) # 100
+	print(attribute_container.get_attribute_buffed_value_by_name(ATTRIBUTE_NAME)) # 100

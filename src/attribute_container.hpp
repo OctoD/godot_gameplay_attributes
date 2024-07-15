@@ -104,17 +104,33 @@ namespace gga
 		/// @param p_predicate The predicate to use to find the attribute.
 		/// @return The attribute found.
 		Ref<RuntimeAttribute> find(Callable p_predicate) const;
+		/// @brief Finds an attribute buffed value in the container.
+		/// @param p_predicate The predicate to use to find the attribute buffed value.
+		/// @return The attribute buffed value found.
+		float find_buffed_value(Callable p_predicate) const;
+		/// @brief Finds an attribute value in the container.
+		/// @param p_predicate The predicate to use to find the attribute value.
+		/// @return The attribute value found.
+		float find_value(Callable p_predicate) const;
 		// getters/setters
 		/// @brief Returns the attributes of the container.
 		/// @return The attributes of the container.
 		Ref<AttributeSet> get_attribute_set() const;
 		/// @brief Returns the attributes of the container.
 		/// @return The attributes of the container.
-		TypedArray<Attribute> get_attributes() const;
+		TypedArray<RuntimeAttribute> get_attributes() const;
 		/// @brief Gets an attribute by name.
 		/// @param p_name The name of the attribute to get.
 		/// @return The attribute with the given name.
 		Ref<RuntimeAttribute> get_attribute_by_name(const String &p_name) const;
+		/// @brief Gets the buffed value of an attribute by name. It returns 0.0f if the attribute is not found. Or if the actual value is 0.0f.
+		/// @param p_name The name of the attribute to get.
+		/// @return The buffed value of the attribute with the given name.
+		float get_attribute_buffed_value_by_name(const String &p_name) const;
+		/// @brief Gets the base value of an attribute by name.
+		/// @param p_name The name of the attribute to get.
+		/// @return The base value of the attribute with the given name.
+		float get_attribute_value_by_name(const String &p_name) const;
 		/// @brief Returns the server authoritative value.
 		/// @return The server authoritative value.
 		bool get_server_authoritative() const;

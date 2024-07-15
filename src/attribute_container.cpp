@@ -45,9 +45,13 @@ void AttributeContainer::_bind_methods()
 	ClassDB::bind_method(D_METHOD("add_attribute", "p_attribute"), &AttributeContainer::add_attribute);
 	ClassDB::bind_method(D_METHOD("apply_buff", "p_buff"), &AttributeContainer::apply_buff);
 	ClassDB::bind_method(D_METHOD("find", "p_predicate"), &AttributeContainer::find);
+	ClassDB::bind_method(D_METHOD("find_buffed_value", "p_predicate"), &AttributeContainer::find_buffed_value);
+	ClassDB::bind_method(D_METHOD("find_value", "p_predicate"), &AttributeContainer::find_value);
 	ClassDB::bind_method(D_METHOD("get_attribute_set"), &AttributeContainer::get_attribute_set);
 	ClassDB::bind_method(D_METHOD("get_attributes"), &AttributeContainer::get_attributes);
 	ClassDB::bind_method(D_METHOD("get_attribute_by_name", "p_name"), &AttributeContainer::get_attribute_by_name);
+	ClassDB::bind_method(D_METHOD("get_attribute_buffed_value_by_name", "p_name"), &AttributeContainer::get_attribute_buffed_value_by_name);
+	ClassDB::bind_method(D_METHOD("get_attribute_value_by_name", "p_name"), &AttributeContainer::get_attribute_value_by_name);
 	ClassDB::bind_method(D_METHOD("get_server_authoritative"), &AttributeContainer::get_server_authoritative);
 	ClassDB::bind_method(D_METHOD("remove_attribute", "p_attribute"), &AttributeContainer::remove_attribute);
 	ClassDB::bind_method(D_METHOD("remove_buff", "p_buff"), &AttributeContainer::remove_buff);
@@ -200,17 +204,29 @@ Ref<RuntimeAttribute> AttributeContainer::find(Callable p_predicate) const
 	return Ref<RuntimeAttribute>();
 }
 
+float AttributeContainer::find_buffed_value(Callable p_predicate) const
+{
+	Ref<RuntimeAttribute> attribute = find(p_predicate);
+	return attribute.is_valid() && !attribute.is_null() ? attribute->get_buffed_value() : 0.0f;
+}
+
+float AttributeContainer::find_value(Callable p_predicate) const
+{
+	Ref<RuntimeAttribute> attribute = find(p_predicate);
+	return attribute.is_valid() && !attribute.is_null() ? attribute->get_value() : 0.0f;
+}
+
 Ref<AttributeSet> AttributeContainer::get_attribute_set() const
 {
 	return attribute_set;
 }
 
-TypedArray<Attribute> AttributeContainer::get_attributes() const
+TypedArray<RuntimeAttribute> AttributeContainer::get_attributes() const
 {
-	TypedArray<Attribute> attributes;
+	TypedArray<RuntimeAttribute> attributes;
 
 	for (int i = 0; i < attributes.size(); i++) {
-		attributes.push_back(RuntimeAttribute::to_attribute(attributes[i]));
+		attributes.push_back(attributes[i]);
 	}
 
 	return attributes;
@@ -227,6 +243,18 @@ Ref<RuntimeAttribute> AttributeContainer::get_attribute_by_name(const String &p_
 	}
 
 	return Ref<RuntimeAttribute>();
+}
+
+float AttributeContainer::get_attribute_buffed_value_by_name(const String &p_name) const
+{
+	Ref<RuntimeAttribute> attribute = get_attribute_by_name(p_name);
+	return attribute.is_valid() && !attribute.is_null() ? attribute->get_buffed_value() : 0.0f;
+}
+
+float AttributeContainer::get_attribute_value_by_name(const String &p_name) const
+{
+	Ref<RuntimeAttribute> attribute = get_attribute_by_name(p_name);
+	return attribute.is_valid() && !attribute.is_null() ? attribute->get_value() : 0.0f;
 }
 
 bool AttributeContainer::get_server_authoritative() const
