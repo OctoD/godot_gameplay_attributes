@@ -13,75 +13,83 @@ This document describes the gameplay attributes of the game. It is intended to b
 
 The addon provides a set of nodes and resources that can be used to define gameplay attributes. These nodes can be added to any scene in your game to define the attributes of the objects in that scene.
 
-## Attribute
+## How does it work and why
 
-The `Attribute` resource defines a single attribute that can be attached to an object. It has the following properties:
+This addon works using Godot's custom resources as attributes. Each `Attribute` is a custom resource that defines a single attribute that can contained using an `AttributeSet` resource. The choice of custom resources is due to Godot's performance on handling many of them, by giving in the same time the possibility to inherit their base class to create custom attributes.
 
-- **attribute_name**: The name of the attribute.
-- **initial_value**: The initial value of the attribute.
-- **min_value**: The minimum value of the attribute.
-- **max_value**: The maximum value of the attribute.
+An `Attribute` has a name, an initial value, a minimum value, and a maximum value.
 
-Each attribute can receive a set of `AttributeBuff` resources that modify its value. Buffs and debuffs can be added to the attribute using the `add_buff` methods. 
+The proper way to define your attributes, is to create your own custom resources that inherit from `Attribute` base class. This way you can define your attribute, and use latter in your attribute sets.
 
-Each `AttributeBuff` resource affect a single attribute, and can be one shot or persistent. Buffs can be added to the attribute using the `add_buff` `Attribute` method. Each `AttributeBuff` has an `operation` property that defines how the buff affects the attribute value. The possible operations are:
+An `AttributeSet` is a set of predefined attributes that can be used to define the attributes of an object in the game, like a character, an enemy, or any other object that has attributes.
 
-- **OP_ADD**: Adds a value to the attribute.
-- **OP_DIVIDE**: Divides the attribute value by a value.
-- **OP_MULTIPLY**: Multiplies the attribute value by a value.
-- **OP_PERCENTAGE**: Adds (or subtract if the value is negative) a percentage of the attribute value.
-- **OP_SUBTRACT**: Subtracts a value from the attribute.
+Each `AttributeSet` has to be used by an `AttributeContainer` node, that is a node that contains the attributes of an object in the game. 
 
-If the AttributeBuff is persistent, it will be applied until it is removed. If it is one shot, it will be applied only once and will modify the attribute directly.
+For each `Attribute` in the `AttributeSet`, the `AttributeContainer` will create a `RuntimeAttribute` that will hold the current value of the attribute, the reference to the `Attribute` resource, and an array to some `RuntimeBuff` that will modify the value of the attribute.
 
-An example of using an `Attribute` resource programmatically:
+A `RuntimeBuff` is the representation of an `AttributeBuff` resource that will modify the value of an attribute. It has a value that will be added/subtracted/multiply/divided to the attribute value, and a duration that will define how long the buff will last (if 0, the buff will last forever).
+
+## How to use this addon programmatically
+
+Here a short example
 
 ```gdscript
-func _ready() -> void:
-    var attribute = Attribute.new()
+extends Node
+# in this example, we will create a simple attribute that will represent the health of a character, which
+# can be buffed or debuffed programmatically
 
-    attribute.attribute_name = "health"
-    attribute.initial_value = 100
-    attribute.min_value = 0
-    attribute.max_value = 120
+const ATTRIBUTE_NAME = "health"
 
-    var buff = AttributeBuff.new()
-    var debuff = AttributeBuff.new()
 
-    buff.attribute_name = attribute.attribute_name
-    buff.operation = AttributeBuff.Operation.Add(10)
-    debuff.attribute_name = attribute.attribute_name
-    debuff.operation = AttributeBuff.Operation.Subtract(5)
+var attribute_container := AttributeContainer.new() 
 
-    print(attribute.current_value()) # 100
 
-    attribute.add_buff(buff)
+func _ready():
+	# create the attribute
+	var health_attribute = Attribute.new()
+	health_attribute.attribute_name = ATTRIBUTE_NAME
+	health_attribute.initial_value = 100
+	health_attribute.min_value = 0
+	health_attribute.max_value = 100
 
-    print(attribute.current_value()) # 110
-    
-    attribute.add_buff(buff)
+	attribute_container.attribute_set = AttributeSet.new()
+	attribute_container.attribute_set.add_attribute(health_attribute)
 
-    print(attribute.current_value()) # 120
+	add_child(attribute_container)
 
-    attribute.add_buff(buff)
+	# add a buff to the attribute
+	var buff = AttributeBuff.new()
+	buff.attribute_name = ATTRIBUTE_NAME
+	buff.operation = AttributeOperation.add(10)
+	
+	var debuff = AttributeBuff.new()
+	debuff.attribute_name = ATTRIBUTE_NAME
+	debuff.operation = AttributeOperation.subtract(10)
 
-    print(attribute.current_value()) # 120, since the attribute is capped at 120
+	attribute_container.apply_buff(debuff)
 
-    attribute.add_buff(debuff)
+	print(attribute_container.get_attribute_by_name(ATTRIBUTE_NAME).get_buffed_value()) # 90
 
-    print(attribute.current_value()) # 105
+	attribute_container.apply_buff(debuff)
+
+	print(attribute_container.get_attribute_by_name(ATTRIBUTE_NAME).get_buffed_value()) # 80
+
+	attribute_container.apply_buff(buff)
+
+	print(attribute_container.get_attribute_by_name(ATTRIBUTE_NAME).get_buffed_value()) # 90
+
+	attribute_container.apply_buff(buff)
+
+	print(attribute_container.get_attribute_by_name(ATTRIBUTE_NAME).get_buffed_value()) # 100
+
+	attribute_container.apply_buff(buff)
+
+	print(attribute_container.get_attribute_by_name(ATTRIBUTE_NAME).get_buffed_value()) # 100
 ```
 
-## AttributeContainer
+## Other examples
 
-To manage multiple attributes in a single object, you can use the `AttributeContainer` node. This node has an `AttributeSet` resource (which is a collection of `Attribute` resources). 
-It also has methods to add/remove attributes programmatically to the container, to add and to remove buffs.
-
-This node handles time based buffs so you do not need to worry about managing them manually.
-
-I would recommend using the `AttributeContainer` node to manage the attributes of your objects, as it provides a more convenient way to manage multiple attributes.
-
-An example of using an `AttributeContainer` node is located in the `godot` folder of this repository.
+You can find other examples in the `godot/examples` folder of this repository.
 
 ## Contributing
 

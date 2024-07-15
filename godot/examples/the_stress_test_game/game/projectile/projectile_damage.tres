@@ -8,4 +8,3 @@ attribute_name = "health"
 buff_name = "pewpew"
 duration = 8.58996e-43
 operation = SubResource("AttributeOperation_6mch0")
-unique = false

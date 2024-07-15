@@ -7,12 +7,14 @@
 attribute_name = "health"
 initial_value = 2.0
 max_value = 4.0
+min_value = 0.0
 script = ExtResource("1_0mh1f")
 
 [sub_resource type="Attribute" id="Attribute_md6lb"]
 attribute_name = "movement_speed"
 initial_value = 30.0
 max_value = 60.0
+min_value = 1.35612e-34
 script = ExtResource("2_0wlov")
 
 [resource]
