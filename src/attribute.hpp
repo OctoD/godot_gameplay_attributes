@@ -125,6 +125,8 @@ namespace gga
 		String buff_name;
 		/// @brief The buff duration.
 		float duration;
+		/// @brief The maximum number of applications possible.
+		int max_applies;
 		/// @brief The operation to apply.
 		Ref<AttributeOperation> operation;
 		/// @brief The buff is transient and will be not affect the attribute value directly.
@@ -149,15 +151,18 @@ namespace gga
 		/// @brief Returns the buff duration.
 		/// @return The buff duration.
 		float get_duration() const;
+		/// @brief Returns the operation to apply as a Ref.
+		/// @return The operation to apply.
+		Ref<AttributeOperation> get_operation() const;
+		/// @brief Returns the maximum number of applications possible.
+		/// @return The maximum number of applications possible.
+		int get_max_applies() const;
 		/// @brief Returns if the buff is transient.
 		/// @return True if the buff is transient, false otherwise.
 		bool get_transient() const;
 		/// @brief Returns if the buff is unique.
 		/// @return True if the buff is unique, false otherwise.
 		bool get_unique() const;
-		/// @brief Returns the operation to apply as a Ref.
-		/// @return The operation to apply.
-		Ref<AttributeOperation> get_operation() const;
 		/// @brief Returns if the buff is time limited.
 		/// @return True if the buff is time limited, false otherwise.
 		bool is_time_limited() const;
@@ -173,6 +178,9 @@ namespace gga
 		/// @brief Sets the operation to apply.
 		/// @param p_value The operation to apply.
 		void set_operation(const Ref<AttributeOperation> &p_value);
+		/// @brief Sets the maximum number of applications possible.
+		/// @param p_value The maximum number of applications possible.
+		void set_max_applies(const int p_value);
 		/// @brief Sets if the buff is transient.
 		/// @param p_value True if the buff is transient, false otherwise.
 		void set_transient(const bool p_value);
