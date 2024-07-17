@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbtf6w0acoe1v"]
+
+[ext_resource type="Script" path="res://examples/max_buff_apply/max_buff_apply.gd" id="1_adahf"]
+
+[sub_resource type="Attribute" id="Attribute_nc7ce"]
+attribute_name = "max_buff_apply_attribute"
+initial_value = 50.0
+max_value = 100.0
+min_value = -7.11224e+19
+
+[sub_resource type="AttributeSet" id="AttributeSet_g7sjx"]
+attributes = Array[Attribute]([SubResource("Attribute_nc7ce")])
+set_name = "abedebare"
+
+[node name="MaxBuffApply" type="VBoxContainer"]
+script = ExtResource("1_adahf")
+
+[node name="AttributeContainer" type="AttributeContainer" parent="."]
+attribute_set = SubResource("AttributeSet_g7sjx")

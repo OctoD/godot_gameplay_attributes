@@ -167,6 +167,7 @@ void AttributeBuff::_bind_methods()
 	ClassDB::bind_method(D_METHOD("get_buff_name"), &AttributeBuff::get_buff_name);
 	ClassDB::bind_method(D_METHOD("get_duration"), &AttributeBuff::get_duration);
 	ClassDB::bind_method(D_METHOD("get_operation"), &AttributeBuff::get_operation);
+	ClassDB::bind_method(D_METHOD("get_max_applies"), &AttributeBuff::get_max_applies);
 	ClassDB::bind_method(D_METHOD("get_transient"), &AttributeBuff::get_transient);
 	ClassDB::bind_method(D_METHOD("get_unique"), &AttributeBuff::get_unique);
 	ClassDB::bind_method(D_METHOD("operate", "base_value"), &AttributeBuff::operate);
@@ -174,6 +175,7 @@ void AttributeBuff::_bind_methods()
 	ClassDB::bind_method(D_METHOD("set_buff_name", "p_value"), &AttributeBuff::set_buff_name);
 	ClassDB::bind_method(D_METHOD("set_duration", "p_value"), &AttributeBuff::set_duration);
 	ClassDB::bind_method(D_METHOD("set_operation", "p_value"), &AttributeBuff::set_operation);
+	ClassDB::bind_method(D_METHOD("set_max_applies", "p_value"), &AttributeBuff::set_max_applies);
 	ClassDB::bind_method(D_METHOD("set_transient", "p_value"), &AttributeBuff::set_transient);
 	ClassDB::bind_method(D_METHOD("set_unique", "p_value"), &AttributeBuff::set_unique);
 
@@ -182,6 +184,7 @@ void AttributeBuff::_bind_methods()
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "buff_name"), "set_buff_name", "get_buff_name");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "duration"), "set_duration", "get_duration");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "operation", PROPERTY_HINT_RESOURCE_TYPE, "AttributeOperation"), "set_operation", "get_operation");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_applies"), "set_max_applies", "get_max_applies");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "transient"), "set_transient", "get_transient");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "unique"), "set_unique", "get_unique");
 }
@@ -230,6 +233,11 @@ Ref<AttributeOperation> AttributeBuff::get_operation() const
 	return operation;
 }
 
+int AttributeBuff::get_max_applies() const
+{
+	return max_applies;
+}
+
 bool AttributeBuff::is_time_limited() const
 {
 	return abs(1.0f - duration) > 0.0001f;
@@ -253,6 +261,11 @@ void AttributeBuff::set_duration(const float p_value)
 void AttributeBuff::set_operation(const Ref<AttributeOperation> &p_value)
 {
 	operation = p_value;
+}
+
+void AttributeBuff::set_max_applies(const int p_value)
+{
+	max_applies = p_value;
 }
 
 void AttributeBuff::set_transient(const bool p_value)
@@ -858,6 +871,19 @@ int RuntimeAttribute::add_buffs(const TypedArray<AttributeBuff> &p_buffs)
 
 bool RuntimeAttribute::can_receive_buff(const Ref<AttributeBuff> &p_buff) const
 {
+	int buffs_count = 0;
+
+	for (int i = 0; i < buffs.size(); i++) {
+		Ref<RuntimeBuff> buff = buffs[i];
+		if (buff->equals_to(p_buff)) {
+			buffs_count++;
+		}
+	}
+
+	if (buffs_count >= p_buff->get_max_applies() && p_buff->get_max_applies() > 0) {
+		return false;
+	}
+
 	return p_buff->get_attribute_name() == attribute->attribute_name;
 }
 
