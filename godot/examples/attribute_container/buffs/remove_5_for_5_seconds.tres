@@ -7,3 +7,4 @@ attribute_name = "attribute_000"
 buff_name = "remove_5_for_5_seconds"
 duration = 5.0
 operation = ExtResource("1_7yylq")
+transient = true
