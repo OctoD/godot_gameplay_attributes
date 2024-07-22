@@ -10,7 +10,7 @@ value = 2.0
 [sub_resource type="AttributeBuff" id="AttributeBuff_2qs2y"]
 attribute_name = "health"
 buff_name = "Health powerup"
-duration = 1.79366e-43
+duration = 0.0
 operation = SubResource("AttributeOperation_b2wqo")
 
 [resource]

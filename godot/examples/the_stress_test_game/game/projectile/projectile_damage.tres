@@ -6,5 +6,5 @@ operand = 4
 [resource]
 attribute_name = "health"
 buff_name = "pewpew"
-duration = 8.58996e-43
+duration = 0.0
 operation = SubResource("AttributeOperation_6mch0")

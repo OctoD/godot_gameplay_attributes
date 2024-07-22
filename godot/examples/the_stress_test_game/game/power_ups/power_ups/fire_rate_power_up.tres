@@ -10,7 +10,7 @@ value = 0.05
 [sub_resource type="AttributeBuff" id="AttributeBuff_dko2g"]
 attribute_name = "fire_rate"
 buff_name = "Fire Rate Attribute Buff"
-duration = 1.4013e-45
+duration = 0.0
 operation = SubResource("AttributeOperation_bh5bp")
 
 [resource]
