@@ -131,12 +131,20 @@ void AttributeContainer::add_attribute(Ref<Attribute> p_attribute)
 {
 	if (!has_attribute(p_attribute)) {
 		Ref<RuntimeAttribute> runtime_attribute = RuntimeAttribute::from_attribute(p_attribute);
-		Callable callable = Callable::create(this, "_on_attribute_changed");
+		Callable attribute_changed_callable = Callable::create(this, "_on_attribute_changed");
+		Callable buff_applied_callable = Callable::create(this, "_on_buff_applied");
+		Callable buff_removed_callable = Callable::create(this, "_on_buff_removed");
 
-		if (!runtime_attribute->is_connected("attribute_changed", callable)) {
-			runtime_attribute->connect("attribute_changed", Callable::create(this, "_on_attribute_changed"));
-			runtime_attribute->connect("buff_added", Callable::create(this, "_on_buff_applied"));
-			runtime_attribute->connect("buff_removed", Callable::create(this, "_on_buff_removed"));
+		if (!runtime_attribute->is_connected("attribute_changed", attribute_changed_callable)) {
+			runtime_attribute->connect("attribute_changed", attribute_changed_callable);
+		} 
+
+		if (!runtime_attribute->is_connected("buff_added", buff_applied_callable)) {
+			runtime_attribute->connect("buff_added", buff_applied_callable);
+		}
+
+		if (!runtime_attribute->is_connected("buff_removed", buff_removed_callable)) {
+			runtime_attribute->connect("buff_removed", buff_removed_callable);
 		}
 
 		attributes.push_back(runtime_attribute);
@@ -165,8 +173,8 @@ void AttributeContainer::remove_attribute(Ref<Attribute> p_attribute)
 			int index = attributes.find(runtime_attribute);
 
 			if (index != -1) {
-				runtime_attribute->disconnect("changed", Callable::create(this, "_on_attribute_changed"));
-				runtime_attribute->disconnect("buff_applied", Callable::create(this, "_on_buff_applied"));
+				runtime_attribute->disconnect("attribute_changed", Callable::create(this, "_on_attribute_changed"));
+				runtime_attribute->disconnect("buff_added", Callable::create(this, "_on_buff_applied"));
 				runtime_attribute->disconnect("buff_removed", Callable::create(this, "_on_buff_removed"));
 				attributes.remove_at(index);
 			}

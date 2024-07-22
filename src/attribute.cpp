@@ -220,7 +220,7 @@ bool AttributeBuff::get_transient() const
 		return transient;
 	}
 
-	return Math::is_equal_approx(duration, 0.05f);
+	return !Math::is_equal_approx(duration, 0.05f);
 }
 
 bool AttributeBuff::get_unique() const
