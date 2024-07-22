@@ -280,6 +280,43 @@ void AttributeBuff::set_unique(const bool p_value)
 
 #pragma endregion
 
+#pragma region AttributeBase
+
+void AttributeBase::_bind_methods()
+{
+	/// binds methods to godot
+	ClassDB::bind_method(D_METHOD("get_attribute_name"), &AttributeBase::get_attribute_name);
+	ClassDB::bind_method(D_METHOD("get_buffs"), &AttributeBase::get_buffs);
+	ClassDB::bind_method(D_METHOD("set_attribute_name", "p_value"), &AttributeBase::set_attribute_name);
+	ClassDB::bind_method(D_METHOD("set_buffs", "p_buffs"), &AttributeBase::set_buffs);
+
+	/// binds properties to godot
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "attribute_name"), "set_attribute_name", "get_attribute_name");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "buffs"), "set_buffs", "get_buffs");
+}
+
+String AttributeBase::get_attribute_name() const
+{
+	return attribute_name;
+}
+
+TypedArray<AttributeBuff> AttributeBase::get_buffs() const
+{
+	return buffs;
+}
+
+void AttributeBase::set_attribute_name(const String &p_value)
+{
+	attribute_name = p_value;
+}
+
+void AttributeBase::set_buffs(const TypedArray<AttributeBuff> &p_buffs)
+{
+	buffs = p_buffs;
+}
+
+#pragma endregion
+
 #pragma region Attribute
 
 void Attribute::_bind_methods()
@@ -288,23 +325,17 @@ void Attribute::_bind_methods()
 	ClassDB::bind_static_method("Attribute", D_METHOD("create", "attribute_name", "initial_value", "min_value", "max_value"), &Attribute::create);
 
 	/// binds methods to godot
-	ClassDB::bind_method(D_METHOD("get_attribute_name"), &Attribute::get_attribute_name);
 	ClassDB::bind_method(D_METHOD("get_initial_value"), &Attribute::get_initial_value);
 	ClassDB::bind_method(D_METHOD("get_max_value"), &Attribute::get_max_value);
 	ClassDB::bind_method(D_METHOD("get_min_value"), &Attribute::get_min_value);
-	ClassDB::bind_method(D_METHOD("set_attribute_name", "p_value"), &Attribute::set_attribute_name);
 	ClassDB::bind_method(D_METHOD("set_initial_value", "p_value"), &Attribute::set_initial_value);
 	ClassDB::bind_method(D_METHOD("set_max_value", "p_value"), &Attribute::set_max_value);
 	ClassDB::bind_method(D_METHOD("set_min_value", "p_value"), &Attribute::set_min_value);
-	ClassDB::bind_method(D_METHOD("get_buffs"), &Attribute::get_buffs);
-	ClassDB::bind_method(D_METHOD("set_buffs", "p_buffs"), &Attribute::set_buffs);
 
 	/// properties to bind to godot
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "attribute_name"), "set_attribute_name", "get_attribute_name");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "initial_value"), "set_initial_value", "get_initial_value");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_value"), "set_max_value", "get_max_value");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "min_value"), "set_min_value", "get_min_value");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "buffs"), "set_buffs", "get_buffs");
 }
 
 Ref<Attribute> Attribute::create(const String &p_attribute_name, const float p_initial_value, const float p_min_value, const float p_max_value)
@@ -315,16 +346,6 @@ Ref<Attribute> Attribute::create(const String &p_attribute_name, const float p_i
 	attribute->set_min_value(p_min_value);
 	attribute->set_max_value(p_max_value);
 	return attribute;
-}
-
-String Attribute::get_attribute_name() const
-{
-	return attribute_name;
-}
-
-TypedArray<AttributeBuff> Attribute::get_buffs() const
-{
-	return buffs;
 }
 
 float Attribute::get_initial_value() const
@@ -340,16 +361,6 @@ float Attribute::get_max_value() const
 float Attribute::get_min_value() const
 {
 	return min_value;
-}
-
-void Attribute::set_attribute_name(const String &p_value)
-{
-	attribute_name = p_value;
-}
-
-void Attribute::set_buffs(const TypedArray<AttributeBuff> &p_buffs)
-{
-	buffs = p_buffs;
 }
 
 void Attribute::set_initial_value(const float p_value)

@@ -2,6 +2,7 @@
 
 [sub_resource type="AttributeOperation" id="AttributeOperation_6mch0"]
 operand = 4
+value = 1.42932e-43
 
 [resource]
 attribute_name = "health"

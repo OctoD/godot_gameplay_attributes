@@ -12,6 +12,7 @@ attribute_name = "health"
 buff_name = "Health powerup"
 duration = 0.0
 operation = SubResource("AttributeOperation_b2wqo")
+transient = false
 
 [resource]
 script = ExtResource("1_ei2v6")

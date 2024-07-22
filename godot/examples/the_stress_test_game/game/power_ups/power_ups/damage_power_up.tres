@@ -12,6 +12,7 @@ attribute_name = "damage"
 buff_name = "Damage power up"
 duration = 0.0
 operation = SubResource("AttributeOperation_n6uk7")
+transient = false
 
 [resource]
 script = ExtResource("1_e4nqt")

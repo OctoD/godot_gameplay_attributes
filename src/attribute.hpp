@@ -189,20 +189,44 @@ namespace gga
 		void set_unique(const bool p_value);
 	};
 
-	/// @brief Attribute.
-	class Attribute : public Resource
+	/// @brief Base Attribute Class.
+	class AttributeBase : public Resource
 	{
-		GDCLASS(Attribute, Resource);
+		GDCLASS(AttributeBase, Resource);
+
+	protected:
+		/// @brief Bind methods to Godot.
+		static void _bind_methods();
+		/// @brief The attribute name.
+		String attribute_name;
+		/// @brief The buffs affecting the attribute.
+		TypedArray<AttributeBuff> buffs;
+
+	public:
+		/// @brief Get the attribute name.
+		/// @return The attribute name.
+		String get_attribute_name() const;
+		/// @brief Get the buffs affecting the attribute.
+		/// @return The buffs affecting the attribute.
+		TypedArray<AttributeBuff> get_buffs() const;
+		/// @brief Set the attribute name.
+		/// @param p_value The attribute name.
+		void set_attribute_name(const String &p_value);
+		/// @brief Set the buffs affecting the attribute.
+		/// @param p_buffs The buffs affecting the attribute.
+		void set_buffs(const TypedArray<AttributeBuff> &p_buffs);
+	};
+
+	/// @brief Attribute.
+	class Attribute : public AttributeBase
+	{
+		GDCLASS(Attribute, AttributeBase);
 
 		friend class RuntimeAttribute;
 
 	protected:
 		/// @brief Bind methods to Godot.
 		static void _bind_methods();
-		/// @brief The buffs affecting the attribute.
-		TypedArray<AttributeBuff> buffs;
-		/// @brief The attribute name.
-		String attribute_name;
 		/// @brief The initial value of the attribute.
 		float initial_value;
 		/// @brief The maximum value of the attribute.
@@ -220,12 +244,6 @@ namespace gga
 		static Ref<Attribute> create(const String &p_attribute_name, const float p_initial_value, const float p_min_value, const float p_max_value);
 
 		// getters/setters
-		/// @brief Get the attribute name.
-		/// @return The attribute name.
-		String get_attribute_name() const;
-		/// @brief Get the buffs affecting the attribute.
-		/// @return The buffs affecting the attribute.
-		TypedArray<AttributeBuff> get_buffs() const;
 		/// @brief Get the initial value of the attribute.
 		/// @return The initial value of the attribute.
 		float get_initial_value() const;
@@ -235,12 +253,6 @@ namespace gga
 		/// @brief Get the minimum value of the attribute.
 		/// @return The minimum value of the attribute.
 		float get_min_value() const;
-		/// @brief Set the attribute name.
-		/// @param p_value The attribute name.
-		void set_attribute_name(const String &p_value);
-		/// @brief Set the buffs affecting the attribute.
-		/// @param p_buffs The buffs affecting the attribute.
-		void set_buffs(const TypedArray<AttributeBuff> &p_buffs);
 		/// @brief Set the initial value of the attribute.
 		/// @param p_value The initial value of the attribute.
 		void set_initial_value(const float p_value);

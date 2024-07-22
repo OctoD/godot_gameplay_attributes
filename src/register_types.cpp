@@ -30,6 +30,7 @@
 #include "attribute.hpp"
 #include "attribute_container.hpp"
 #include "buff_pool_queue.hpp"
+#include "derived_attribute.hpp"
 #include <godot_cpp/core/class_db.hpp>
 
 using namespace godot;
@@ -39,6 +40,7 @@ void gdextension_initialize(ModuleInitializationLevel p_level)
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
 		ClassDB::register_class<gga::AttributeOperation>();
 		ClassDB::register_class<gga::AttributeBuff>();
+		ClassDB::register_class<gga::AttributeBase>();
 		ClassDB::register_class<gga::Attribute>();
 		ClassDB::register_class<gga::AttributeSet>();
 		ClassDB::register_runtime_class<gga::AttributeContainer>();
@@ -46,6 +48,7 @@ void gdextension_initialize(ModuleInitializationLevel p_level)
 		ClassDB::register_runtime_class<gga::BuffPoolQueue>();
 		ClassDB::register_runtime_class<gga::RuntimeBuff>();
 		ClassDB::register_runtime_class<gga::RuntimeAttribute>();
+		ClassDB::register_class<gga::DerivedAttribute>();
 	} else if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
 	}
 }
