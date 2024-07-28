@@ -206,6 +206,17 @@ namespace gga
 		/// @brief Get the attribute name.
 		/// @return The attribute name.
 		String get_attribute_name() const;
+
+		/// @brief Get the minimum value of the attribute.
+		/// @return The minimum value of the attribute.
+		virtual float get_min_value() const = 0;
+		/// @brief Get the maximum value of the attribute.
+		/// @return The maximum value of the attribute.
+		virtual float get_max_value() const = 0;
+		/// @brief Get the initial value of the attribute.
+		/// @return The initial value of the attribute.
+		virtual float get_initial_value() const = 0;
+
 		/// @brief Get the buffs affecting the attribute.
 		/// @return The buffs affecting the attribute.
 		TypedArray<AttributeBuff> get_buffs() const;
@@ -246,13 +257,13 @@ namespace gga
 		// getters/setters
 		/// @brief Get the initial value of the attribute.
 		/// @return The initial value of the attribute.
-		float get_initial_value() const;
+		float get_initial_value() const override;
 		/// @brief Get the maximum value of the attribute.
 		/// @return The maximum value of the attribute.
-		float get_max_value() const;
+		float get_max_value() const override;
 		/// @brief Get the minimum value of the attribute.
 		/// @return The minimum value of the attribute.
-		float get_min_value() const;
+		float get_min_value() const override;
 		/// @brief Set the initial value of the attribute.
 		/// @param p_value The initial value of the attribute.
 		void set_initial_value(const float p_value);
@@ -348,39 +359,6 @@ namespace gga
 		int count() const;
 	};
 
-	class AttributesTable : public Resource
-	{
-		GDCLASS(AttributesTable, Resource);
-
-	protected:
-		static void _bind_methods();
-		/// @brief The attribute sets in the table.
-		TypedArray<AttributeSet> attribute_sets;
-
-	public:
-		AttributesTable();
-		AttributesTable(TypedArray<AttributeSet> p_attribute_sets);
-
-		/// @brief Add an attribute set to the table.
-		/// @param p_attribute_set The attribute set to add.
-		void add_attribute_set(const Ref<AttributeSet> &p_attribute_set);
-		/// @brief Get the attribute sets in the table.
-		/// @return The attribute sets.
-		TypedArray<AttributeSet> get_attribute_sets() const;
-		/// @brief Get the attribute names in the table.
-		/// @return The attribute names.
-		PackedStringArray get_attribute_names() const;
-		/// @brief Check if the table has an attribute set.
-		/// @param p_attribute_set The attribute set to check.
-		bool has_attribute_set(const Ref<AttributeSet> &p_attribute_set) const;
-		/// @brief Remove an attribute set from the table.
-		/// @param p_attribute_set The attribute set to remove.
-		void remove_attribute_set(const Ref<AttributeSet> &p_attribute_set);
-		/// @brief Remove an attribute set from the table.
-		/// @param p_attribute_set The attribute set to remove.
-		void set_attribute_sets(const TypedArray<AttributeSet> &p_attribute_sets);
-	};
-
 	/// @brief Runtime buff. Using class because structs seems to not be allowed in Godot yet.
 	class RuntimeBuff : public RefCounted
 	{
@@ -419,22 +397,13 @@ namespace gga
 	protected:
 		static void _bind_methods();
 		/// @brief The attribute reference.
-		Ref<Attribute> attribute;
+		Ref<AttributeBase> attribute;
 		/// @brief The attribute value.
 		float value;
 		/// @brief The attribute buffs.
 		TypedArray<RuntimeBuff> buffs;
 
 	public:
-		/// @brief Create a runtime attribute from an attribute.
-		/// @param p_attribute The attribute to create the runtime attribute from.
-		/// @return The new instance of RuntimeAttribute.
-		static Ref<RuntimeAttribute> from_attribute(const Ref<Attribute> &p_attribute);
-		/// @brief Create an attribute from a runtime attribute.
-		/// @param p_attribute The runtime attribute to create the attribute from.
-		/// @return The new instance of Attribute.
-		static Ref<Attribute> to_attribute(const Ref<RuntimeAttribute> &p_attribute);
-
 		/// @brief Add a buff to the attribute.
 		/// @param p_buff The buff to add.
 		/// @return True if the buff was added, false otherwise.
@@ -474,7 +443,7 @@ namespace gga
 		TypedArray<RuntimeBuff> get_buffs() const;
 		/// @brief Set the attribute.
 		/// @param p_value The attribute.
-		void set_attribute(const Ref<Attribute> &p_value);
+		void set_attribute(const Ref<AttributeBase> &p_value);
 		/// @brief Sets the buffs affecting the attribute.
 		/// @param p_value The buffs affecting the attribute.
 		void set_buffs(const TypedArray<AttributeBuff> &p_value);
