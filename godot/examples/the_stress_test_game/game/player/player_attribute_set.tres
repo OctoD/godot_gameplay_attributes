@@ -56,4 +56,4 @@ attribute_name = "pickup_radius"
 script = ExtResource("7_ivnag")
 
 [resource]
-attributes = Array[Attribute]([SubResource("Attribute_o56mt"), SubResource("Attribute_yu740"), SubResource("Attribute_n8rb4"), SubResource("Attribute_cye61"), SubResource("Attribute_i2pdw"), SubResource("Attribute_x86gy"), SubResource("Attribute_ad25v")])
+attributes = Array[AttributeBase]([SubResource("Attribute_o56mt"), SubResource("Attribute_yu740"), SubResource("Attribute_n8rb4"), SubResource("Attribute_cye61"), SubResource("Attribute_i2pdw"), SubResource("Attribute_x86gy"), SubResource("Attribute_ad25v")])

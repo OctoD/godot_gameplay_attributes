@@ -30,7 +30,6 @@
 #include "attribute.hpp"
 #include "attribute_container.hpp"
 #include "buff_pool_queue.hpp"
-#include "derived_attribute.hpp"
 #include <godot_cpp/core/class_db.hpp>
 
 using namespace godot;
@@ -44,14 +43,12 @@ void gdextension_initialize(ModuleInitializationLevel p_level)
 		ClassDB::register_abstract_class<gga::AttributeBase>();
 		ClassDB::register_class<gga::Attribute>();
 		ClassDB::register_class<gga::AttributeSet>();
-		ClassDB::register_class<gga::DerivedAttribute>();
 		/// nodes
 		ClassDB::register_runtime_class<gga::AttributeContainer>();
 		ClassDB::register_runtime_class<gga::BuffPoolQueue>();
 		/// runtime classes
 		ClassDB::register_runtime_class<gga::RuntimeBuff>();
 		ClassDB::register_runtime_class<gga::RuntimeAttribute>();
-		ClassDB::register_runtime_class<gga::RuntimeDerivedAttribute>();
 	} else if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
 	}
 }

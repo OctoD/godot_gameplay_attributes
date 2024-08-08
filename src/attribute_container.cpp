@@ -31,7 +31,6 @@
 
 #include "attribute.hpp"
 #include "buff_pool_queue.hpp"
-#include "derived_attribute.hpp"
 
 using namespace gga;
 
@@ -136,8 +135,9 @@ void AttributeContainer::add_attribute(Ref<AttributeBase> p_attribute)
 		Ref<RuntimeAttribute> runtime_attribute = memnew(RuntimeAttribute);
 
 		runtime_attribute->set_attribute(p_attribute);
+		runtime_attribute->set_attribute_set(attribute_set);
 		runtime_attribute->set_buffs(p_attribute->get_buffs());
-		runtime_attribute->set_value(p_attribute->get_initial_value());
+		runtime_attribute->set_value(runtime_attribute->get_initial_value());
 
 		Callable attribute_changed_callable = Callable::create(this, "_on_attribute_changed");
 		Callable buff_applied_callable = Callable::create(this, "_on_buff_applied");
@@ -243,13 +243,13 @@ Ref<AttributeSet> AttributeContainer::get_attribute_set() const
 
 TypedArray<RuntimeAttribute> AttributeContainer::get_attributes() const
 {
-	TypedArray<RuntimeAttribute> attributes;
+	TypedArray<RuntimeAttribute> return_attributes = TypedArray<RuntimeAttribute>();
 
 	for (int i = 0; i < attributes.size(); i++) {
-		attributes.push_back(attributes[i]);
+		return_attributes.push_back(attributes[i]);
 	}
 
-	return attributes;
+	return return_attributes;
 }
 
 Ref<RuntimeAttribute> AttributeContainer::get_attribute_by_name(const String &p_name) const

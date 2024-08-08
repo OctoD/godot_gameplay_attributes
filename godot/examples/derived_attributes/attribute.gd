@@ -4,7 +4,7 @@ extends HBoxContainer
 signal decreased()
 signal increased()
 
-@onready var attribute_name: Label = $AttributeName
+@onready var attribute_name: Label = %AttributeName
 @onready var decrement: Button = %Decrement
 @onready var value_display: Label = %ValueDisplay
 @onready var increment: Button = %Increment
@@ -29,3 +29,8 @@ func bind_runtime_attribute(runtime_attribute: RuntimeAttribute) -> void:
 func draw(attribute: RuntimeAttribute, _old_value: float, new_value: float) -> void:
 	attribute_name.text = attribute.attribute.attribute_name
 	value_display.text = str(int(new_value))
+	
+	
+func set_readonly(value: bool) -> void:
+	decrement.visible = !value
+	increment.visible = !value
