@@ -16,6 +16,20 @@ func _append_items(items, target: Node, readonly: bool) -> void:
 		target.add_child(attr_scene)
 		attr_scene.bind_runtime_attribute(item)
 		attr_scene.set_readonly(readonly)
+		print(item.get_buffed_value())
+		if (!readonly):
+			attr_scene.decreased.connect(func ():
+				var buff = AttributeBuff.new()
+				buff.attribute_name = item.attribute.attribute_name
+				buff.operation = AttributeOperation.subtract(1)
+				attribute_container.apply_buff(buff)
+			)
+			attr_scene.increased.connect(func ():
+				var buff = AttributeBuff.new()
+				buff.attribute_name = item.attribute.attribute_name
+				buff.operation = AttributeOperation.add(1)
+				attribute_container.apply_buff(buff)
+			)
 
 
 func _ready() -> void:

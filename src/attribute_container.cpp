@@ -134,6 +134,7 @@ void AttributeContainer::add_attribute(Ref<AttributeBase> p_attribute)
 	if (!has_attribute(p_attribute)) {
 		Ref<RuntimeAttribute> runtime_attribute = memnew(RuntimeAttribute);
 
+		runtime_attribute->attribute_container = this;
 		runtime_attribute->set_attribute(p_attribute);
 		runtime_attribute->set_attribute_set(attribute_set);
 		runtime_attribute->set_buffs(p_attribute->get_buffs());

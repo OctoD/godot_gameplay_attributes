@@ -39,7 +39,10 @@ using namespace godot;
 namespace gga
 {
 	class AttributeBase;
-	
+	class AttributeContainer;
+	class AttributeSet;
+	class RuntimeAttribute;
+
 	enum OperationType
 	{
 		/// @brief Add operation.
@@ -295,18 +298,22 @@ namespace gga
 		/// @return The attribute name.
 		String get_attribute_name() const;
 
-		/// @brief Get the minimum value of the attribute.
+		/// @brief Subscribes to some attributes
+		GDVIRTUAL1RC(TypedArray<AttributeBase>, _derived_from, Ref<AttributeSet>);
+		/// @brief Gets the buffed attribute value. The array passed as argument is the array of RuntimeAttribute instances buffed value.
+		GDVIRTUAL1RC(float, _get_buffed_value, PackedFloat32Array);
+		/// @brief Get the initial value of the attribute.
 		/// @return The minimum value of the attribute.
 		GDVIRTUAL1RC(float, _get_initial_value, Ref<AttributeSet>);
-		virtual float get_min_value() const = 0;
+		virtual float get_initial_value() const = 0;
 		/// @brief Get the maximum value of the attribute.
 		/// @return The maximum value of the attribute.
 		GDVIRTUAL1RC(float, _get_max_value, Ref<AttributeSet>);
 		virtual float get_max_value() const = 0;
-		/// @brief Get the initial value of the attribute.
-		/// @return The initial value of the attribute.
+		/// @brief Get the minimum value of the attribute.
+		/// @return The minimum value of the attribute.
 		GDVIRTUAL1RC(float, _get_min_value, Ref<AttributeSet>);
-		virtual float get_initial_value() const = 0;
+		virtual float get_min_value() const = 0;
 
 		/// @brief Get the buffs affecting the attribute.
 		/// @return The buffs affecting the attribute.
@@ -402,11 +409,15 @@ namespace gga
 		GDCLASS(RuntimeAttribute, RefCounted);
 
 	protected:
+		friend class AttributeContainer;
+
 		static void _bind_methods();
 		/// @brief The attribute reference.
 		Ref<AttributeBase> attribute;
 		/// @brief The attribute set reference.
 		Ref<AttributeSet> attribute_set;
+		/// @brief The attribute container reference.
+		AttributeContainer *attribute_container;
 		/// @brief The attribute value.
 		float value;
 		/// @brief The attribute buffs.
@@ -448,6 +459,9 @@ namespace gga
 		/// @brief Get the buffed value of the attribute.
 		/// @return The buffed value.
 		float get_buffed_value() const;
+		/// @brief Get the attributes the attribute derives from.
+		/// @return The attributes the attribute derives from.
+		TypedArray<AttributeBase> get_derived_from() const;
 		/// @brief Get the initial value of the attribute.
 		/// @return The initial value of the attribute.
 		float get_initial_value() const;
@@ -459,7 +473,7 @@ namespace gga
 		float get_max_value() const;
 		/// @brief Gets the value of the attribute.
 		/// @return The value of the attribute.
-		float get_value() const;
+		float get_value();
 		/// @brief Get the buffs affecting the attribute.
 		TypedArray<RuntimeBuff> get_buffs() const;
 		/// @brief Set the attribute.

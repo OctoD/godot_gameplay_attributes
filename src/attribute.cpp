@@ -28,6 +28,7 @@
 /**************************************************************************/
 
 #include "attribute.hpp"
+#include "attribute_container.hpp"
 
 using namespace gga;
 
@@ -291,6 +292,8 @@ void AttributeBase::_bind_methods()
 	ClassDB::bind_method(D_METHOD("set_buffs", "p_buffs"), &AttributeBase::set_buffs);
 
 	/// binds virtuals to godot
+	GDVIRTUAL_BIND(_derived_from, "attribute_set");
+	GDVIRTUAL_BIND(_get_buffed_value, "values");
 	GDVIRTUAL_BIND(_get_initial_value, "attribute_set");
 	GDVIRTUAL_BIND(_get_max_value, "attribute_set");
 	GDVIRTUAL_BIND(_get_min_value, "attribute_set");
@@ -720,6 +723,7 @@ void RuntimeAttribute::_bind_methods()
 	ClassDB::bind_method(D_METHOD("get_attribute_set"), &RuntimeAttribute::get_attribute_set);
 	ClassDB::bind_method(D_METHOD("get_buffed_value"), &RuntimeAttribute::get_buffed_value);
 	ClassDB::bind_method(D_METHOD("get_buffs"), &RuntimeAttribute::get_buffs);
+	ClassDB::bind_method(D_METHOD("get_derived_from"), &RuntimeAttribute::get_derived_from);
 	ClassDB::bind_method(D_METHOD("get_min_value"), &RuntimeAttribute::get_min_value);
 	ClassDB::bind_method(D_METHOD("get_initial_value"), &RuntimeAttribute::get_initial_value);
 	ClassDB::bind_method(D_METHOD("get_max_value"), &RuntimeAttribute::get_max_value);
@@ -862,6 +866,24 @@ Ref<AttributeSet> RuntimeAttribute::get_attribute_set() const
 
 float RuntimeAttribute::get_buffed_value() const
 {
+	if (GDVIRTUAL_IS_OVERRIDDEN_PTR(attribute, _get_buffed_value)) {
+		TypedArray<AttributeBase> derived_from = get_derived_from();
+		TypedArray<float> values = TypedArray<float>();
+
+		if (derived_from.size() > 0) {
+			for (int i = 0; i < derived_from.size(); i++) {
+				Ref<AttributeBase> derived_attribute = derived_from[i];
+				values.push_back(attribute_container->get_attribute_buffed_value_by_name(derived_attribute->get_attribute_name()));
+			}
+		}
+
+		float buffed_value = value;
+
+		if (GDVIRTUAL_CALL_PTR(attribute, _get_buffed_value, values, buffed_value)) {
+			return buffed_value;
+		}
+	}
+
 	float current_value = value;
 
 	for (int i = 0; i < buffs.size(); i++) {
@@ -870,6 +892,19 @@ float RuntimeAttribute::get_buffed_value() const
 	}
 
 	return current_value;
+}
+
+TypedArray<AttributeBase> RuntimeAttribute::get_derived_from() const
+{
+	if (GDVIRTUAL_IS_OVERRIDDEN_PTR(attribute, _derived_from)) {
+		TypedArray<AttributeBase> derived_attributes = TypedArray<AttributeBase>();
+
+		if (GDVIRTUAL_CALL_PTR(attribute, _derived_from, attribute_set, derived_attributes)) {
+			return derived_attributes;
+		}
+	}
+
+	return TypedArray<AttributeBase>();
 }
 
 float RuntimeAttribute::get_min_value() const
@@ -911,7 +946,7 @@ float RuntimeAttribute::get_max_value() const
 	return attribute->get_max_value();
 }
 
-float RuntimeAttribute::get_value() const
+float RuntimeAttribute::get_value()
 {
 	return value;
 }
