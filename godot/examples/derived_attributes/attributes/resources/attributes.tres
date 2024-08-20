@@ -1,0 +1,58 @@
+[gd_resource type="AttributeSet" load_steps=17 format=3 uid="uid://fcvopdysvkug"]
+
+[ext_resource type="Script" path="res://examples/derived_attributes/attributes/scripts/armor.gd" id="1_se0wm"]
+[ext_resource type="Script" path="res://examples/derived_attributes/attributes/scripts/constitution.gd" id="2_byn0i"]
+[ext_resource type="Script" path="res://examples/derived_attributes/attributes/scripts/dexterity.gd" id="3_ysn4f"]
+[ext_resource type="Script" path="res://examples/derived_attributes/attributes/scripts/health.gd" id="4_id80i"]
+[ext_resource type="Script" path="res://examples/derived_attributes/attributes/scripts/intelligence.gd" id="5_sy81i"]
+[ext_resource type="Script" path="res://examples/derived_attributes/attributes/scripts/mana.gd" id="6_cna11"]
+[ext_resource type="Script" path="res://examples/derived_attributes/attributes/scripts/melee_damage.gd" id="7_0c3hl"]
+[ext_resource type="Script" path="res://examples/derived_attributes/attributes/scripts/strength.gd" id="8_ailyk"]
+
+[sub_resource type="Attribute" id="Attribute_gnvv6"]
+initial_value = 1.35926e-43
+max_value = 1.56945e-43
+min_value = 6.86636e-44
+script = ExtResource("1_se0wm")
+
+[sub_resource type="Attribute" id="Attribute_6ppt1"]
+initial_value = 5.0
+max_value = 100.0
+min_value = 1.5134e-43
+script = ExtResource("2_byn0i")
+
+[sub_resource type="Attribute" id="Attribute_qxbih"]
+initial_value = 5.0
+max_value = 100.0
+min_value = 4.2039e-45
+script = ExtResource("3_ysn4f")
+
+[sub_resource type="Attribute" id="Attribute_wt17l"]
+max_value = 1.35926e-43
+min_value = 1.56945e-43
+script = ExtResource("4_id80i")
+
+[sub_resource type="Attribute" id="Attribute_whdut"]
+initial_value = 5.0
+min_value = 6.5861e-44
+script = ExtResource("5_sy81i")
+
+[sub_resource type="Attribute" id="Attribute_w8pva"]
+initial_value = 1.41531e-43
+max_value = 1.61149e-43
+min_value = 6.5861e-44
+script = ExtResource("6_cna11")
+
+[sub_resource type="Attribute" id="Attribute_153wp"]
+initial_value = 1.62551e-43
+max_value = 9.22056e-39
+script = ExtResource("7_0c3hl")
+
+[sub_resource type="Attribute" id="Attribute_h7vdv"]
+initial_value = 5.0
+max_value = 100.0
+min_value = 7.00649e-44
+script = ExtResource("8_ailyk")
+
+[resource]
+attributes = Array[AttributeBase]([SubResource("Attribute_gnvv6"), SubResource("Attribute_6ppt1"), SubResource("Attribute_qxbih"), SubResource("Attribute_wt17l"), SubResource("Attribute_whdut"), SubResource("Attribute_w8pva"), SubResource("Attribute_153wp"), SubResource("Attribute_h7vdv")])

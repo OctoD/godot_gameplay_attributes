@@ -37,13 +37,16 @@ using namespace godot;
 void gdextension_initialize(ModuleInitializationLevel p_level)
 {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+		/// attributes, resources and operations
 		ClassDB::register_class<gga::AttributeOperation>();
 		ClassDB::register_class<gga::AttributeBuff>();
+		ClassDB::register_abstract_class<gga::AttributeBase>();
 		ClassDB::register_class<gga::Attribute>();
 		ClassDB::register_class<gga::AttributeSet>();
+		/// nodes
 		ClassDB::register_runtime_class<gga::AttributeContainer>();
-		ClassDB::register_class<gga::AttributesTable>();
 		ClassDB::register_runtime_class<gga::BuffPoolQueue>();
+		/// runtime classes
 		ClassDB::register_runtime_class<gga::RuntimeBuff>();
 		ClassDB::register_runtime_class<gga::RuntimeAttribute>();
 	} else if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {

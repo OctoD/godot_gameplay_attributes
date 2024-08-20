@@ -15,6 +15,13 @@
         "xhash": "cpp",
         "xstring": "cpp",
         "xtree": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "atomic": "cpp",
+        "charconv": "cpp",
+        "format": "cpp",
+        "memory": "cpp",
+        "type_traits": "cpp",
+        "xlocale": "cpp",
+        "xmemory": "cpp"
     }
 }

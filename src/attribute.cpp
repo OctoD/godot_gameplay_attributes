@@ -28,6 +28,7 @@
 /**************************************************************************/
 
 #include "attribute.hpp"
+#include "attribute_container.hpp"
 
 using namespace gga;
 
@@ -280,6 +281,54 @@ void AttributeBuff::set_unique(const bool p_value)
 
 #pragma endregion
 
+#pragma region AttributeBase
+
+void AttributeBase::_bind_methods()
+{
+	/// binds methods to godot
+	ClassDB::bind_method(D_METHOD("get_attribute_name"), &AttributeBase::get_attribute_name);
+	ClassDB::bind_method(D_METHOD("get_buffs"), &AttributeBase::get_buffs);
+	ClassDB::bind_method(D_METHOD("set_attribute_name", "p_value"), &AttributeBase::set_attribute_name);
+	ClassDB::bind_method(D_METHOD("set_buffs", "p_buffs"), &AttributeBase::set_buffs);
+
+	/// binds virtuals to godot
+	GDVIRTUAL_BIND(_derived_from, "attribute_set");
+	GDVIRTUAL_BIND(_get_buffed_value, "values");
+	GDVIRTUAL_BIND(_get_initial_value, "attribute_set");
+	GDVIRTUAL_BIND(_get_max_value, "attribute_set");
+	GDVIRTUAL_BIND(_get_min_value, "attribute_set");
+
+	/// binds properties to godot
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "attribute_name"), "set_attribute_name", "get_attribute_name");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "buffs"), "set_buffs", "get_buffs");
+}
+
+String AttributeBase::get_attribute_name() const
+{
+	if (attribute_name.is_empty()) {
+		return get_class_static();
+	}
+
+	return attribute_name;
+}
+
+TypedArray<AttributeBuff> AttributeBase::get_buffs() const
+{
+	return buffs;
+}
+
+void AttributeBase::set_attribute_name(const String &p_value)
+{
+	attribute_name = p_value;
+}
+
+void AttributeBase::set_buffs(const TypedArray<AttributeBuff> &p_buffs)
+{
+	buffs = p_buffs;
+}
+
+#pragma endregion
+
 #pragma region Attribute
 
 void Attribute::_bind_methods()
@@ -288,23 +337,17 @@ void Attribute::_bind_methods()
 	ClassDB::bind_static_method("Attribute", D_METHOD("create", "attribute_name", "initial_value", "min_value", "max_value"), &Attribute::create);
 
 	/// binds methods to godot
-	ClassDB::bind_method(D_METHOD("get_attribute_name"), &Attribute::get_attribute_name);
 	ClassDB::bind_method(D_METHOD("get_initial_value"), &Attribute::get_initial_value);
 	ClassDB::bind_method(D_METHOD("get_max_value"), &Attribute::get_max_value);
 	ClassDB::bind_method(D_METHOD("get_min_value"), &Attribute::get_min_value);
-	ClassDB::bind_method(D_METHOD("set_attribute_name", "p_value"), &Attribute::set_attribute_name);
 	ClassDB::bind_method(D_METHOD("set_initial_value", "p_value"), &Attribute::set_initial_value);
 	ClassDB::bind_method(D_METHOD("set_max_value", "p_value"), &Attribute::set_max_value);
 	ClassDB::bind_method(D_METHOD("set_min_value", "p_value"), &Attribute::set_min_value);
-	ClassDB::bind_method(D_METHOD("get_buffs"), &Attribute::get_buffs);
-	ClassDB::bind_method(D_METHOD("set_buffs", "p_buffs"), &Attribute::set_buffs);
 
 	/// properties to bind to godot
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "attribute_name"), "set_attribute_name", "get_attribute_name");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "initial_value"), "set_initial_value", "get_initial_value");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_value"), "set_max_value", "get_max_value");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "min_value"), "set_min_value", "get_min_value");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "buffs"), "set_buffs", "get_buffs");
 }
 
 Ref<Attribute> Attribute::create(const String &p_attribute_name, const float p_initial_value, const float p_min_value, const float p_max_value)
@@ -315,16 +358,6 @@ Ref<Attribute> Attribute::create(const String &p_attribute_name, const float p_i
 	attribute->set_min_value(p_min_value);
 	attribute->set_max_value(p_max_value);
 	return attribute;
-}
-
-String Attribute::get_attribute_name() const
-{
-	return attribute_name;
-}
-
-TypedArray<AttributeBuff> Attribute::get_buffs() const
-{
-	return buffs;
 }
 
 float Attribute::get_initial_value() const
@@ -340,16 +373,6 @@ float Attribute::get_max_value() const
 float Attribute::get_min_value() const
 {
 	return min_value;
-}
-
-void Attribute::set_attribute_name(const String &p_value)
-{
-	attribute_name = p_value;
-}
-
-void Attribute::set_buffs(const TypedArray<AttributeBuff> &p_buffs)
-{
-	buffs = p_buffs;
 }
 
 void Attribute::set_initial_value(const float p_value)
@@ -388,12 +411,12 @@ void AttributeSet::_bind_methods()
 	ClassDB::bind_method(D_METHOD("set_set_name", "p_value"), &AttributeSet::set_set_name);
 
 	/// binds properties to godot
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "attributes", PROPERTY_HINT_RESOURCE_TYPE, "24/17:Attribute"), "set_attributes", "get_attributes");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "attributes", PROPERTY_HINT_RESOURCE_TYPE, "24/17:AttributeBase"), "set_attributes", "get_attributes");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "set_name"), "set_set_name", "get_set_name");
 
 	/// adds signals to godot
-	ADD_SIGNAL(MethodInfo("attribute_added", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "Attribute")));
-	ADD_SIGNAL(MethodInfo("attribute_removed", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "Attribute")));
+	ADD_SIGNAL(MethodInfo("attribute_added", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "AttributeBase")));
+	ADD_SIGNAL(MethodInfo("attribute_removed", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "AttributeBase")));
 }
 
 bool AttributeSet::operator==(const Ref<AttributeSet> &set) const
@@ -417,16 +440,16 @@ bool AttributeSet::operator==(const Ref<AttributeSet> &set) const
 
 AttributeSet::AttributeSet()
 {
-	attributes = TypedArray<Attribute>();
+	attributes = TypedArray<AttributeBase>();
 }
 
-AttributeSet::AttributeSet(TypedArray<Attribute> p_attributes, String p_set_name)
+AttributeSet::AttributeSet(TypedArray<AttributeBase> p_attributes, String p_set_name)
 {
 	attributes = p_attributes.duplicate(true);
 	set_name = p_set_name;
 }
 
-bool AttributeSet::add_attribute(const Ref<Attribute> &p_attribute)
+bool AttributeSet::add_attribute(const Ref<AttributeBase> &p_attribute)
 {
 	if (!has_attribute(p_attribute)) {
 		Ref<Attribute> d_attribute = p_attribute->duplicate(true);
@@ -440,13 +463,13 @@ bool AttributeSet::add_attribute(const Ref<Attribute> &p_attribute)
 	return false;
 }
 
-uint16_t AttributeSet::add_attributes(const TypedArray<Attribute> &p_attributes)
+uint16_t AttributeSet::add_attributes(const TypedArray<AttributeBase> &p_attributes)
 {
 	uint16_t count = 0;
 
 	for (int i = 0; i < p_attributes.size(); i++) {
 		if (!has_attribute(p_attributes[i])) {
-			Ref<Attribute> d_attribute = p_attributes[i];
+			Ref<AttributeBase> d_attribute = p_attributes[i];
 
 			d_attribute = d_attribute->duplicate(true);
 
@@ -463,15 +486,15 @@ uint16_t AttributeSet::add_attributes(const TypedArray<Attribute> &p_attributes)
 	return count;
 }
 
-int AttributeSet::find(const Ref<Attribute> &p_attribute) const
+int AttributeSet::find(const Ref<AttributeBase> &p_attribute) const
 {
 	return attributes.find(p_attribute);
 }
 
-Ref<Attribute> AttributeSet::find_by_classname(const String &p_classname) const
+Ref<AttributeBase> AttributeSet::find_by_classname(const String &p_classname) const
 {
 	for (int i = 0; i < attributes.size(); i++) {
-		Ref<Attribute> attribute = attributes[i];
+		Ref<AttributeBase> attribute = attributes[i];
 
 		if (attribute->get_class() == p_classname) {
 			return attributes[i];
@@ -481,17 +504,17 @@ Ref<Attribute> AttributeSet::find_by_classname(const String &p_classname) const
 	return Ref<Attribute>();
 }
 
-Ref<Attribute> AttributeSet::find_by_name(const String &p_name) const
+Ref<AttributeBase> AttributeSet::find_by_name(const String &p_name) const
 {
 	for (int i = 0; i < attributes.size(); i++) {
-		Ref<Attribute> attribute = attributes[i];
+		Ref<AttributeBase> attribute = attributes[i];
 
 		if (attribute->get_attribute_name() == p_name) {
 			return attributes[i];
 		}
 	}
 
-	return Ref<Attribute>();
+	return Ref<AttributeBase>();
 }
 
 PackedStringArray AttributeSet::get_attributes_names() const
@@ -499,19 +522,19 @@ PackedStringArray AttributeSet::get_attributes_names() const
 	PackedStringArray names = PackedStringArray();
 
 	for (int i = 0; i < attributes.size(); i++) {
-		Ref<Attribute> attribute = attributes[i];
+		Ref<AttributeBase> attribute = attributes[i];
 		names.push_back(attribute->get_attribute_name());
 	}
 
 	return names;
 }
 
-TypedArray<Attribute> AttributeSet::get_attributes() const
+TypedArray<AttributeBase> AttributeSet::get_attributes() const
 {
 	return attributes;
 }
 
-Ref<Attribute> AttributeSet::get_at(int index) const
+Ref<AttributeBase> AttributeSet::get_at(int index) const
 {
 	if (index >= 0 && index < attributes.size()) {
 		return attributes[index];
@@ -525,7 +548,7 @@ String AttributeSet::get_set_name() const
 	return set_name;
 }
 
-bool AttributeSet::has_attribute(const Ref<Attribute> &p_attribute) const
+bool AttributeSet::has_attribute(const Ref<AttributeBase> &p_attribute) const
 {
 	for (int i = 0; i < attributes.size(); i++) {
 		if (attributes[i] == p_attribute) {
@@ -536,7 +559,7 @@ bool AttributeSet::has_attribute(const Ref<Attribute> &p_attribute) const
 	return false;
 }
 
-bool AttributeSet::remove_attribute(const Ref<Attribute> &p_attribute)
+bool AttributeSet::remove_attribute(const Ref<AttributeBase> &p_attribute)
 {
 	int index = attributes.find(p_attribute);
 	bool result = false;
@@ -551,7 +574,7 @@ bool AttributeSet::remove_attribute(const Ref<Attribute> &p_attribute)
 	return false;
 }
 
-int AttributeSet::remove_attributes(const TypedArray<Attribute> &p_attributes)
+int AttributeSet::remove_attributes(const TypedArray<AttributeBase> &p_attributes)
 {
 	int count = 0;
 
@@ -572,14 +595,14 @@ int AttributeSet::remove_attributes(const TypedArray<Attribute> &p_attributes)
 	return count;
 }
 
-void AttributeSet::push_back(const Ref<Attribute> &p_attribute)
+void AttributeSet::push_back(const Ref<AttributeBase> &p_attribute)
 {
 	attributes.push_back(p_attribute);
 	emit_signal("attribute_added", p_attribute);
 	emit_changed();
 }
 
-void AttributeSet::set_attributes(const TypedArray<Attribute> &p_attributes)
+void AttributeSet::set_attributes(const TypedArray<AttributeBase> &p_attributes)
 {
 	attributes = p_attributes;
 	emit_changed();
@@ -594,91 +617,6 @@ void AttributeSet::set_set_name(const String &p_value)
 int AttributeSet::count() const
 {
 	return attributes.size();
-}
-
-#pragma endregion
-
-#pragma region AttributesTable
-
-void AttributesTable::_bind_methods()
-{
-	/// binds methods to godot
-	ClassDB::bind_method(D_METHOD("add_attribute_set", "p_attribute_set"), &AttributesTable::add_attribute_set);
-	ClassDB::bind_method(D_METHOD("get_attribute_names"), &AttributesTable::get_attribute_names);
-	ClassDB::bind_method(D_METHOD("get_attribute_sets"), &AttributesTable::get_attribute_sets);
-	ClassDB::bind_method(D_METHOD("has_attribute_set", "p_attribute_set"), &AttributesTable::has_attribute_set);
-	ClassDB::bind_method(D_METHOD("remove_attribute_set", "p_attribute_set"), &AttributesTable::remove_attribute_set);
-	ClassDB::bind_method(D_METHOD("set_attribute_sets", "p_attribute_sets"), &AttributesTable::set_attribute_sets);
-
-	/// binds properties to godot
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "attribute_sets", PROPERTY_HINT_RESOURCE_TYPE, "24/17:AttributeSet"), "set_attribute_sets", "get_attribute_sets");
-}
-
-AttributesTable::AttributesTable()
-{
-	attribute_sets = TypedArray<AttributeSet>();
-}
-
-AttributesTable::AttributesTable(TypedArray<AttributeSet> p_attribute_sets) :
-		attribute_sets(p_attribute_sets)
-{
-}
-
-void AttributesTable::add_attribute_set(const Ref<AttributeSet> &p_attribute_set)
-{
-	if (!has_attribute_set(p_attribute_set)) {
-		attribute_sets.push_back(p_attribute_set);
-	}
-}
-
-TypedArray<AttributeSet> AttributesTable::get_attribute_sets() const
-{
-	return attribute_sets;
-}
-
-PackedStringArray AttributesTable::get_attribute_names() const
-{
-	PackedStringArray names = PackedStringArray();
-
-	for (int i = 0; i < attribute_sets.size(); i++) {
-		Ref<AttributeSet> attribute_set = attribute_sets[i];
-		PackedStringArray set_names = attribute_set->get_attributes_names();
-
-		for (int j = 0; j < set_names.size(); j++) {
-			if (!names.has(set_names[j])) {
-				names.push_back(set_names[j]);
-			}
-		}
-	}
-
-	names.sort();
-
-	return names;
-}
-
-bool AttributesTable::has_attribute_set(const Ref<AttributeSet> &p_attribute_set) const
-{
-	for (int i = 0; i < attribute_sets.size(); i++) {
-		if (attribute_sets[i] == p_attribute_set) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void AttributesTable::remove_attribute_set(const Ref<AttributeSet> &p_attribute_set)
-{
-	int index = attribute_sets.find(p_attribute_set);
-
-	if (index != -1) {
-		attribute_sets.remove_at(index);
-	}
-}
-
-void AttributesTable::set_attribute_sets(const TypedArray<AttributeSet> &p_attribute_sets)
-{
-	attribute_sets = p_attribute_sets;
 }
 
 #pragma endregion
@@ -772,67 +710,41 @@ void RuntimeBuff::set_time_left(const float p_value)
 
 #pragma endregion
 
-#pragma region RuntimeAttribute
+#pragma region RuntimeAttributeBase
 
 void RuntimeAttribute::_bind_methods()
 {
 	/// binds methods to godot
-	ClassDB::bind_static_method("RuntimeAttribute", D_METHOD("from_attribute", "p_attribute"), &RuntimeAttribute::from_attribute);
-	ClassDB::bind_static_method("RuntimeAttribute", D_METHOD("to_attribute", "p_attribute"), &RuntimeAttribute::to_attribute);
 	ClassDB::bind_method(D_METHOD("add_buff", "p_buff"), &RuntimeAttribute::add_buff);
 	ClassDB::bind_method(D_METHOD("add_buffs", "p_buffs"), &RuntimeAttribute::add_buffs);
 	ClassDB::bind_method(D_METHOD("can_receive_buff", "p_buff"), &RuntimeAttribute::can_receive_buff);
 	ClassDB::bind_method(D_METHOD("clear_buffs"), &RuntimeAttribute::clear_buffs);
 	ClassDB::bind_method(D_METHOD("get_attribute"), &RuntimeAttribute::get_attribute);
+	ClassDB::bind_method(D_METHOD("get_attribute_set"), &RuntimeAttribute::get_attribute_set);
 	ClassDB::bind_method(D_METHOD("get_buffed_value"), &RuntimeAttribute::get_buffed_value);
 	ClassDB::bind_method(D_METHOD("get_buffs"), &RuntimeAttribute::get_buffs);
+	ClassDB::bind_method(D_METHOD("get_derived_from"), &RuntimeAttribute::get_derived_from);
+	ClassDB::bind_method(D_METHOD("get_min_value"), &RuntimeAttribute::get_min_value);
+	ClassDB::bind_method(D_METHOD("get_initial_value"), &RuntimeAttribute::get_initial_value);
+	ClassDB::bind_method(D_METHOD("get_max_value"), &RuntimeAttribute::get_max_value);
 	ClassDB::bind_method(D_METHOD("get_value"), &RuntimeAttribute::get_value);
 	ClassDB::bind_method(D_METHOD("remove_buff", "p_buff"), &RuntimeAttribute::remove_buff);
 	ClassDB::bind_method(D_METHOD("remove_buffs", "p_buffs"), &RuntimeAttribute::remove_buffs);
 	ClassDB::bind_method(D_METHOD("set_attribute", "p_value"), &RuntimeAttribute::set_attribute);
+	ClassDB::bind_method(D_METHOD("set_attribute_set", "p_value"), &RuntimeAttribute::set_attribute_set);
 	ClassDB::bind_method(D_METHOD("set_buffs", "p_buffs"), &RuntimeAttribute::set_buffs);
 	ClassDB::bind_method(D_METHOD("set_value", "p_value"), &RuntimeAttribute::set_value);
 
 	/// binds properties to godot
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "Attribute"), "set_attribute", "get_attribute");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "AttributeBase"), "set_attribute", "get_attribute");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "value"), "set_value", "get_value");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "buffs"), "set_buffs", "get_buffs");
 
 	/// adds signals to godot
-	ADD_SIGNAL(MethodInfo("attribute_changed", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeAttribute"), PropertyInfo(Variant::FLOAT, "previous_value"), PropertyInfo(Variant::FLOAT, "new_value")));
+	ADD_SIGNAL(MethodInfo("attribute_changed", PropertyInfo(Variant::OBJECT, "attribute", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeAttributeBase"), PropertyInfo(Variant::FLOAT, "previous_value"), PropertyInfo(Variant::FLOAT, "new_value")));
 	ADD_SIGNAL(MethodInfo("buff_added", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeBuff")));
 	ADD_SIGNAL(MethodInfo("buff_removed", PropertyInfo(Variant::OBJECT, "buff", PROPERTY_HINT_RESOURCE_TYPE, "RuntimeBuff")));
 	ADD_SIGNAL(MethodInfo("buffs_cleared"));
-}
-
-Ref<RuntimeAttribute> RuntimeAttribute::from_attribute(const Ref<Attribute> &p_attribute)
-{
-	TypedArray<AttributeBuff> p_attribute_buffs = p_attribute->get_buffs();
-	TypedArray<RuntimeBuff> buffs = TypedArray<RuntimeBuff>();
-
-	for (int i = 0; i < p_attribute_buffs.size(); i++) {
-		buffs.push_back(RuntimeBuff::from_buff(p_attribute_buffs[i]));
-	}
-
-	Ref<RuntimeAttribute> runtime_attribute = memnew(RuntimeAttribute);
-	runtime_attribute->attribute = p_attribute;
-	runtime_attribute->buffs = buffs;
-	runtime_attribute->value = p_attribute->get_initial_value();
-	return runtime_attribute;
-}
-
-Ref<Attribute> RuntimeAttribute::to_attribute(const Ref<RuntimeAttribute> &p_attribute)
-{
-	Ref<Attribute> attribute_copy = p_attribute->attribute->duplicate(true);
-	TypedArray<AttributeBuff> buffs = TypedArray<AttributeBuff>();
-
-	for (int i = 0; i < p_attribute->buffs.size(); i++) {
-		buffs.push_back(RuntimeBuff::to_buff(p_attribute->buffs[i]));
-	}
-
-	attribute_copy->buffs = buffs;
-
-	return attribute_copy;
 }
 
 bool RuntimeAttribute::add_buff(const Ref<AttributeBuff> &p_buff)
@@ -849,7 +761,7 @@ bool RuntimeAttribute::add_buff(const Ref<AttributeBuff> &p_buff)
 		emit_signal("buff_added", runtime_buff);
 	} else {
 		float prev_value = value;
-		value = Math::clamp(p_buff->operate(value), attribute->min_value, attribute->max_value);
+		value = Math::clamp(p_buff->operate(value), attribute->get_min_value(), attribute->get_max_value());
 		emit_signal("attribute_changed", this, prev_value, value);
 	}
 
@@ -884,7 +796,7 @@ bool RuntimeAttribute::can_receive_buff(const Ref<AttributeBuff> &p_buff) const
 		return false;
 	}
 
-	return p_buff->get_attribute_name() == attribute->attribute_name;
+	return p_buff->get_attribute_name() == attribute->get_attribute_name();
 }
 
 void RuntimeAttribute::clear_buffs()
@@ -947,8 +859,31 @@ Ref<Attribute> RuntimeAttribute::get_attribute() const
 	return attribute;
 }
 
+Ref<AttributeSet> RuntimeAttribute::get_attribute_set() const
+{
+	return attribute_set;
+}
+
 float RuntimeAttribute::get_buffed_value() const
 {
+	if (GDVIRTUAL_IS_OVERRIDDEN_PTR(attribute, _get_buffed_value)) {
+		TypedArray<AttributeBase> derived_from = get_derived_from();
+		TypedArray<float> values = TypedArray<float>();
+
+		if (derived_from.size() > 0) {
+			for (int i = 0; i < derived_from.size(); i++) {
+				Ref<AttributeBase> derived_attribute = derived_from[i];
+				values.push_back(attribute_container->get_attribute_buffed_value_by_name(derived_attribute->get_attribute_name()));
+			}
+		}
+
+		float buffed_value = value;
+
+		if (GDVIRTUAL_CALL_PTR(attribute, _get_buffed_value, values, buffed_value)) {
+			return buffed_value;
+		}
+	}
+
 	float current_value = value;
 
 	for (int i = 0; i < buffs.size(); i++) {
@@ -959,7 +894,69 @@ float RuntimeAttribute::get_buffed_value() const
 	return current_value;
 }
 
-float RuntimeAttribute::get_value() const
+TypedArray<AttributeBase> RuntimeAttribute::get_derived_from() const
+{
+	if (GDVIRTUAL_IS_OVERRIDDEN_PTR(attribute, _derived_from)) {
+		TypedArray<AttributeBase> derived_attributes = TypedArray<AttributeBase>();
+
+		if (GDVIRTUAL_CALL_PTR(attribute, _derived_from, attribute_set, derived_attributes)) {
+			return derived_attributes;
+		}
+	}
+
+	return TypedArray<AttributeBase>();
+}
+
+float RuntimeAttribute::get_min_value() const
+{
+	if (GDVIRTUAL_IS_OVERRIDDEN_PTR(attribute, _get_min_value)) {
+		float ret;
+
+		if (GDVIRTUAL_CALL_PTR(attribute, _get_min_value, attribute_set, ret)) {
+			return ret;
+		}
+	}
+
+	return attribute->get_min_value();
+}
+
+float RuntimeAttribute::get_initial_value() const
+{
+	if (GDVIRTUAL_IS_OVERRIDDEN_PTR(attribute, _get_initial_value)) {
+		float ret;
+		TypedArray<AttributeBase> base_attributes = get_derived_from();
+
+		ERR_FAIL_COND_V_MSG(base_attributes.size() == 0, 0, "Attribute set must be set to get initial value. Please override _derived_from method.");
+
+		PackedFloat32Array values = PackedFloat32Array();
+
+		for (int i = 0; i < base_attributes.size(); i++) {
+			Ref<AttributeBase> base_attribute = base_attributes[i];
+			values.push_back(base_attribute->get_initial_value());
+		}
+
+		if (GDVIRTUAL_CALL_PTR(attribute, _get_initial_value, values, ret)) {
+			return ret;
+		}
+	}
+
+	return attribute->get_initial_value();
+}
+
+float RuntimeAttribute::get_max_value() const
+{
+	if (GDVIRTUAL_IS_OVERRIDDEN_PTR(attribute, _get_max_value)) {
+		float ret;
+
+		if (GDVIRTUAL_CALL_PTR(attribute, _get_max_value, attribute_set, ret)) {
+			return ret;
+		}
+	}
+
+	return attribute->get_max_value();
+}
+
+float RuntimeAttribute::get_value()
 {
 	return value;
 }
@@ -969,14 +966,20 @@ TypedArray<RuntimeBuff> RuntimeAttribute::get_buffs() const
 	return buffs;
 }
 
-void RuntimeAttribute::set_attribute(const Ref<Attribute> &p_value)
+void RuntimeAttribute::set_attribute(const Ref<AttributeBase> &p_value)
 {
 	attribute = p_value;
 }
 
 void RuntimeAttribute::set_value(const float p_value)
 {
-	value = Math::clamp(p_value, attribute->min_value, attribute->max_value);
+	float max_value = get_max_value();
+
+	if (Math::is_zero_approx(max_value)) {
+		value = p_value > get_min_value() ? p_value : get_min_value();
+	} else {
+		value = Math::clamp(p_value, get_min_value(), get_max_value());
+	}
 }
 
 void RuntimeAttribute::set_buffs(const TypedArray<AttributeBuff> &p_value)
@@ -986,6 +989,11 @@ void RuntimeAttribute::set_buffs(const TypedArray<AttributeBuff> &p_value)
 	for (int i = 0; i < p_value.size(); i++) {
 		buffs.push_back(RuntimeBuff::from_buff(p_value[i]));
 	}
+}
+
+void RuntimeAttribute::set_attribute_set(const Ref<AttributeSet> &p_value)
+{
+	attribute_set = p_value;
 }
 
 #pragma endregion

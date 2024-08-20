@@ -1,9 +1,9 @@
-[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://c4gihey1qoe8h"]
-
-[ext_resource type="AttributeOperation" uid="uid://d1240pmejx0be" path="res://examples/attribute_container/buffs/operations/-1_p.tres" id="1_rmw04"]
+[gd_resource type="AttributeBuff" format=3 uid="uid://c4gihey1qoe8h"]
 
 [resource]
 attribute_name = "attribute_000"
 buff_name = "remove_1_percent"
 duration = 1.83679e-40
-operation = ExtResource("1_rmw04")
+max_applies = 409
+transient = false
+unique = false

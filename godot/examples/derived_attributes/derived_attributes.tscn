@@ -1,0 +1,67 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqvwn1f5hh0lg"]
+
+[ext_resource type="Script" path="res://examples/derived_attributes/derived_attributes.gd" id="1_7kkyc"]
+[ext_resource type="AttributeSet" uid="uid://fcvopdysvkug" path="res://examples/derived_attributes/attributes/resources/attributes.tres" id="2_u0b81"]
+
+[node name="DerivedAttributes" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7kkyc")
+
+[node name="AttributeContainer" type="AttributeContainer" parent="."]
+attribute_set = ExtResource("2_u0b81")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Attributes" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="HBoxContainer/Attributes"]
+layout_mode = 2
+text = "Attributes"
+horizontal_alignment = 2
+
+[node name="Panel" type="Panel" parent="HBoxContainer/Attributes"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BaseAttributesList" type="VBoxContainer" parent="HBoxContainer/Attributes/Panel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
+[node name="DerivedAttributes" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="HBoxContainer/DerivedAttributes"]
+layout_mode = 2
+text = "Derived Attributes"
+
+[node name="Panel" type="Panel" parent="HBoxContainer/DerivedAttributes"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DerivedAttributesList" type="VBoxContainer" parent="HBoxContainer/DerivedAttributes/Panel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

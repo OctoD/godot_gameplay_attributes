@@ -36,7 +36,7 @@ using namespace godot;
 
 namespace gga
 {
-	class Attribute;
+	class AttributeBase;
 	class AttributeBuff;
 	class AttributeSet;
 	class BuffPoolQueue;
@@ -53,9 +53,11 @@ namespace gga
 		/// @brief Attribute's set.
 		Ref<AttributeSet> attribute_set;
 		/// @brief TypedArray of attributes.
-		TypedArray<RuntimeAttribute> attributes;
+		Dictionary attributes;
 		/// @brief Buff pool queue. It is used to store buffs that have a limited duration.
 		BuffPoolQueue *buff_pool_queue;
+		/// @brief Derived attributes. These are attributes that are calculated from other attributes.
+		Dictionary derived_attributes;
 		/// @brief Server authoritative. If set to true, the container will only process buffs on the server.
 		bool server_authoritative;
 
@@ -77,7 +79,10 @@ namespace gga
 		/// @param p_buff The buff that was removed.
 		void _on_buff_removed(Ref<RuntimeBuff> p_buff);
 		/// @brief Checks if the container has a specific attribute.
-		bool has_attribute(Ref<Attribute> p_attribute);
+		bool has_attribute(Ref<AttributeBase> p_attribute);
+		/// @brief Notifies derived attributes that an attribute has changed.
+		/// @param p_runtime_attribute The attribute that changed.
+		void notify_derived_attributes(Ref<RuntimeAttribute> p_runtime_attribute);
 
 	public:
 		/// @brief Override of the _physics_process method.
@@ -87,13 +92,13 @@ namespace gga
 		void _ready() override;
 		/// @brief Adds an attribute to the container.
 		/// @param p_attribute The attribute to add.
-		void add_attribute(Ref<Attribute> p_attribute);
+		void add_attribute(Ref<AttributeBase> p_attribute);
 		/// @brief Adds a buff to the container.
 		/// @param p_buff The buff to add.
 		void apply_buff(Ref<AttributeBuff> p_buff);
 		/// @brief Removes an attribute from the container.
 		/// @param p_attribute The attribute to remove.
-		void remove_attribute(Ref<Attribute> p_attribute);
+		void remove_attribute(Ref<AttributeBase> p_attribute);
 		/// @brief Removes a buff from the container.
 		/// @param p_buff The buff to remove.
 		void remove_buff(Ref<AttributeBuff> p_buff);
