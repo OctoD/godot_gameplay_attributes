@@ -53,9 +53,11 @@ namespace gga
 		/// @brief Attribute's set.
 		Ref<AttributeSet> attribute_set;
 		/// @brief TypedArray of attributes.
-		TypedArray<RuntimeAttribute> attributes;
+		Dictionary attributes;
 		/// @brief Buff pool queue. It is used to store buffs that have a limited duration.
 		BuffPoolQueue *buff_pool_queue;
+		/// @brief Derived attributes. These are attributes that are calculated from other attributes.
+		Dictionary derived_attributes;
 		/// @brief Server authoritative. If set to true, the container will only process buffs on the server.
 		bool server_authoritative;
 
