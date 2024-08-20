@@ -924,8 +924,18 @@ float RuntimeAttribute::get_initial_value() const
 {
 	if (GDVIRTUAL_IS_OVERRIDDEN_PTR(attribute, _get_initial_value)) {
 		float ret;
+		TypedArray<AttributeBase> base_attributes = get_derived_from();
 
-		if (GDVIRTUAL_CALL_PTR(attribute, _get_initial_value, attribute_set, ret)) {
+		ERR_FAIL_COND_V_MSG(base_attributes.size() == 0, 0, "Attribute set must be set to get initial value. Please override _derived_from method.");
+
+		PackedFloat32Array values = PackedFloat32Array();
+
+		for (int i = 0; i < base_attributes.size(); i++) {
+			Ref<AttributeBase> base_attribute = base_attributes[i];
+			values.push_back(base_attribute->get_initial_value());
+		}
+
+		if (GDVIRTUAL_CALL_PTR(attribute, _get_initial_value, values, ret)) {
 			return ret;
 		}
 	}

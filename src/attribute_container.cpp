@@ -74,6 +74,7 @@ void AttributeContainer::_bind_methods()
 void AttributeContainer::_on_attribute_changed(Ref<RuntimeAttribute> p_attribute, const float p_previous_value, const float p_new_value)
 {
 	emit_signal("attribute_changed", p_attribute, p_previous_value, p_new_value);
+	notify_derived_attributes(p_attribute);
 }
 
 void AttributeContainer::_on_buff_applied(Ref<RuntimeBuff> p_buff)
@@ -100,6 +101,24 @@ void AttributeContainer::_on_buff_removed(Ref<RuntimeBuff> p_buff)
 bool AttributeContainer::has_attribute(Ref<AttributeBase> p_attribute)
 {
 	return attributes.has(p_attribute->get_attribute_name());
+}
+
+void AttributeContainer::notify_derived_attributes(Ref<RuntimeAttribute> p_runtime_attribute)
+{
+	if (derived_attributes.has(p_runtime_attribute->get_attribute()->get_attribute_name())) {
+		TypedArray<RuntimeAttribute> derived = derived_attributes[p_runtime_attribute->get_attribute()->get_attribute_name()];
+		Callable attribute_changed_callable = Callable::create(this, "_on_attribute_changed");
+
+		for (int i = 0; i < derived.size(); i++) {
+			Ref<RuntimeAttribute> derived_attribute = derived[i];
+			float previous_value = derived_attribute->get_value();
+			float current_value = derived_attribute->get_buffed_value();
+
+			if (previous_value != current_value) {
+				derived_attribute->emit_signal("attribute_changed", derived_attribute, previous_value, current_value);
+			}
+		}
+	}
 }
 
 void AttributeContainer::_physics_process(double p_delta)
@@ -148,6 +167,26 @@ void AttributeContainer::add_attribute(Ref<AttributeBase> p_attribute)
 
 		if (!runtime_attribute->is_connected("buff_removed", buff_removed_callable)) {
 			runtime_attribute->connect("buff_removed", buff_removed_callable);
+		}
+
+		TypedArray<AttributeBase> base_attributes = runtime_attribute->get_derived_from();
+
+		if (base_attributes.size() > 0) {
+			int i = 0;
+
+			for (i; i < base_attributes.size(); i++) {
+				Ref<AttributeBase> base_attribute = base_attributes[i];
+				Array _derived;
+
+				if (derived_attributes.has(base_attribute->get_attribute_name())) {
+					_derived = derived_attributes[base_attribute->get_attribute_name()];
+				} else {
+					_derived = Array();
+					derived_attributes[base_attribute->get_attribute_name()] = _derived;
+				}
+
+				_derived.push_back(runtime_attribute);
+			}
 		}
 
 		attributes[p_attribute->get_attribute_name()] = runtime_attribute;
@@ -211,7 +250,7 @@ void AttributeContainer::setup()
 Ref<RuntimeAttribute> AttributeContainer::find(Callable p_predicate) const
 {
 	Array _attributes = attributes.values();
-	
+
 	for (int i = 0; i < _attributes.size(); i++) {
 		if (p_predicate.call(_attributes[i])) {
 			return _attributes[i];

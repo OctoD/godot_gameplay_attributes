@@ -28,14 +28,12 @@ min_value = 4.2039e-45
 script = ExtResource("3_ysn4f")
 
 [sub_resource type="Attribute" id="Attribute_wt17l"]
-initial_value = -3.88769e+33
 max_value = 1.35926e-43
 min_value = 1.56945e-43
 script = ExtResource("4_id80i")
 
 [sub_resource type="Attribute" id="Attribute_whdut"]
 initial_value = 5.0
-max_value = 100.0
 min_value = 6.5861e-44
 script = ExtResource("5_sy81i")
 
@@ -48,7 +46,6 @@ script = ExtResource("6_cna11")
 [sub_resource type="Attribute" id="Attribute_153wp"]
 initial_value = 1.62551e-43
 max_value = 9.22056e-39
-min_value = -0.140208
 script = ExtResource("7_0c3hl")
 
 [sub_resource type="Attribute" id="Attribute_h7vdv"]

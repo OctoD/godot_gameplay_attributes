@@ -80,6 +80,9 @@ namespace gga
 		void _on_buff_removed(Ref<RuntimeBuff> p_buff);
 		/// @brief Checks if the container has a specific attribute.
 		bool has_attribute(Ref<AttributeBase> p_attribute);
+		/// @brief Notifies derived attributes that an attribute has changed.
+		/// @param p_runtime_attribute The attribute that changed.
+		void notify_derived_attributes(Ref<RuntimeAttribute> p_runtime_attribute);
 
 	public:
 		/// @brief Override of the _physics_process method.

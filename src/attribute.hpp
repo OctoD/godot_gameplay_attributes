@@ -304,7 +304,7 @@ namespace gga
 		GDVIRTUAL1RC(float, _get_buffed_value, PackedFloat32Array);
 		/// @brief Get the initial value of the attribute.
 		/// @return The minimum value of the attribute.
-		GDVIRTUAL1RC(float, _get_initial_value, Ref<AttributeSet>);
+		GDVIRTUAL1RC(float, _get_initial_value, PackedFloat32Array);
 		virtual float get_initial_value() const = 0;
 		/// @brief Get the maximum value of the attribute.
 		/// @return The maximum value of the attribute.

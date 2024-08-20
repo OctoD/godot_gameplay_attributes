@@ -1,12 +1,34 @@
 Godot Gameplay Attributes
 =========================
 
-This document describes the gameplay attributes of the game. It is intended to be a reference for the game designers and developers to understand the game mechanics and how they interact with each other.
-
 # Installation
+
+## Using the AssetLib
+
+1. Open the Godot editor.
+2. Navigate to the AssetLib tab.
+3. Search for "Gameplay Attributes".
+4. Install and enjoy!
+
+## Using the GitHub repository
 
 1. Download the latest version of the addon from the [releases page](https://github.com/OctoD/godot_gameplay_attributes/releases).
 2. Extract the contents of the zip file into your project's `addons` folder.
+3. Enjoy!
+
+## Using Git
+
+1. Clone the repository into your project's `addons` folder:
+
+```bash
+git clone --recurse-submodules
+```
+
+2. Build the project:
+
+```bash
+scons platform=windows # or linux, macos etc
+```
 3. Enjoy!
 
 # Usage
@@ -19,7 +41,7 @@ This addon works using Godot's custom resources as attributes. Each `Attribute` 
 
 An `Attribute` has a name, an initial value, a minimum value, and a maximum value.
 
-The proper way to define your attributes, is to create your own custom resources that inherit from `Attribute` base class. This way you can define your attribute, and use latter in your attribute sets.
+The proper way to define your attributes, is to create your own custom resources as scripts that inherit from `Attribute` base class. This way you can define your attribute, and use latter in your attribute sets.
 
 An `AttributeSet` is a set of predefined attributes that can be used to define the attributes of an object in the game, like a character, an enemy, or any other object that has attributes.
 
@@ -28,6 +50,41 @@ Each `AttributeSet` has to be used by an `AttributeContainer` node, that is a no
 For each `Attribute` in the `AttributeSet`, the `AttributeContainer` will create a `RuntimeAttribute` that will hold the current value of the attribute, the reference to the `Attribute` resource, and an array to some `RuntimeBuff` that will modify the value of the attribute.
 
 A `RuntimeBuff` is the representation of an `AttributeBuff` resource that will modify the value of an attribute. It has a value that will be added/subtracted/multiply/divided to the attribute value, and a duration that will define how long the buff will last (if 0, the buff will last forever).
+
+### Derived attributes
+
+Derived attributes are attributes that are calculated based on other attributes. For example, the health of a character can be calculated based on the strength and constitution attributes of the character, or mana can be calculated based on intelligence and wisdom.
+
+To define a derived attribute, you must create a scripts that inherits from `Attribute` base class. 
+
+Example:
+
+```gdscript
+class_name HealthDerivedAttribute extends Attribute
+
+
+const ATTRIBUTE_NAME = "Health"
+
+
+func _init(_attribute_name = ATTRIBUTE_NAME) -> void:
+	attribute_name = _attribute_name
+
+
+func _get_buffed_value(values: PackedFloat32Array) -> float:
+	return values[0] * 6
+
+
+func _derived_from(attribute_set: AttributeSet) -> Array[AttributeBase]:
+	return [attribute_set.find_by_name(ConstitutionAttribute.ATTRIBUTE_NAME)]
+	
+	
+func _get_initial_value(values: PackedFloat32Array) -> float:
+	return values[0] * 6
+```
+
+You must override the `_get_buffed_value` method to define how the attribute value is calculated based on the values of the attributes that it depends on. You must override the `_derived_from` method to define which attributes the derived attribute depends on and the `_get_initial_value` method to define the initial value of the attribute.
+
+You can optionally override the `_get_min_value` and `_get_max_value` methods to define the minimum and maximum values of the attribute. 
 
 ## How to use this addon programmatically
 
