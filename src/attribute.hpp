@@ -127,19 +127,19 @@ namespace gga
 		static void _bind_methods();
 
 		/// @brief The affected attribute name.
-		String attribute_name;
+		String attribute_name = "";
 		/// @brief The buff name.
-		String buff_name;
+		String buff_name = "";
 		/// @brief The buff duration.
-		float duration;
+		float duration = 0.0f;
 		/// @brief The maximum number of applications possible.
-		int max_applies;
+		int max_applies = 0;
 		/// @brief The operation to apply.
 		Ref<AttributeOperation> operation;
 		/// @brief The buff is transient and will be not affect the attribute value directly.
-		bool transient;
+		bool transient = false;
 		/// @brief If the buff is unique and only one can be applied.
-		bool unique;
+		bool unique = false;
 
 	public:
 		// equal operator overload
@@ -337,11 +337,11 @@ namespace gga
 		/// @brief Bind methods to Godot.
 		static void _bind_methods();
 		/// @brief The initial value of the attribute.
-		float initial_value;
+		float initial_value = 0.000000f;
 		/// @brief The maximum value of the attribute.
-		float max_value;
+		float max_value = 0.000000f;
 		/// @brief The minimum value of the attribute.
-		float min_value;
+		float min_value = 0.000000f;
 
 	public:
 		/// @brief Create an attribute from some parameters.
@@ -383,9 +383,9 @@ namespace gga
 		/// @brief The attribute buff reference.
 		Ref<AttributeBuff> buff;
 		/// @brief The time the buff was added.
-		float time_left;
+		float time_left = 0.0f;
 		/// @brief If the buff is unique.
-		bool unique;
+		bool unique = false;
 
 	public:
 		static Ref<RuntimeBuff> from_buff(const Ref<AttributeBuff> &p_buff);
@@ -419,7 +419,7 @@ namespace gga
 		/// @brief The attribute container reference.
 		AttributeContainer *attribute_container;
 		/// @brief The attribute value.
-		float value;
+		float value = 0.0f;
 		/// @brief The attribute buffs.
 		TypedArray<RuntimeBuff> buffs;
 
@@ -479,7 +479,7 @@ namespace gga
 		/// @brief Set the attribute.
 		/// @param p_value The attribute.
 		void set_attribute(const Ref<AttributeBase> &p_value);
-		/// @brief Set the attribute set.
+		/// @brief Set the attribute set.w
 		/// @param p_value The attribute set.
 		void set_attribute_set(const Ref<AttributeSet> &p_value);
 		/// @brief Sets the buffs affecting the attribute.

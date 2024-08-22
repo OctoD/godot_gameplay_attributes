@@ -197,6 +197,7 @@ bool AttributeBuff::operator==(const Ref<AttributeBuff> &buff) const
 
 float AttributeBuff::operate(float base_value) const
 {
+	ERR_FAIL_COND_V_MSG(operation.is_null(), 0.0f, "AttributeBuff operation is null, cannot operate on base value.");
 	return operation->operate(base_value);
 }
 
@@ -757,6 +758,9 @@ bool RuntimeAttribute::add_buff(const Ref<AttributeBuff> &p_buff)
 		return false;
 	} else if (p_buff->get_transient()) {
 		Ref<RuntimeBuff> runtime_buff = RuntimeBuff::from_buff(p_buff);
+
+		ERR_FAIL_COND_V_MSG(runtime_buff.is_null(), false, "Failed to create runtime buff from attribute buff.");
+
 		buffs.push_back(runtime_buff);
 		emit_signal("buff_added", runtime_buff);
 	} else {
@@ -866,6 +870,8 @@ Ref<AttributeSet> RuntimeAttribute::get_attribute_set() const
 
 float RuntimeAttribute::get_buffed_value() const
 {
+	float current_value = value;
+
 	if (GDVIRTUAL_IS_OVERRIDDEN_PTR(attribute, _get_buffed_value)) {
 		TypedArray<AttributeBase> derived_from = get_derived_from();
 		TypedArray<float> values = TypedArray<float>();
@@ -877,18 +883,16 @@ float RuntimeAttribute::get_buffed_value() const
 			}
 		}
 
-		float buffed_value = value;
-
-		if (GDVIRTUAL_CALL_PTR(attribute, _get_buffed_value, values, buffed_value)) {
-			return buffed_value;
-		}
+		GDVIRTUAL_CALL_PTR(attribute, _get_buffed_value, values, current_value);
 	}
-
-	float current_value = value;
 
 	for (int i = 0; i < buffs.size(); i++) {
 		Ref<RuntimeBuff> buff = buffs[i];
-		current_value = buff->get_buff()->operate(current_value);
+		Ref<AttributeBuff> attribute_buff = buff->get_buff();
+
+		if (attribute_buff.is_valid() && !attribute_buff.is_null()) {
+			current_value = attribute_buff->operate(current_value);
+		}
 	}
 
 	return current_value;

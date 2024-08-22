@@ -197,7 +197,7 @@ void AttributeContainer::apply_buff(Ref<AttributeBuff> p_buff)
 {
 	Ref<RuntimeAttribute> runtime_attribute = get_attribute_by_name(p_buff->get_attribute_name());
 
-	if (runtime_attribute->add_buff(p_buff)) {
+	if (runtime_attribute.is_valid() && !runtime_attribute.is_null() && runtime_attribute->add_buff(p_buff)) {
 		if (!Math::is_zero_approx(p_buff->get_duration())) {
 			buff_pool_queue->enqueue(RuntimeBuff::from_buff(p_buff));
 		}
@@ -317,4 +317,8 @@ void AttributeContainer::set_attribute_set(const Ref<AttributeSet> &p_attribute_
 void AttributeContainer::set_server_authoritative(const bool p_server_authoritative)
 {
 	server_authoritative = p_server_authoritative;
+
+	if (buff_pool_queue != nullptr) {
+		buff_pool_queue->set_server_authoritative(server_authoritative);
+	}
 }
