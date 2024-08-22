@@ -23,6 +23,6 @@ func _ready() -> void:
 		sprite_2d.texture = power_up_resource.texture
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if collector_target:
 		global_position = lerp(global_position, collector_target.global_position, 1.1)

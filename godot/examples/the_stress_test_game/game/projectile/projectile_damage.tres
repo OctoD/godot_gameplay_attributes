@@ -5,5 +5,4 @@ attribute_name = "health"
 buff_name = "pewpew"
 duration = -1.39842e-12
 max_applies = 511
-transient = true
 unique = true
