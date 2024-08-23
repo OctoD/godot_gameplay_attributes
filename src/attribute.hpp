@@ -72,9 +72,9 @@ namespace gga
 		static Ref<AttributeOperation> create(const OperationType p_operand, const float p_value);
 
 		/// @brief Operand.
-		OperationType operand;
+		OperationType operand = OperationType::OP_ADD;
 		/// @brief Value.
-		float value;
+		float value = 0.0f;
 
 	public:
 		bool operator==(const Ref<AttributeOperation> &buff) const;
