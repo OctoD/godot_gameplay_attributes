@@ -4,13 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://owosly7wqjwg" path="res://examples/the_stress_test_game/kenney_tiny-dungeon/Tiles/tile_0116.png" id="2_2y270"]
 
 [sub_resource type="AttributeOperation" id="AttributeOperation_arouv"]
-operand = -995504608
 value = 1.0
 
 [sub_resource type="AttributeBuff" id="AttributeBuff_phnmx"]
 attribute_name = "movement_speed"
 buff_name = "Movement Speed Power Up"
-duration = 0.0
 operation = SubResource("AttributeOperation_arouv")
 
 [resource]

@@ -4,18 +4,16 @@
 [ext_resource type="Script" path="res://examples/the_stress_test_game/game/attributes/movement_speed.gd" id="2_0wlov"]
 
 [sub_resource type="Attribute" id="Attribute_rtf21"]
-attribute_name = "health"
 initial_value = 2.0
 max_value = 4.0
-min_value = 0.0
+attribute_name = "health"
 script = ExtResource("1_0mh1f")
 
 [sub_resource type="Attribute" id="Attribute_md6lb"]
-attribute_name = "movement_speed"
 initial_value = 30.0
 max_value = 60.0
-min_value = 0.0
+attribute_name = "movement_speed"
 script = ExtResource("2_0wlov")
 
 [resource]
-attributes = Array[Attribute]([SubResource("Attribute_rtf21"), SubResource("Attribute_md6lb")])
+attributes = Array[AttributeBase]([SubResource("Attribute_rtf21"), SubResource("Attribute_md6lb")])

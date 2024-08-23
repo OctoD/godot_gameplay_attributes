@@ -4,13 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://omahn1mrvi5o" path="res://examples/the_stress_test_game/kenney_tiny-dungeon/Tiles/tile_0115.png" id="2_snstl"]
 
 [sub_resource type="AttributeOperation" id="AttributeOperation_f7ji0"]
-operand = -995503168
 value = 4.0
 
 [sub_resource type="AttributeBuff" id="AttributeBuff_2qs2y"]
 attribute_name = "health"
 buff_name = "Health powerup"
-duration = 0.0
 operation = SubResource("AttributeOperation_f7ji0")
 
 [resource]

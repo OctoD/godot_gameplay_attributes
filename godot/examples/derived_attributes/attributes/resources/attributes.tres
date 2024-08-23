@@ -34,6 +34,7 @@ script = ExtResource("4_id80i")
 
 [sub_resource type="Attribute" id="Attribute_whdut"]
 initial_value = 5.0
+max_value = 100.0
 min_value = 6.5861e-44
 script = ExtResource("5_sy81i")
 

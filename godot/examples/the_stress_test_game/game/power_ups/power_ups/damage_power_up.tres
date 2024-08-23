@@ -4,13 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://b237god0a1vo2" path="res://examples/the_stress_test_game/kenney_tiny-dungeon/Tiles/tile_0103.png" id="2_txoyb"]
 
 [sub_resource type="AttributeOperation" id="AttributeOperation_lkna5"]
-operand = 8460
 value = 1.0
 
 [sub_resource type="AttributeBuff" id="AttributeBuff_lbg58"]
 attribute_name = "damage"
 buff_name = "Damage power up"
-duration = 0.0
 operation = SubResource("AttributeOperation_lkna5")
 transient = true
 
