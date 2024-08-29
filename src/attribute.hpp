@@ -115,87 +115,6 @@ namespace gga
 		void set_value(const float p_value);
 	};
 
-	/// @brief Attribute buff.
-	class AttributeBuff : public Resource
-	{
-		GDCLASS(AttributeBuff, Resource);
-
-		friend class RuntimeBuff;
-
-	protected:
-		/// @brief Bind methods to Godot.
-		static void _bind_methods();
-
-		/// @brief The affected attribute name.
-		String attribute_name = "";
-		/// @brief The buff name.
-		String buff_name = "";
-		/// @brief The buff duration.
-		float duration = 0.0f;
-		/// @brief The maximum number of applications possible.
-		int max_applies = 0;
-		/// @brief The operation to apply.
-		Ref<AttributeOperation> operation;
-		/// @brief The buff is transient and will be not affect the attribute value directly.
-		bool transient = false;
-		/// @brief If the buff is unique and only one can be applied.
-		bool unique = false;
-
-	public:
-		// equal operator overload
-		bool operator==(const Ref<AttributeBuff> &buff) const;
-
-		/// @brief Returns the result of the operation on the base value.
-		/// @param base_value The base value to operate on. It's the attribute underlying value.
-		/// @return The result of the operation.
-		float operate(float base_value) const;
-		/// @brief Returns the affected attribute name.
-		/// @return The affected attribute name.
-		String get_attribute_name() const;
-		/// @brief Returns the buff name.
-		/// @return The buff name.
-		String get_buff_name() const;
-		/// @brief Returns the buff duration.
-		/// @return The buff duration.
-		float get_duration() const;
-		/// @brief Returns the operation to apply as a Ref.
-		/// @return The operation to apply.
-		Ref<AttributeOperation> get_operation() const;
-		/// @brief Returns the maximum number of applications possible.
-		/// @return The maximum number of applications possible.
-		int get_max_applies() const;
-		/// @brief Returns if the buff is transient.
-		/// @return True if the buff is transient, false otherwise.
-		bool get_transient() const;
-		/// @brief Returns if the buff is unique.
-		/// @return True if the buff is unique, false otherwise.
-		bool get_unique() const;
-		/// @brief Returns if the buff is time limited.
-		/// @return True if the buff is time limited, false otherwise.
-		bool is_time_limited() const;
-		/// @brief Sets the affected attribute name.
-		/// @param p_value The affected attribute name.
-		void set_attribute_name(const String &p_value);
-		/// @brief Sets the buff name.
-		/// @param p_value The buff name.
-		void set_buff_name(const String &p_value);
-		/// @brief Sets the buff duration.
-		/// @param p_value The buff duration.
-		void set_duration(const float p_value);
-		/// @brief Sets the operation to apply.
-		/// @param p_value The operation to apply.
-		void set_operation(const Ref<AttributeOperation> &p_value);
-		/// @brief Sets the maximum number of applications possible.
-		/// @param p_value The maximum number of applications possible.
-		void set_max_applies(const int p_value);
-		/// @brief Sets if the buff is transient.
-		/// @param p_value True if the buff is transient, false otherwise.
-		void set_transient(const bool p_value);
-		/// @brief Sets if the buff is unique.
-		/// @param p_value True if the buff is unique, false otherwise.
-		void set_unique(const bool p_value);
-	};
-
 	class AttributeSet : public Resource
 	{
 		GDCLASS(AttributeSet, Resource);
@@ -278,6 +197,95 @@ namespace gga
 		/// @brief Get the number of attributes in the set.
 		/// @return The number of attributes.
 		int count() const;
+	};
+
+	/// @brief Attribute buff.
+	class AttributeBuff : public Resource
+	{
+		GDCLASS(AttributeBuff, Resource);
+
+		friend class RuntimeBuff;
+
+	protected:
+		/// @brief Bind methods to Godot.
+		static void _bind_methods();
+
+		/// @brief The affected attribute name.
+		String attribute_name = "";
+		/// @brief The buff name.
+		String buff_name = "";
+		/// @brief The buff duration.
+		float duration = 0.0f;
+		/// @brief The maximum number of applications possible.
+		int max_applies = 0;
+		/// @brief The operation to apply.
+		Ref<AttributeOperation> operation;
+		/// @brief The buff is transient and will be not affect the attribute value directly.
+		bool transient = false;
+		/// @brief If the buff is unique and only one can be applied.
+		bool unique = false;
+
+	public:
+		// equal operator overload
+		bool operator==(const Ref<AttributeBuff> &buff) const;
+
+		/// @brief Changes which attributes the buff applies to.
+		GDVIRTUAL1RC(TypedArray<AttributeBase>, _applies_to, Ref<AttributeSet>);
+		/// @brief Changes the operation to apply. If overridden, an array of AttributeOperation must be returned. This will skip the operation property.
+		GDVIRTUAL1RC(TypedArray<AttributeOperation>, _operate, TypedArray<float>);
+
+		/// @brief Returns the result of the operation on the base value.
+		/// @param base_value The base value to operate on. It's the attribute underlying value.
+		/// @return The result of the operation.
+		float operate(float base_value) const;
+		/// @brief Returns the affected attribute name.
+		/// @return The affected attribute name.
+		String get_attribute_name() const;
+		/// @brief Returns the buff name.
+		/// @return The buff name.
+		String get_buff_name() const;
+		/// @brief Returns the buff duration.
+		/// @return The buff duration.
+		float get_duration() const;
+		/// @brief Returns the operation to apply as a Ref.
+		/// @return The operation to apply.
+		Ref<AttributeOperation> get_operation() const;
+		/// @brief Returns the maximum number of applications possible.
+		/// @return The maximum number of applications possible.
+		int get_max_applies() const;
+		/// @brief Returns if the buff is transient.
+		/// @return True if the buff is transient, false otherwise.
+		bool get_transient() const;
+		/// @brief Returns if the buff is unique.
+		/// @return True if the buff is unique, false otherwise.
+		bool get_unique() const;
+		/// @brief Returns if the _operate method is overridden.
+		/// @return True if the _operate method is overridden, false otherwise.
+		bool is_operate_overridden() const;
+		/// @brief Returns if the buff is time limited.
+		/// @return True if the buff is time limited, false otherwise.
+		bool is_time_limited() const;
+		/// @brief Sets the affected attribute name.
+		/// @param p_value The affected attribute name.
+		void set_attribute_name(const String &p_value);
+		/// @brief Sets the buff name.
+		/// @param p_value The buff name.
+		void set_buff_name(const String &p_value);
+		/// @brief Sets the buff duration.
+		/// @param p_value The buff duration.
+		void set_duration(const float p_value);
+		/// @brief Sets the operation to apply.
+		/// @param p_value The operation to apply.
+		void set_operation(const Ref<AttributeOperation> &p_value);
+		/// @brief Sets the maximum number of applications possible.
+		/// @param p_value The maximum number of applications possible.
+		void set_max_applies(const int p_value);
+		/// @brief Sets if the buff is transient.
+		/// @param p_value True if the buff is transient, false otherwise.
+		void set_transient(const bool p_value);
+		/// @brief Sets if the buff is unique.
+		/// @param p_value True if the buff is unique, false otherwise.
+		void set_unique(const bool p_value);
 	};
 
 	/// @brief Base Attribute Class.
@@ -379,6 +387,8 @@ namespace gga
 		GDCLASS(RuntimeBuff, RefCounted);
 
 	protected:
+		friend class RuntimeAttribute;
+
 		static void _bind_methods();
 		/// @brief The attribute buff reference.
 		Ref<AttributeBuff> buff;
@@ -387,20 +397,60 @@ namespace gga
 		/// @brief If the buff is unique.
 		bool unique = false;
 
+		/// @brief Returns the attributes the buff applies to.
+		/// @param p_attribute_set The attribute set to check.
+		/// @return The attributes the buff applies to.
+		TypedArray<RuntimeAttribute> applies_to(const AttributeContainer *p_attribute_container) const;
+		/// @brief Operate on the runtime attributes.
+		/// @param p_runtime_attributes The runtime attributes to operate on.
+		/// @return The operated runtime values.
+		TypedArray<float> operate(const TypedArray<RuntimeAttribute> &p_runtime_attributes) const;
+
 	public:
 		static Ref<RuntimeBuff> from_buff(const Ref<AttributeBuff> &p_buff);
 		static Ref<AttributeBuff> to_buff(const Ref<RuntimeBuff> &p_buff);
+		/// @brief It's the == operator overload.
+		/// @param p_attribute The attribute to compare.
+		/// @return True if the attribute is equal, false otherwise.
 		bool operator==(const Ref<AttributeBuff> &p_attribute) const;
+		/// @brief It's the == operator overload.
+		/// @param p_attribute The runtime attribute to compare.
+		/// @return True if the runtime attribute is equal, false otherwise.
 		bool operator==(const Ref<RuntimeBuff> &p_attribute) const;
-
+		/// @brief Returns if the buff can be applied to an attribute.
+		/// @param p_attribute The attribute to check.
+		/// @return True if the buff can be applied to the attribute, false otherwise.
+		bool can_apply_to_attribute(const Ref<RuntimeAttribute> &p_attribute) const;
+		/// @brief Returns if the buff can be dequeued from the queue.
+		/// @return True if the buff can be dequeued, false otherwise.
 		bool can_dequeue() const;
+		/// @brief Returns if the buff equals to another buff.
+		/// @param p_buff The buff to compare.
+		/// @return True if the buff is equal to the other buff, false otherwise.
 		bool equals_to(const Ref<AttributeBuff> &p_buff) const;
+		/// @brief Get the attribute name.
+		/// @return The attribute name.
 		String get_attribute_name() const;
+		/// @brief Get the buff name.
+		/// @return The buff name.
 		String get_buff_name() const;
+		/// @brief Get the buff.
+		/// @return The buff.
 		Ref<AttributeBuff> get_buff() const;
+		/// @brief Get the duration of the buff.
+		/// @return The duration of the buff.
 		float get_duration() const;
+		/// @brief Get the time left for the buff to expire.
+		/// @return The time left for the buff to expire.
 		float get_time_left() const;
+		/// @brief Returns if the _operate method is overridden.
+		/// @return True if the _operate method is overridden, false otherwise.
+		bool is_operate_overridden() const;
+		/// @brief Set the buff.
+		/// @param p_value The buff.
 		void set_buff(const Ref<AttributeBuff> &p_value);
+		/// @brief Set the duration of the buff.
+		/// @param p_value The duration of the buff.
 		void set_time_left(const float p_value);
 	};
 
@@ -410,6 +460,7 @@ namespace gga
 
 	protected:
 		friend class AttributeContainer;
+		friend class RuntimeBuff;
 
 		static void _bind_methods();
 		/// @brief The attribute reference.

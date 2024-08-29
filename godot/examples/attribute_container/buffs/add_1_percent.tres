@@ -1,12 +1,7 @@
-[gd_resource type="AttributeBuff" load_steps=2 format=3 uid="uid://dywx4cyhu0jqt"]
-
-[ext_resource type="AttributeOperation" uid="uid://5id06q5x83r" path="res://examples/attribute_container/buffs/operations/+1_p.tres" id="1_no1wn"]
+[gd_resource type="AttributeBuff" format=3 uid="uid://dywx4cyhu0jqt"]
 
 [resource]
 attribute_name = "attribute_000"
 buff_name = "add_1_percent"
-duration = 0.0
-operation = ExtResource("1_no1wn")
 max_applies = 351
-transient = false
 unique = true

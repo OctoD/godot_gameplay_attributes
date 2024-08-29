@@ -31,7 +31,7 @@ func _ready() -> void:
 		button.pressed.connect(func ():
 			load_example(example)	
 		)
-		
+
 		button.text = example.resource_path.replacen("_", " ").replace(".tscn", "").get_file().get_basename().capitalize()
 		example_selection.add_child(button)
 

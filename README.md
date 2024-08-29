@@ -1,6 +1,8 @@
 Godot Gameplay Attributes
 =========================
 
+![GGA logo](godot/Icon.svg)
+
 # Installation
 
 ## Using the AssetLib
@@ -85,6 +87,19 @@ func _get_initial_value(values: PackedFloat32Array) -> float:
 You must override the `_get_buffed_value` method to define how the attribute value is calculated based on the values of the attributes that it depends on. You must override the `_derived_from` method to define which attributes the derived attribute depends on and the `_get_initial_value` method to define the initial value of the attribute.
 
 You can optionally override the `_get_min_value` and `_get_max_value` methods to define the minimum and maximum values of the attribute. 
+
+## Custom attribute buff/debuff
+
+You can create your own custom attribute buff/debuff by creating a script that inherits from `AttributeBuff` base class.
+
+This class provides two virtuals you have to implement: 
+
+- `_applies_to(attribute_set: AttributeSet) -> Array[AttributeBase]` that will define to which attribute the buff will be applied.
+- `_operate(values: Array[float]) -> Array[AttributeOperation]` that will define how the buff will modify the attributes.
+
+You can find an example [here](godot\examples\attribute_buffs_programmatic_operations\buffs\damage_to_health_and_armor.gd).
+
+This is good for mechanics where there is some kind of buff/debuff mitigation, like a shield that will absorb some damage before it reaches the health of a character, or movement speed that will be reduced by a debuff.
 
 ## How to use this addon programmatically
 

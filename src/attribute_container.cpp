@@ -195,11 +195,25 @@ void AttributeContainer::add_attribute(Ref<AttributeBase> p_attribute)
 
 void AttributeContainer::apply_buff(Ref<AttributeBuff> p_buff)
 {
-	Ref<RuntimeAttribute> runtime_attribute = get_attribute_by_name(p_buff->get_attribute_name());
+	ERR_FAIL_NULL_MSG(p_buff, "Buff cannot be null, it must be an instance of a class inheriting from AttributeBuff abstract class.");
 
-	if (runtime_attribute.is_valid() && !runtime_attribute.is_null() && runtime_attribute->add_buff(p_buff)) {
-		if (!Math::is_zero_approx(p_buff->get_duration())) {
-			buff_pool_queue->enqueue(RuntimeBuff::from_buff(p_buff));
+	if (p_buff->is_operate_overridden()) {
+		TypedArray<RuntimeAttribute> _attributes = get_attributes();
+
+		for (int i = 0; i < _attributes.size(); i++) {
+			Ref<RuntimeAttribute> runtime_attribute = _attributes[i];
+
+			if (runtime_attribute->add_buff(p_buff) && !Math::is_zero_approx(p_buff->get_duration())) {
+				buff_pool_queue->enqueue(RuntimeBuff::from_buff(p_buff));
+			}
+		}
+	} else {
+		Ref<RuntimeAttribute> runtime_attribute = get_attribute_by_name(p_buff->get_attribute_name());
+
+		if (runtime_attribute.is_valid() && !runtime_attribute.is_null() && runtime_attribute->add_buff(p_buff)) {
+			if (!Math::is_zero_approx(p_buff->get_duration())) {
+				buff_pool_queue->enqueue(RuntimeBuff::from_buff(p_buff));
+			}
 		}
 	}
 }
