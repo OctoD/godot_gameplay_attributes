@@ -1,6 +1,8 @@
 Godot Gameplay Attributes
 =========================
 
+![GGA logo](godot/Icon.svg)
+
 # Installation
 
 ## Using the AssetLib
