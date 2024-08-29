@@ -9,7 +9,7 @@ min_value = 1.4013e-45
 attribute_name = "attribute_000"
 
 [sub_resource type="AttributeSet" id="AttributeSet_7dso0"]
-attributes = Array[Attribute]([SubResource("Attribute_jndah")])
+attributes = Array[AttributeBase]([SubResource("Attribute_jndah")])
 
 [node name="AttributeContainer" type="VBoxContainer"]
 anchors_preset = 15

@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://cr6c1qrsan6ay"]
+[gd_scene load_steps=6 format=3 uid="uid://cr6c1qrsan6ay"]
 
 [ext_resource type="Script" path="res://examples/main.gd" id="1_26gv5"]
 [ext_resource type="PackedScene" uid="uid://4lm2ofr1pb88" path="res://examples/attribute_container/attribute_container.tscn" id="3_kpila"]
 [ext_resource type="PackedScene" uid="uid://cqvwn1f5hh0lg" path="res://examples/derived_attributes/derived_attributes.tscn" id="4_c76b4"]
+[ext_resource type="PackedScene" uid="uid://d2kctykbvpmr1" path="res://examples/attribute_buffs_programmatic_operations/attribute_buffs_programmatic_operations.tscn" id="5_dhme3"]
 [ext_resource type="PackedScene" uid="uid://b2yfl5ptmb1he" path="res://examples/the_stress_test_game/the_stress_test_game.tscn" id="5_yt216"]
 
 [node name="Main" type="VBoxContainer"]
@@ -12,7 +13,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_26gv5")
-examples = Array[PackedScene]([ExtResource("5_yt216"), ExtResource("3_kpila"), ExtResource("4_c76b4")])
+examples = Array[PackedScene]([ExtResource("5_yt216"), ExtResource("3_kpila"), ExtResource("4_c76b4"), ExtResource("5_dhme3")])
 
 [node name="Toolbar" type="HBoxContainer" parent="."]
 unique_name_in_owner = true

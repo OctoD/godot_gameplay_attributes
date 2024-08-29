@@ -1,0 +1,49 @@
+[gd_scene load_steps=5 format=3 uid="uid://d2kctykbvpmr1"]
+
+[ext_resource type="Script" path="res://examples/attribute_buffs_programmatic_operations/attribute_buffs_programmatic_operations.gd" id="1_n1i5o"]
+
+[sub_resource type="Attribute" id="Attribute_kvqnj"]
+initial_value = 50.0
+max_value = 100.0
+attribute_name = "Health"
+
+[sub_resource type="Attribute" id="Attribute_rppkq"]
+initial_value = 25.0
+max_value = 100.0
+attribute_name = "Armor"
+
+[sub_resource type="AttributeSet" id="AttributeSet_p82uo"]
+attributes = Array[AttributeBase]([SubResource("Attribute_kvqnj"), SubResource("Attribute_rppkq")])
+
+[node name="AttributeBuffsProgrammaticOperations" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_n1i5o")
+
+[node name="AttributeContainer" type="AttributeContainer" parent="."]
+attribute_set = SubResource("AttributeSet_p82uo")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+
+[node name="Health" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "HEALTH"
+horizontal_alignment = 1
+
+[node name="Armor" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="Damage" type="Button" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Apply damage
+"
