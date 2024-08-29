@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Attribute" inherits="AttributeBase" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		An attribute that can be added to an AttributeSet.
+	</brief_description>
+	<description>
+		An attribute that can be added to an AttributeSet.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="create" qualifiers="static">
+			<return type="Attribute" />
+			<param index="0" name="attribute_name" type="String" />
+			<param index="1" name="initial_value" type="float" />
+			<param index="2" name="min_value" type="float" />
+			<param index="3" name="max_value" type="float" />
+			<description>
+				Creates a new Attribute with the given values.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="initial_value" type="float" setter="set_initial_value" getter="get_initial_value" default="0.0">
+			The initial value of the attribute.
+		</member>
+		<member name="max_value" type="float" setter="set_max_value" getter="get_max_value" default="0.0">
+			The maximum value of the attribute.
+			If the value is set to 0, the attribute will have no maximum value.
+		</member>
+		<member name="min_value" type="float" setter="set_min_value" getter="get_min_value" default="0.0">
+			The minimum value of the attribute.
+		</member>
+	</members>
+</class>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AttributeOperation" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Alters an attribute value.
+	</brief_description>
+	<description>
+		It represents an operation to be applied to an attribute value.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add" qualifiers="static">
+			<return type="AttributeOperation" />
+			<param index="0" name="p_value" type="float" />
+			<description>
+				Adds a value to the attribute.
+			</description>
+		</method>
+		<method name="divide" qualifiers="static">
+			<return type="AttributeOperation" />
+			<param index="0" name="p_value" type="float" />
+			<description>
+				Divides the attribute by a value.
+			</description>
+		</method>
+		<method name="multiply" qualifiers="static">
+			<return type="AttributeOperation" />
+			<param index="0" name="p_value" type="float" />
+			<description>
+				Multiplies the attribute by a value.
+			</description>
+		</method>
+		<method name="operate" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="base_value" type="float" />
+			<description>
+				Applies the operation to the base value.
+			</description>
+		</method>
+		<method name="percentage" qualifiers="static">
+			<return type="AttributeOperation" />
+			<param index="0" name="p_value" type="float" />
+			<description>
+				Applies a percentage to the attribute.
+			</description>
+		</method>
+		<method name="subtract" qualifiers="static">
+			<return type="AttributeOperation" />
+			<param index="0" name="p_value" type="float" />
+			<description>
+				Subtracts a value from the attribute.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="operand" type="int" setter="set_operand" getter="get_operand" default="0">
+			The operand to apply to the attribute.
+		</member>
+		<member name="value" type="float" setter="set_value" getter="get_value" default="0.0">
+			The value to apply to the attribute.
+		</member>
+	</members>
+	<constants>
+		<constant name="OP_ADD" value="0" enum="OperationType">
+			The operation adds a value to the attribute.
+		</constant>
+		<constant name="OP_DIVIDE" value="1" enum="OperationType">
+			The operation divides the attribute by a value.
+		</constant>
+		<constant name="OP_MULTIPLY" value="2" enum="OperationType">
+			The operation multiplies the attribute by a value.
+		</constant>
+		<constant name="OP_PERCENTAGE" value="3" enum="OperationType">
+			The operation applies a percentage to the attribute.
+		</constant>
+		<constant name="OP_SUBTRACT" value="4" enum="OperationType">
+			The operation subtracts a value from the attribute.
+		</constant>
+	</constants>
+</class>

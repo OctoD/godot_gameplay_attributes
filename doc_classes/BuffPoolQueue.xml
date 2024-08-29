@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BuffPoolQueue" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Manages a pool of timed [AttributeBuff].
+	</brief_description>
+	<description>
+		This class is automagically used by [AttributeContainer] to manage a pool of timed [AttributeBuff] objects. 
+		It is used to enqueue and dequeue buffs when they expire.
+		This is why it does not have public methods and members.
+	</description>
+	<tutorials>
+	</tutorials>
+	<signals>
+		<signal name="attribute_buff_dequeued">
+			<param index="0" name="buff" type="RuntimeBuff" />
+			<description>
+				Emitted when a buff is dequeued.
+			</description>
+		</signal>
+		<signal name="attribute_buff_enqueued">
+			<param index="0" name="buff" type="RuntimeBuff" />
+			<description>
+				Emitted when a buff is enqueued.
+			</description>
+		</signal>
+	</signals>
+</class>

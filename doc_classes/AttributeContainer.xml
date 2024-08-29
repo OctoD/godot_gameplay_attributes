@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AttributeContainer" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Contains an [AttributeSet] and manages [AttributeBase] and [AttributeBuff] objects.
+	</brief_description>
+	<description>
+		This class is used to manage [AttributeBase] and [AttributeBuff] objects. 
+
+		You can add, remove and find attributes and buffs using this node. 
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_attribute">
+			<return type="void" />
+			<param index="0" name="p_attribute" type="AttributeBase" />
+			<description>
+				Adds an attribute to the container.
+			</description>
+		</method>
+		<method name="apply_buff">
+			<return type="void" />
+			<param index="0" name="p_buff" type="AttributeBuff" />
+			<description>
+				Applies a buff to the right attribute(s).
+			</description>
+		</method>
+		<method name="find" qualifiers="const">
+			<return type="RuntimeAttribute" />
+			<param index="0" name="p_predicate" type="Callable" />
+			<description>
+				Finds a [RuntimeAttribute] using a predicate.
+			</description>
+		</method>
+		<method name="find_buffed_value" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="p_predicate" type="Callable" />
+			<description>
+				Finds the buffed value of an attribute using a predicate.
+			</description>
+		</method>
+		<method name="find_value" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="p_predicate" type="Callable" />
+			<description>
+				Finds the value of an attribute using a predicate.
+			</description>
+		</method>
+		<method name="get_attribute_buffed_value_by_name" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="p_name" type="String" />
+			<description>
+				Gets the buffed value of an attribute by name.
+				[b]Note:[/b] If an attribute is derived by many others, and a buff has [method AttributeBuff._operate] overloaded, the buffed value will not reflect the real value. Use the [method find_buffed_value] method to get the real value.
+			</description>
+		</method>
+		<method name="get_attribute_by_name" qualifiers="const">
+			<return type="RuntimeAttribute" />
+			<param index="0" name="p_name" type="String" />
+			<description>
+				Gets an attribute by name.
+			</description>
+		</method>
+		<method name="get_attribute_value_by_name" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="p_name" type="String" />
+			<description>
+				Gets the value of an attribute by name.
+			</description>
+		</method>
+		<method name="get_attributes" qualifiers="const">
+			<return type="RuntimeAttribute[]" />
+			<description>
+				Gets all attributes.
+			</description>
+		</method>
+		<method name="remove_attribute">
+			<return type="void" />
+			<param index="0" name="p_attribute" type="AttributeBase" />
+			<description>
+				Removes an attribute from the container.
+			</description>
+		</method>
+		<method name="remove_buff">
+			<return type="void" />
+			<param index="0" name="p_buff" type="AttributeBuff" />
+			<description>
+				Removes a buff from the container.
+			</description>
+		</method>
+		<method name="setup">
+			<return type="void" />
+			<description>
+				Sets up the container. Call this programmatically in case the [method _ready] method is not called.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="attribute_set" type="AttributeSet" setter="set_attribute_set" getter="get_attribute_set">
+			The set of attributes.
+		</member>
+		<member name="server_authoritative" type="bool" setter="set_server_authoritative" getter="get_server_authoritative" default="false">
+			If [code]true[/code], the server is authoritative for the attribute values. 
+			It means that only the server can change the attribute values.
+			[b]Note:[/b] It's still experimental, expect bugs.
+		</member>
+	</members>
+	<signals>
+		<signal name="attribute_changed">
+			<param index="0" name="attribute" type="RuntimeAttributeBase" />
+			<param index="1" name="previous_value" type="float" />
+			<param index="2" name="new_value" type="float" />
+			<description>
+				Emitted when an attribute changes.
+			</description>
+		</signal>
+		<signal name="buff_applied">
+			<param index="0" name="buff" type="RuntimeBuff" />
+			<description>
+				Emitted when a buff is applied.
+			</description>
+		</signal>
+		<signal name="buff_dequed">
+			<param index="0" name="buff" type="RuntimeBuff" />
+			<description>
+				Emitted when a buff is dequeued because it is expired. 
+			</description>
+		</signal>
+		<signal name="buff_enqued">
+			<param index="0" name="buff" type="RuntimeBuff" />
+			<description>
+				Emitted when a buff is enqueued.
+			</description>
+		</signal>
+		<signal name="buff_removed">
+			<param index="0" name="buff" type="RuntimeBuff" />
+			<description>
+				Emitted when a buff is removed.
+			</description>
+		</signal>
+	</signals>
+</class>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AttributeBuff" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Alters an attribute value.
+	</brief_description>
+	<description>
+		This class is used to alter an attribute value. 
+		Buffs can be temporary or permanent, and can be applied multiple times. 
+		Buffs can also be transient, meaning they can be removed after being applied.
+		Buffs can have a duration, a maximum number of applies or can be unique.
+
+		You can create and apply [AttributeBuff] objects to a [RuntimeAttribute] object to alter its value in different ways:
+		- Creating [AttributeBuff] resources for static buffs.
+		- Deriving [AttributeBuff] class and overloading the [method _applies_to] and [method _operate] methods for dynamic buffs.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_applies_to" qualifiers="virtual const">
+			<return type="AttributeBase[]" />
+			<param index="0" name="attribute_set" type="AttributeSet" />
+			<description>
+				If overridden, this method should return an array of attributes that this buff applies to.
+
+				[codeblock]
+					func _applies_to(attribute_set: AttributeSet) -> Array[AttributeBase]:
+						return [
+							attribute_set.find_attribute_by_name("Health"),
+							attribute_set.find_attribute_by_name("Armor")
+						]
+				[/codeblock]
+			</description>
+		</method>
+		<method name="_operate" qualifiers="virtual const">
+			<return type="AttributeOperation[]" />
+			<param index="0" name="values" type="float[]" />
+			<description>
+				If overridden, this method should return an array of operations to apply to the attribute values.
+
+				[codeblock]
+					func _operate(values: Array[float]) -> Array[AttributeOperation]:
+						var health = values[0]
+						var armor = values[1]
+						var diff = armor - my_custom_property_which_represents_a_damage_maybe
+						
+						if diff < 0:
+							return [
+								AttributeOperation.subtract(abs(diff)),
+								AttributeOperation.subtract(armor)
+							]
+						else:
+							return return [
+								AttributeOperation.subtract(0),
+								AttributeOperation.subtract(my_custom_property_which_represents_a_damage_maybe)
+							]
+				[/codeblock]
+			</description>
+		</method>
+		<method name="operate" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="base_value" type="float" />
+			<description>
+				Operates on the base value and returns the new value.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="attribute_name" type="String" setter="set_attribute_name" getter="get_attribute_name" default="&quot;&quot;">
+			The name of the attribute this buff applies to.
+			[b]Note:[/b] This property is only used if the buff is not overridden.
+		</member>
+		<member name="buff_name" type="String" setter="set_buff_name" getter="get_buff_name" default="&quot;&quot;">
+			The name of the buff. It should be as unique as possible.
+		</member>
+		<member name="duration" type="float" setter="set_duration" getter="get_duration" default="0.0">
+			The duration of the buff in seconds. 
+			If 0 and [member transient] is [code]true[/code], the buff is permanent.
+			If 0 and [member transient] is [code]false[/code], the buff modifies the Attribute directly.
+		</member>
+		<member name="max_applies" type="int" setter="set_max_applies" getter="get_max_applies" default="0">
+			The maximum number of concurrent buffs of the same type that can be applied if [member transient] is [code]true[/code].
+		</member>
+		<member name="operation" type="AttributeOperation" setter="set_operation" getter="get_operation">
+			The [AttributeOperation] to apply to the attribute.
+		</member>
+		<member name="transient" type="bool" setter="set_transient" getter="get_transient" default="false">
+			If [code]true[/code] and [member duration] is greater than [code]0.0[/code], the buff is removed automagically by the [AttributeContainer] node.
+			If [code]true[/code] and [member duration] is [code]0.0[/code], the buff is permanent and can be removed manually at any time.
+			If [code]false[/code], the buff alters the attribute directly.
+		</member>
+		<member name="unique" type="bool" setter="set_unique" getter="get_unique" default="false">
+			If [code]true[/code], only one buff of this type can be applied at a time.
+		</member>
+	</members>
+</class>

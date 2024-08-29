@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AttributeBase" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Base class for Attributes.
+	</brief_description>
+	<description>
+		This is an abstract base class for Attributes. You should not use this class directly, but rather use one of its derived classes.
+		A good practice consist in overriding the [Attribute] class to create your own attributes.
+
+		In certain scenarios, you could also create attributes from other [Attribute] classes by overriding three methods:
+		- [method _derived_from] to select the attributes which are derived from this one, [b]required[/b].
+		- [method _get_buffed_value] to calculate the value of the attribute after applying all the buffs, [b]required[/b].
+		- [method _get_initial_value] to calculate the initial value of the attribute, [b]required[/b].
+		- [method _get_max_value] to calculate the maximum value of the attribute, [b]optional[/b].
+		- [method _get_min_value] to calculate the minimum value of the attribute, [b]optional[/b].
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="_derived_from" qualifiers="virtual const">
+			<return type="AttributeBase[]" />
+			<param index="0" name="attribute_set" type="AttributeSet" />
+			<description>
+				Override this method to select the attributes which are derived from this one.
+				[codeblock]
+					func _derived_from(attribute_set: AttributeSet) -> Array:
+					return [
+						attribute_set.find_attribute_by_name("MyAttributeName_1"),
+						attribute_set.find_attribute_by_name("MyAttributeName_2")
+					]
+				[/codeblock]
+
+				[b]Note:[/b] This method is called automagically only if the attribute is a derived one.
+				[b]Note:[/b] This method is required for derived attributes.
+			</description>
+		</method>
+		<method name="_get_buffed_value" qualifiers="virtual const">
+			<return type="float" />
+			<param index="0" name="values" type="PackedFloat32Array" />
+			<description>
+				Override this method to calculate the value of the attribute after applying all the buffs.
+				Each param is the value of the attribute which is derived from this one.
+				[codeblock]
+					func _get_buffed_value(values: PackedFloat32Array) -> float:
+						var my_attribute_value_1 = values[0]
+						var my_attribute_value_2 = values[1]
+							
+						return my_attribute_value_1 + my_attribute_value_2 + 1
+				[/codeblock]
+
+				[b]Note:[/b] This method is called automagically only if the attribute is a derived one.
+				[b]Note:[/b] This method is required for derived attributes.
+			</description>
+		</method>
+		<method name="_get_initial_value" qualifiers="virtual const">
+			<return type="float" />
+			<param index="0" name="attribute_set" type="PackedFloat32Array" />
+			<description>
+				Override this method to calculate the initial value of the attribute.
+				[codeblock]
+					func _get_initial_value(attribute_set: AttributeSet) -> float:
+						var my_attribute_value_1 = values[0]
+						var my_attribute_value_2 = values[1]
+						
+						return my_attribute_value_1 + my_attribute_value_2 + 1
+				[/codeblock]
+
+				[b]Note:[/b] This method is called automagically only if the attribute is a derived one.
+				[b]Note:[/b] This method is required for derived attributes.
+			</description>
+		</method>
+		<method name="_get_max_value" qualifiers="virtual const">
+			<return type="float" />
+			<param index="0" name="attribute_set" type="AttributeSet" />
+			<description>
+				Override this method to calculate the maximum value of the attribute.
+
+				[codeblock]
+					func _get_max_value(attribute_set: AttributeSet) -> float:
+						var value_0 = attribute_set.find_attribute_by_name("MyAttributeName_1").max_value
+						var value_1 = attribute_set.find_attribute_by_name("MyAttributeName_2").max_value
+						
+						return clamp((value_0 + value_1) / 2.0, 0.0, 100.0)
+				[/codeblock]
+
+				[b]Note:[/b] This method is called automagically only if the attribute is a derived one.
+				[b]Note:[/b] This method is optional.
+			</description>
+		</method>
+		<method name="_get_min_value" qualifiers="virtual const">
+			<return type="float" />
+			<param index="0" name="attribute_set" type="AttributeSet" />
+			<description>
+				Override this method to calculate the minimum value of the attribute.
+
+				[codeblock]
+					func _get_min_value(attribute_set: AttributeSet) -> float:
+						# do your stuff here
+				[/codeblock]
+
+				[b]Note:[/b] This method is called automagically only if the attribute is a derived one.
+				[b]Note:[/b] This method is optional.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="attribute_name" type="String" setter="set_attribute_name" getter="get_attribute_name" default="&quot;AttributeBase&quot;">
+			The name of the attribute.
+		</member>
+		<member name="buffs" type="AttributeBuff[]" setter="set_buffs" getter="get_buffs" default="[]">
+			The initial buffs assigned to the attribute. This array comes in handy when you want to apply buffs to the attribute before the game starts (e.g. when the player is creating a character, after a load etc).
+		</member>
+	</members>
+</class>

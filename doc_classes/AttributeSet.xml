@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AttributeSet" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A set of attributes.
+	</brief_description>
+	<description>
+		This class is used to group [AttributeBase] objects.
+
+		You can add, remove and find attributes using this node.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_attribute">
+			<return type="bool" />
+			<param index="0" name="p_attribute" type="AttributeBase" />
+			<description>
+				Adds an attribute to the set.
+			</description>
+		</method>
+		<method name="add_attributes">
+			<return type="int" />
+			<param index="0" name="p_attributes" type="AttributeBase[]" />
+			<description>
+				Adds many attributes to the set.
+			</description>
+		</method>
+		<method name="find_by_classname" qualifiers="const">
+			<return type="AttributeBase" />
+			<param index="0" name="p_classname" type="String" />
+			<description>
+				Finds an attribute by its class name.
+			</description>
+		</method>
+		<method name="find_by_name" qualifiers="const">
+			<return type="AttributeBase" />
+			<param index="0" name="p_name" type="String" />
+			<description>
+				Finds an attribute by its [member AttributeBase.attribute_name].
+			</description>
+		</method>
+		<method name="get_attributes_names" qualifiers="const">
+			<return type="PackedStringArray" />
+			<description>
+				Returns the names of all attributes in the set.
+			</description>
+		</method>
+		<method name="has_attribute" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="p_attribute" type="AttributeBase" />
+			<description>
+				Returns [code]true[/code] if the set contains the attribute.
+			</description>
+		</method>
+		<method name="remove_attribute">
+			<return type="bool" />
+			<param index="0" name="p_attribute" type="AttributeBase" />
+			<description>
+				Removes an attribute from the set.
+			</description>
+		</method>
+		<method name="remove_attributes">
+			<return type="int" />
+			<param index="0" name="p_attributes" type="AttributeBase[]" />
+			<description>
+				Removes many attributes from the set.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="attributes" type="AttributeBase[]" setter="set_attributes" getter="get_attributes" default="[]">
+			The attributes in the set.
+		</member>
+		<member name="set_name" type="String" setter="set_set_name" getter="get_set_name" default="&quot;&quot;">
+			The name of the set.
+		</member>
+	</members>
+	<signals>
+		<signal name="attribute_added">
+			<param index="0" name="attribute" type="AttributeBase" />
+			<description>
+				Emitted when an attribute is added to the set.
+			</description>
+		</signal>
+		<signal name="attribute_removed">
+			<param index="0" name="attribute" type="AttributeBase" />
+			<description>
+				Emitted when an attribute is removed from the set.
+			</description>
+		</signal>
+	</signals>
+</class>

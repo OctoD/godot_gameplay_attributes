@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="RuntimeBuff" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		A runtime representation of an [AttributeBuff].
+	</brief_description>
+	<description>
+		This class is used to represent an [AttributeBuff] at runtime.
+		You can add, remove and find attributes and buffs using this node.
+		[b]Note:[/b] This class is not meant to be instanced manually. Do it at your own risk of causing unexpected behavior.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="from_buff" qualifiers="static">
+			<return type="RuntimeBuff" />
+			<param index="0" name="p_buff" type="AttributeBuff" />
+			<description>
+				Returns an instance of [RuntimeBuff] from an [AttributeBuff].
+			</description>
+		</method>
+		<method name="get_attribute_name" qualifiers="const">
+			<return type="String" />
+			<description>
+				Gets the name of the attribute this buff affects.
+			</description>
+		</method>
+		<method name="get_buff_name" qualifiers="const">
+			<return type="String" />
+			<description>
+				Gets the name of the buff.
+			</description>
+		</method>
+		<method name="get_duration" qualifiers="const">
+			<return type="float" />
+			<description>
+				Gets the duration of the buff.
+			</description>
+		</method>
+		<method name="get_time_left" qualifiers="const">
+			<return type="float" />
+			<description>
+				Gets the time left for the buff to expire.
+			</description>
+		</method>
+		<method name="set_time_left">
+			<return type="void" />
+			<param index="0" name="p_value" type="float" />
+			<description>
+				Sets the time left for the buff to expire.
+			</description>
+		</method>
+		<method name="to_buff" qualifiers="static">
+			<return type="AttributeBuff" />
+			<param index="0" name="p_buff" type="RuntimeBuff" />
+			<description>
+				Returns an instance of [AttributeBuff] from a [RuntimeBuff].
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="buff" type="AttributeBuff" setter="set_buff" getter="get_buff">
+			The buff this runtime buff represents.
+		</member>
+	</members>
+</class>

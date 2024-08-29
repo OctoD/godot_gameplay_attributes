@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="RuntimeAttribute" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		The runtime representation of an [AttributeBase].
+	</brief_description>
+	<description>
+		This class is used to represent an [AttributeBase] at runtime.
+		You can add, remove and find buffs using this node.
+
+		[b]Note:[/b] This class is not meant to be instanced manually. Do it at your own risk of causing unexpected behavior.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_buff">
+			<return type="bool" />
+			<param index="0" name="p_buff" type="AttributeBuff" />
+			<description>
+				Adds a buff to the attribute.
+			</description>
+		</method>
+		<method name="add_buffs">
+			<return type="int" />
+			<param index="0" name="p_buffs" type="AttributeBuff[]" />
+			<description>
+				Adds many buffs to the attribute.
+			</description>
+		</method>
+		<method name="can_receive_buff" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="p_buff" type="AttributeBuff" />
+			<description>
+				Returns [code]true[/code] if the attribute can receive the buff.
+			</description>
+		</method>
+		<method name="clear_buffs">
+			<return type="void" />
+			<description>
+				Removes all buffs from the attribute.
+			</description>
+		</method>
+		<method name="get_attribute_set" qualifiers="const">
+			<return type="AttributeSet" />
+			<description>
+				Gets the attribute set this attribute belongs to.
+			</description>
+		</method>
+		<method name="get_buffed_value" qualifiers="const">
+			<return type="float" />
+			<description>
+				Gets the buffed value of the attribute.
+			</description>
+		</method>
+		<method name="get_derived_from" qualifiers="const">
+			<return type="AttributeBase[]" />
+			<description>
+				Gets the attributes this attribute is derived from.
+			</description>
+		</method>
+		<method name="get_initial_value" qualifiers="const">
+			<return type="float" />
+			<description>
+				Gets the initial value of the attribute.
+			</description>
+		</method>
+		<method name="get_max_value" qualifiers="const">
+			<return type="float" />
+			<description>
+				Gets the maximum value of the attribute.
+			</description>
+		</method>
+		<method name="get_min_value" qualifiers="const">
+			<return type="float" />
+			<description>
+				Gets the minimum value of the attribute.
+			</description>
+		</method>
+		<method name="remove_buff">
+			<return type="bool" />
+			<param index="0" name="p_buff" type="AttributeBuff" />
+			<description>
+				Removes a buff from the attribute.
+			</description>
+		</method>
+		<method name="remove_buffs">
+			<return type="int" />
+			<param index="0" name="p_buffs" type="AttributeBuff[]" />
+			<description>
+				Removes many buffs from the attribute.
+			</description>
+		</method>
+		<method name="set_attribute_set">
+			<return type="void" />
+			<param index="0" name="p_value" type="AttributeSet" />
+			<description>
+				Sets the attribute set this attribute belongs to.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="attribute" type="Attribute" setter="set_attribute" getter="get_attribute">
+			The [Attribute] this runtime attribute represents.
+		</member>
+		<member name="buffs" type="RuntimeBuff[]" setter="set_buffs" getter="get_buffs" default="[]">
+			The buffs applied to the attribute.
+		</member>
+		<member name="value" type="float" setter="set_value" getter="get_value" default="0.0">
+			The value of the attribute.
+		</member>
+	</members>
+	<signals>
+		<signal name="attribute_changed">
+			<param index="0" name="attribute" type="RuntimeAttributeBase" />
+			<param index="1" name="previous_value" type="float" />
+			<param index="2" name="new_value" type="float" />
+			<description>
+				Emitted when the attribute value changes.
+			</description>
+		</signal>
+		<signal name="buff_added">
+			<param index="0" name="buff" type="RuntimeBuff" />
+			<description>
+				Emitted when a buff is added to the attribute.
+			</description>
+		</signal>
+		<signal name="buff_removed">
+			<param index="0" name="buff" type="RuntimeBuff" />
+			<description>
+				Emitted when a buff is removed from the attribute.
+			</description>
+		</signal>
+		<signal name="buffs_cleared">
+			<description>
+				Emitted when all buffs are removed from the attribute.
+			</description>
+		</signal>
+	</signals>
+</class>
