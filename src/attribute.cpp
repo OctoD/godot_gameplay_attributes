@@ -1019,6 +1019,8 @@ float RuntimeAttribute::get_buffed_value() const
 		TypedArray<AttributeBase> derived_from = get_derived_from();
 		TypedArray<float> values = TypedArray<float>();
 
+		// todo: rework this. It makes impossible to apply an overridden AttributeBuff to a derived attribute.
+
 		if (derived_from.size() > 0) {
 			for (int i = 0; i < derived_from.size(); i++) {
 				Ref<AttributeBase> derived_attribute = derived_from[i];
