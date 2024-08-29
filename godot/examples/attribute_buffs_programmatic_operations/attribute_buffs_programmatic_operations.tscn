@@ -3,12 +3,12 @@
 [ext_resource type="Script" path="res://examples/attribute_buffs_programmatic_operations/attribute_buffs_programmatic_operations.gd" id="1_n1i5o"]
 
 [sub_resource type="Attribute" id="Attribute_kvqnj"]
-initial_value = 50.0
+initial_value = 49.0
 max_value = 100.0
 attribute_name = "Health"
 
 [sub_resource type="Attribute" id="Attribute_rppkq"]
-initial_value = 25.0
+initial_value = 22.0
 max_value = 100.0
 attribute_name = "Armor"
 
