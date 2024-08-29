@@ -1,7 +1,7 @@
 Godot Gameplay Attributes
 =========================
 
-![GGA logo](godot/Icon.svg)
+![GGA logo](godot/icon.svg)
 
 # Installation
 
