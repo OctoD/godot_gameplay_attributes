@@ -234,5 +234,5 @@ jobs:
         uses: actions/upload-artifact/merge@v4
         with:
           name: godot_gameplay_attributes
-          pattern: godot_gameplay_attributes-*
+          pattern: godot_gameplay_attributes*
           delete-merged: true
