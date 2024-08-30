@@ -207,6 +207,23 @@ jobs:
           path: |
             ${{ github.workspace }}/bin/**
 
+  manifest:
+    name: Manifest
+    runs-on: ubuntu-20.04
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot_gameplay_attributes.gdextension
+          path:
+            ${{ github.workspace }}/godot/addons/godot_gameplay_attributes/godot_gameplay_attributes.gdextension
+
   # Merges all the build artifacts together into a single artifact.
   # If you comment out this step, all the builds will be uploaded individually.
   merge:
