@@ -206,6 +206,12 @@ jobs:
           name: godot_gameplay_attributes-${{ matrix.platform }}-${{ matrix.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
           path: |
             ${{ github.workspace }}/bin/**
+      - name: Upload manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot_gameplay_attributes.gdextension
+          path: |
+            ${{ github.workspace }}/godot/addons/godot_gameplay_attributes/godot_gameplay_attributes.gdextension
 
   # Merges all the build artifacts together into a single artifact.
   # If you comment out this step, all the builds will be uploaded individually.
@@ -217,5 +223,5 @@ jobs:
         uses: actions/upload-artifact/merge@v4
         with:
           name: godot_gameplay_attributes
-          pattern: godot_gameplay_attributes-*
+          pattern: godot_gameplay_attributes*
           delete-merged: true
