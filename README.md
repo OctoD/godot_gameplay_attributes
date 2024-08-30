@@ -3,6 +3,8 @@ Godot Gameplay Attributes
 
 ![GGA logo](godot/icon.svg)
 
+> (Part of [Godot Gameplay Systems](https://github.com/OctoD/godot-gameplay-systems))
+
 # Installation
 
 ## Using the AssetLib
