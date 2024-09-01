@@ -228,7 +228,7 @@ jobs:
   # If you comment out this step, all the builds will be uploaded individually.
   merge:
     runs-on: ubuntu-20.04
-    needs: build
+    needs: manifest
     steps:
       - name: Merge Artifacts
         uses: actions/upload-artifact/merge@v4
