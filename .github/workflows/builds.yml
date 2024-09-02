@@ -222,7 +222,7 @@ jobs:
         with:
           name: godot_gameplay_attributes.gdextension
           path:
-            ${{ github.workspace }}/godot/addons/godot_gameplay_attributes/godot_gameplay_attributes.gdextension
+            ${{ github.workspace }}/godot_gameplay_attributes.gdextension
 
   # Merges all the build artifacts together into a single artifact.
   # If you comment out this step, all the builds will be uploaded individually.
