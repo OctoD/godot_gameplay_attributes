@@ -57,7 +57,8 @@ file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
 
 if env["platform"] == "macos" or env["platform"] == "ios":
     platlibname = "{}.{}.{}".format(libname, env["platform"], env["target"])
-    file = "{}.framework/{}".format(env["platform"], platlibname, platlibname)
+    arch = env.get("arch", "arm64")
+    file = "{}.{}.dylib".format(platlibname, arch)
 if env["target"] in ["editor", "template_debug"]:
     try:
         doc_data = env.GodotCPPDocData("src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))

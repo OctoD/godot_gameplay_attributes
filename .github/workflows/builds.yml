@@ -55,6 +55,18 @@ jobs:
             target-type: template_debug
             os: ubuntu-24.04
 
+          - platform: macos
+            float-precision: single
+            arch: arm64
+            target-type: template_debug
+            os: macos-latest
+
+          - platform: macos
+            float-precision: single
+            arch: x86_64
+            target-type: template_debug
+            os: macos-latest
+
 #          - platform: web
 #            float-precision: single
 #            arch: wasm32
@@ -67,6 +79,18 @@ jobs:
             arch: x86_64
             target-type: template_release
             os: ubuntu-24.04
+
+          - platform: macos
+            float-precision: single
+            arch: arm64
+            target-type: template_release
+            os: macos-latest
+
+          - platform: macos
+            float-precision: single
+            arch: x86_64
+            target-type: template_release
+            os: macos-latest
 
         # Double precision templates
         # Double precision debug templates
@@ -112,6 +136,18 @@ jobs:
             target-type: template_debug
             os: ubuntu-24.04
 
+          - platform: macos
+            float-precision: double
+            arch: arm64
+            target-type: template_debug
+            os: macos-latest
+
+          - platform: macos
+            float-precision: double
+            arch: x86_64
+            target-type: template_debug
+            os: macos-latest
+
 #          - platform: web
 #            float-precision: double
 #            arch: wasm32
@@ -137,11 +173,17 @@ jobs:
             target-type: template_release
             os: windows-latest
 
-          # - platform: macos
-          #   float-precision: double
-          #   arch: universal
-          #   target-type: template_release
-          #   os: macos-latest
+          - platform: macos
+            float-precision: double
+            arch: arm64
+            target-type: template_release
+            os: macos-latest
+
+          - platform: macos
+            float-precision: double
+            arch: x86_64
+            target-type: template_release
+            os: macos-latest
 
           - platform: android
             float-precision: double
