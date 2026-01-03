@@ -3,7 +3,6 @@ entry_symbol = "gdextension_init"
 compatibility_minimum = 4.4
 reloadable = true
 
-
 [libraries]
 windows.debug.x86_64 = "windows/godot_gameplay_attributes.windows.template_debug.x86_64.dll"
 windows.release.x86_64 = "windows/godot_gameplay_attributes.windows.template_release.x86_64.dll"

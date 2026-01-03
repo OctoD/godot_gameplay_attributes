@@ -85,11 +85,14 @@ runs:
       if: ${{ inputs.platform == 'windows' }}
       with:
         version: 12.2.0
-# macOS only 
+# Dependencies of godot
+    # Use python 3.x release (works cross platform)
     - name: Set up Python 3.x
       uses: actions/setup-python@v5
       with:
+        # Semantic version range syntax or exact version of a Python version
         python-version: "3.x"
+        # Optional - x64 or x86 architecture, defaults to x64
         architecture: "x64"
     - name: Setup scons
       shell: bash
